@@ -1,0 +1,32 @@
+# Our Makefile will automatically add additional settings
+# to this builds array (environment variables, flags, ...)
+builds:
+  - id: cmctl
+  - id: kubectl_cert-manager
+
+# creates SBOMs of all archives and the source tarball using syft
+# https://goreleaser.com/customization/sbom
+sboms:
+  - artifacts: binary
+    documents:
+      - "klone_{{ .Os }}_{{ .Arch }}.sbom"
+
+# signs the checksum file
+# all files (including the sboms) are included in the checksum, so we don't need to sign each one if we don't want to
+# https://goreleaser.com/customization/sign
+signs:
+- cmd: cosign
+  signature: "${artifact}.cosign.bundle"
+  env:
+  - COSIGN_EXPERIMENTAL=1
+  args:
+    - sign-blob
+    - '--bundle=${signature}'
+    - '${artifact}'
+    - "--yes" # needed on cosign 2.0.0+
+  artifacts: checksum
+  output: true
+
+archives:
+  - name_template: "{{.Binary}}_{{.Os}}_{{.Arch}}"
+    format: binary
