@@ -56,6 +56,8 @@ $(foreach build_name,$(build_names),$(eval $(call check_variables,$(build_name))
 
 CGO_ENABLED ?= 0
 
+build_targets := $(build_names:%=$(bin_dir)/bin/%)
+run_targets := $(build_names:%=run-%)
 oci_build_targets := $(build_names:%=oci-build-%)
 oci_push_targets := $(build_names:%=oci-push-%)
 oci_maybe_push_targets := $(build_names:%=oci-maybe-push-%)
@@ -63,8 +65,29 @@ oci_load_targets := $(build_names:%=oci-load-%)
 
 image_tool_dir := $(dir $(lastword $(MAKEFILE_LIST)))/image_tool/
 
+$(bin_dir)/bin:
+	mkdir -p $@
+
+## Build manager binary.
+## @category [shared] Build
+$(build_targets): $(bin_dir)/bin/%: FORCE | $(NEEDS_GO) $(bin_dir)/bin
+	CGO_ENABLED=$(CGO_ENABLED) \
+	$(GO) build \
+		-ldflags '$(go_$*_ldflags)' \
+		-o $@ \
+		$(go_$*_source_path)
+
+.PHONY: $(run_targets)
+ARGS ?= # default empty
+## Run a controller from your host.
+## @category [shared] Build
+$(run_targets): run-%: | $(NEEDS_GO)
+	$(GO) run \
+		-ldflags '$(go_$*_ldflags)' \
+		$(go_$*_source_path) $(ARGS)
+
 .PHONY: $(oci_build_targets)
-## Build the OCI image.
+## Build the oci image.
 ## @category [shared] Build
 $(oci_build_targets): oci-build-%: | $(NEEDS_KO) $(NEEDS_GO) $(NEEDS_YQ) $(bin_dir)/scratch/image
 	$(eval oci_layout_path := $(bin_dir)/scratch/image/oci-layout-$*.$(oci_$*_image_tag))
@@ -99,7 +122,7 @@ $(oci_build_targets): oci-build-%: | $(NEEDS_KO) $(NEEDS_GO) $(NEEDS_YQ) $(bin_d
 		> $(CURDIR)/$(oci_layout_path).digests
 
 .PHONY: $(oci_push_targets)
-## Build and push OCI image.
+## Push docker image.
 ## If the tag already exists, this target will overwrite it.
 ## If an identical image was already built before, we will add a new tag to it, but we will not sign it again.
 ## Expected pushed images:
@@ -120,7 +143,10 @@ $(oci_push_targets): oci-push-%: oci-build-% | $(NEEDS_CRANE) $(NEEDS_COSIGN) $(
 	fi
 
 .PHONY: $(oci_maybe_push_targets)
-## Run 'make oci-push-...' if tag does not already exist in registry.
+## Push docker image if tag does not already exist.
+## Expected pushed images:
+## - :v1.2.3, @sha256:0000001
+## - :v1.2.3.sig, :sha256-0000001.sig
 ## @category [shared] Build
 $(oci_maybe_push_targets): oci-maybe-push-%: | $(NEEDS_CRANE)
 	if $(CRANE) manifest digest $(oci_$*_image_name):$(oci_$*_image_tag) > /dev/null 2>&1; then \
@@ -131,8 +157,7 @@ $(oci_maybe_push_targets): oci-maybe-push-%: | $(NEEDS_CRANE)
 	fi
 
 .PHONY: $(oci_load_targets)
-## Build OCI image for the local architecture and load
-## it into the $(kind_cluster_name) kind cluster.
+## Load docker image.
 ## @category [shared] Build
 $(oci_load_targets): oci_platforms := ""
 $(oci_load_targets): oci-load-%: oci-build-% | kind-cluster $(NEEDS_KIND)

@@ -16,7 +16,7 @@
 ## Generate klone shared Makefiles
 ## @category [shared] Generate/ Verify
 generate-klone: | $(NEEDS_KLONE)
-#	$(KLONE) sync
+	$(KLONE) sync
 
 shared_generate_targets += generate-klone
 
