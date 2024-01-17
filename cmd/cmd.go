@@ -27,8 +27,8 @@ import (
 	"k8s.io/component-base/logs"
 
 	logf "github.com/cert-manager/cert-manager/pkg/logs"
-	"github.com/cert-manager/cmctl/pkg/build"
-	"github.com/cert-manager/cmctl/pkg/build/commands"
+	"github.com/cert-manager/cmctl/v2/pkg/build"
+	"github.com/cert-manager/cmctl/v2/pkg/build/commands"
 )
 
 func NewCertManagerCtlCommand(ctx context.Context, in io.Reader, out, err io.Writer) *cobra.Command {

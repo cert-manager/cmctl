@@ -40,8 +40,8 @@ import (
 	cmmeta "github.com/cert-manager/cert-manager/pkg/apis/meta/v1"
 	"github.com/cert-manager/cert-manager/pkg/ctl"
 	"github.com/cert-manager/cert-manager/pkg/util/pki"
-	"github.com/cert-manager/cmctl/pkg/build"
-	"github.com/cert-manager/cmctl/pkg/factory"
+	"github.com/cert-manager/cmctl/v2/pkg/build"
+	"github.com/cert-manager/cmctl/v2/pkg/factory"
 )
 
 var (

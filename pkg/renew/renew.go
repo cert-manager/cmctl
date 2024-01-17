@@ -34,8 +34,8 @@ import (
 	cmapi "github.com/cert-manager/cert-manager/pkg/apis/certmanager/v1"
 	cmmeta "github.com/cert-manager/cert-manager/pkg/apis/meta/v1"
 	cmclient "github.com/cert-manager/cert-manager/pkg/client/clientset/versioned"
-	"github.com/cert-manager/cmctl/pkg/build"
-	"github.com/cert-manager/cmctl/pkg/factory"
+	"github.com/cert-manager/cmctl/v2/pkg/build"
+	"github.com/cert-manager/cmctl/v2/pkg/factory"
 )
 
 var (

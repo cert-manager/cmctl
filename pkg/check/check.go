@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 
-	"github.com/cert-manager/cmctl/pkg/check/api"
+	"github.com/cert-manager/cmctl/v2/pkg/check/api"
 )
 
 // NewCmdCheck returns a cobra command for checking cert-manager components.

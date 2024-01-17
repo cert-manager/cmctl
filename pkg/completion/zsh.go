@@ -21,7 +21,7 @@ import (
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"k8s.io/kubectl/pkg/cmd/util"
 
-	"github.com/cert-manager/cmctl/pkg/build"
+	"github.com/cert-manager/cmctl/v2/pkg/build"
 )
 
 func newCmdCompletionZSH(ioStreams genericclioptions.IOStreams) *cobra.Command {

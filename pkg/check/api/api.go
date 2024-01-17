@@ -32,8 +32,8 @@ import (
 
 	logf "github.com/cert-manager/cert-manager/pkg/logs"
 	"github.com/cert-manager/cert-manager/pkg/util/cmapichecker"
-	cmcmdutil "github.com/cert-manager/cmctl/internal/util"
-	"github.com/cert-manager/cmctl/pkg/factory"
+	cmcmdutil "github.com/cert-manager/cmctl/v2/internal/util"
+	"github.com/cert-manager/cmctl/v2/pkg/factory"
 )
 
 // Options is a struct to support check api command

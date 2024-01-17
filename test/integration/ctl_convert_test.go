@@ -23,7 +23,7 @@ import (
 
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 
-	"github.com/cert-manager/cmctl/pkg/convert"
+	"github.com/cert-manager/cmctl/v2/pkg/convert"
 )
 
 const (

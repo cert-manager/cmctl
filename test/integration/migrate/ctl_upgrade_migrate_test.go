@@ -33,8 +33,8 @@ import (
 	"github.com/cert-manager/cert-manager/pkg/webhook/handlers/testdata/apis/testgroup/install"
 	v1 "github.com/cert-manager/cert-manager/pkg/webhook/handlers/testdata/apis/testgroup/v1"
 	v2 "github.com/cert-manager/cert-manager/pkg/webhook/handlers/testdata/apis/testgroup/v2"
-	"github.com/cert-manager/cmctl/pkg/upgrade/migrateapiversion"
-	"github.com/cert-manager/cmctl/test/integration/framework"
+	"github.com/cert-manager/cmctl/v2/pkg/upgrade/migrateapiversion"
+	"github.com/cert-manager/cmctl/v2/test/integration/framework"
 )
 
 // Create a test resource at a given version.

@@ -26,8 +26,8 @@ import (
 	cmdutil "k8s.io/kubectl/pkg/cmd/util"
 
 	logf "github.com/cert-manager/cert-manager/pkg/logs"
-	ctlcmd "github.com/cert-manager/cmctl/cmd"
-	"github.com/cert-manager/cmctl/internal/util"
+	ctlcmd "github.com/cert-manager/cmctl/v2/cmd"
+	"github.com/cert-manager/cmctl/v2/internal/util"
 )
 
 func main() {

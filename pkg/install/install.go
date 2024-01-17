@@ -34,8 +34,8 @@ import (
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 
 	logf "github.com/cert-manager/cert-manager/pkg/logs"
-	"github.com/cert-manager/cmctl/pkg/build"
-	"github.com/cert-manager/cmctl/pkg/install/helm"
+	"github.com/cert-manager/cmctl/v2/pkg/build"
+	"github.com/cert-manager/cmctl/v2/pkg/install/helm"
 )
 
 type InstallOptions struct {

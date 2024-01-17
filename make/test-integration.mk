@@ -59,6 +59,6 @@ test-integration: | $(cert_manager_crds) $(NEEDS_GO) $(NEEDS_GOTESTSUM) $(NEEDS_
 		-coverprofile=$(ARTIFACTS)/filtered.cov \
 		./test/integration/... \
 		-- \
-		-ldflags $(go_ctl_ldflags)
+		-ldflags $(go_cmctl_ldflags)
 
 	$(GO) tool cover -html=$(ARTIFACTS)/filtered.cov -o=$(ARTIFACTS)/filtered.html

@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-repo_name := github.com/cert-manager/cmctl
+repo_name := github.com/cert-manager/cmctl/v2
 
 exe_build_names := cmctl kubectl_cert-manager
 gorelease_file := .goreleaser.yml

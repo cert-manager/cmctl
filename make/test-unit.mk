@@ -23,6 +23,6 @@ test-unit: | $(NEEDS_GO) $(NEEDS_GOTESTSUM) $(ARTIFACTS)
 		-coverprofile=$(ARTIFACTS)/filtered.cov \
 		./cmd/... ./internal/... ./pkg/... \
 		-- \
-		-ldflags $(go_ctl_ldflags)
+		-ldflags $(go_cmctl_ldflags)
 
 	$(GO) tool cover -html=$(ARTIFACTS)/filtered.cov -o=$(ARTIFACTS)/filtered.html

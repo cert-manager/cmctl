@@ -22,7 +22,7 @@ import (
 	"os"
 
 	logf "github.com/cert-manager/cert-manager/pkg/logs"
-	"github.com/cert-manager/cmctl/pkg/factory"
+	"github.com/cert-manager/cmctl/v2/pkg/factory"
 	"github.com/go-logr/logr"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"

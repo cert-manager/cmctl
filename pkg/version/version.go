@@ -30,8 +30,8 @@ import (
 
 	"github.com/cert-manager/cert-manager/pkg/util"
 	"github.com/cert-manager/cert-manager/pkg/util/versionchecker"
-	"github.com/cert-manager/cmctl/pkg/build"
-	"github.com/cert-manager/cmctl/pkg/factory"
+	"github.com/cert-manager/cmctl/v2/pkg/build"
+	"github.com/cert-manager/cmctl/v2/pkg/factory"
 )
 
 // Version is a struct for version information

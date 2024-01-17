@@ -39,9 +39,9 @@ import (
 	"github.com/cert-manager/cert-manager/pkg/ctl"
 	"github.com/cert-manager/cert-manager/pkg/util/pki"
 	"github.com/cert-manager/cert-manager/test/unit/gen"
-	"github.com/cert-manager/cmctl/pkg/factory"
-	statuscertcmd "github.com/cert-manager/cmctl/pkg/status/certificate"
-	"github.com/cert-manager/cmctl/test/integration/framework"
+	"github.com/cert-manager/cmctl/v2/pkg/factory"
+	statuscertcmd "github.com/cert-manager/cmctl/v2/pkg/status/certificate"
+	"github.com/cert-manager/cmctl/v2/test/integration/framework"
 )
 
 func generateCSR(t *testing.T) []byte {

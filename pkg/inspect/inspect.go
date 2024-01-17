@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 
-	"github.com/cert-manager/cmctl/pkg/inspect/secret"
+	"github.com/cert-manager/cmctl/v2/pkg/inspect/secret"
 )
 
 func NewCmdInspect(ctx context.Context, ioStreams genericclioptions.IOStreams) *cobra.Command {

@@ -1,4 +1,4 @@
-module github.com/cert-manager/cmctl
+module github.com/cert-manager/cmctl/v2
 
 go 1.21
 

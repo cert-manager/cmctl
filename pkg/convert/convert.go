@@ -21,7 +21,7 @@ import (
 	"fmt"
 
 	logf "github.com/cert-manager/cert-manager/pkg/logs"
-	"github.com/cert-manager/cmctl/pkg/build"
+	"github.com/cert-manager/cmctl/v2/pkg/build"
 
 	"github.com/spf13/cobra"
 	metainternalversion "k8s.io/apimachinery/pkg/apis/meta/internalversion"

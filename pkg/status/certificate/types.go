@@ -31,7 +31,7 @@ import (
 	cmacme "github.com/cert-manager/cert-manager/pkg/apis/acme/v1"
 	cmapi "github.com/cert-manager/cert-manager/pkg/apis/certmanager/v1"
 	"github.com/cert-manager/cert-manager/pkg/util/pki"
-	"github.com/cert-manager/cmctl/pkg/status/util"
+	"github.com/cert-manager/cmctl/v2/pkg/status/util"
 )
 
 type CertificateStatus struct {

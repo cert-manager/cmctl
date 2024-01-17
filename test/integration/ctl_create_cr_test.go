@@ -33,9 +33,9 @@ import (
 	cmapiv1 "github.com/cert-manager/cert-manager/pkg/apis/certmanager/v1"
 	cmmeta "github.com/cert-manager/cert-manager/pkg/apis/meta/v1"
 	"github.com/cert-manager/cert-manager/pkg/util/pki"
-	"github.com/cert-manager/cmctl/pkg/create/certificaterequest"
-	"github.com/cert-manager/cmctl/pkg/factory"
-	"github.com/cert-manager/cmctl/test/integration/framework"
+	"github.com/cert-manager/cmctl/v2/pkg/create/certificaterequest"
+	"github.com/cert-manager/cmctl/v2/pkg/factory"
+	"github.com/cert-manager/cmctl/v2/test/integration/framework"
 )
 
 type CreateCRTest struct {
