@@ -44,6 +44,7 @@ endif
 RELEASE_DRYRUN ?= false
 
 CGO_ENABLED ?= 0
+GOEXPERIMENT ?=  # empty by default
 
 run_targets := $(all_exe_build_names:%=run-%)
 build_targets := $(all_exe_build_names:%=$(bin_dir)/bin/%)
@@ -57,6 +58,7 @@ ARGS ?= # default empty
 ## @category [shared] Build
 $(run_targets): run-%: | $(NEEDS_GO)
 	CGO_ENABLED=$(CGO_ENABLED) \
+	GOEXPERIMENT=$(GOEXPERIMENT) \
 	$(GO) run \
 		-ldflags '$(go_$*_ldflags)' \
 		$(go_$*_source_path) $(ARGS)
@@ -66,6 +68,7 @@ $(run_targets): run-%: | $(NEEDS_GO)
 ## @category [shared] Build
 $(build_targets): $(bin_dir)/bin/%: FORCE | $(NEEDS_GO)
 	CGO_ENABLED=$(CGO_ENABLED) \
+	GOEXPERIMENT=$(GOEXPERIMENT) \
 	$(GO) build \
 		-ldflags '$(go_$*_ldflags)' \
 		-o $@ \
@@ -75,6 +78,7 @@ define template_for_target
 	$(YQ) 'with(.builds[]; select(.id == "$(1)") | .binary = "$(1)")' | \
 	$(YQ) 'with(.builds[]; select(.id == "$(1)") | .main = "$(go_$(1)_source_path)")' | \
 	$(YQ) 'with(.builds[]; select(.id == "$(1)") | .env[0] = "CGO_ENABLED={{.Env.CGO_ENABLED}}")' | \
+	$(YQ) 'with(.builds[]; select(.id == "$(1)") | .env[1] = "GOEXPERIMENT={{.Env.GOEXPERIMENT}}")' | \
 	$(YQ) 'with(.builds[]; select(.id == "$(1)") | .mod_timestamp = "{{.Env.SOURCE_DATE_EPOCH}}")' | \
 	$(YQ) 'with(.builds[]; select(.id == "$(1)") | .flags[0] = "-trimpath")' | \
 	$(YQ) 'with(.builds[]; select(.id == "$(1)") | .ldflags[0] = "-s")' | \
@@ -104,6 +108,7 @@ endif
 
 	SOURCE_DATE_EPOCH=$(GITEPOCH) \
 	CGO_ENABLED=$(CGO_ENABLED) \
+	GOEXPERIMENT=$(GOEXPERIMENT) \
 	$(GORELEASER) release \
 		$(extra_args) \
 		--fail-fast \
