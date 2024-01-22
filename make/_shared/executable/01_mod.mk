@@ -22,6 +22,7 @@ ifndef build_names
 ifndef exe_build_names
 $(error build_names and exe_build_names are not set)
 endif
+build_names := # empty
 endif
 
 all_exe_build_names := $(sort $(build_names) $(exe_build_names))
@@ -30,7 +31,28 @@ fatal_if_undefined = $(if $(findstring undefined,$(origin $1)),$(error $1 is not
 
 define check_variables
 $(call fatal_if_undefined,go_$1_ldflags)
-$(call fatal_if_undefined,go_$1_source_path)
+$(call fatal_if_undefined,go_$1_main_dir)
+$(call fatal_if_undefined,go_$1_mod_dir)
+
+ifneq ($(go_$1_main_dir:.%=.),.)
+$$(error go_$1_main_dir "$(go_$1_main_dir)" should be a directory path that DOES start with ".")
+endif
+ifeq ($(go_$1_main_dir:%/=/),/)
+$$(error go_$1_main_dir "$(go_$1_main_dir)" should be a directory path that DOES NOT end with "/")
+endif
+ifeq ($(go_$1_main_dir:%.go=.go),.go)
+$$(error go_$1_main_dir "$(go_$1_main_dir)" should be a directory path that DOES NOT end with ".go")
+endif
+ifneq ($(go_$1_mod_dir:\.%=\.),.)
+$$(error go_$1_mod_dir "$(go_$1_mod_dir)" should be a directory path that DOES start with ".")
+endif
+ifeq ($(go_$1_mod_dir:%/=/),/)
+$$(error go_$1_mod_dir "$(go_$1_mod_dir)" should be a directory path that DOES NOT end with "/")
+endif
+ifeq ($(go_$1_mod_dir:%.go=.go),.go)
+$$(error go_$1_mod_dir "$(go_$1_mod_dir)" should be a directory path that DOES NOT end with ".go")
+endif
+
 endef
 
 $(foreach build_name,$(all_exe_build_names),$(eval $(call check_variables,$(build_name))))
@@ -55,8 +77,10 @@ $(bin_dir)/bin:
 .PHONY: $(run_targets)
 ARGS ?= # default empty
 ## Directly run the go source locally.
+## Any Go workfile is ignored.
 ## @category [shared] Build
 $(run_targets): run-%: | $(NEEDS_GO)
+	GOWORK=off \
 	CGO_ENABLED=$(CGO_ENABLED) \
 	GOEXPERIMENT=$(GOEXPERIMENT) \
 	$(GO) run \
@@ -64,9 +88,10 @@ $(run_targets): run-%: | $(NEEDS_GO)
 		$(go_$*_source_path) $(ARGS)
 
 ## Build the go source locally for development/ testing
-## on the local platform.
+## on the local platform. Any Go workfile is ignored.
 ## @category [shared] Build
 $(build_targets): $(bin_dir)/bin/%: FORCE | $(NEEDS_GO)
+	GOWORK=off \
 	CGO_ENABLED=$(CGO_ENABLED) \
 	GOEXPERIMENT=$(GOEXPERIMENT) \
 	$(GO) build \
@@ -76,7 +101,8 @@ $(build_targets): $(bin_dir)/bin/%: FORCE | $(NEEDS_GO)
 
 define template_for_target
 	$(YQ) 'with(.builds[]; select(.id == "$(1)") | .binary = "$(1)")' | \
-	$(YQ) 'with(.builds[]; select(.id == "$(1)") | .main = "$(go_$(1)_source_path)")' | \
+	$(YQ) 'with(.builds[]; select(.id == "$(1)") | .main = "$(go_$(1)_main_dir)")' | \
+	$(YQ) 'with(.builds[]; select(.id == "$(1)") | .dir = "$(go_$(1)_mod_dir)")' | \
 	$(YQ) 'with(.builds[]; select(.id == "$(1)") | .env[0] = "CGO_ENABLED={{.Env.CGO_ENABLED}}")' | \
 	$(YQ) 'with(.builds[]; select(.id == "$(1)") | .env[1] = "GOEXPERIMENT={{.Env.GOEXPERIMENT}}")' | \
 	$(YQ) 'with(.builds[]; select(.id == "$(1)") | .mod_timestamp = "{{.Env.SOURCE_DATE_EPOCH}}")' | \
@@ -106,6 +132,7 @@ ifeq ($(RELEASE_DRYRUN),true)
 	$(eval extra_args := $(extra_args) --skip=announce,publish,validate,sign)
 endif
 
+	GOWORK=off \
 	SOURCE_DATE_EPOCH=$(GITEPOCH) \
 	CGO_ENABLED=$(CGO_ENABLED) \
 	GOEXPERIMENT=$(GOEXPERIMENT) \

@@ -25,7 +25,6 @@ dryrun-release: release
 ## Publish all release artifacts (image + helm chart)
 ## @category [shared] Release
 release: | $(NEEDS_CRANE) $(bin_dir)/scratch
-	$(MAKE) oci-push-cmctl
 	$(MAKE) exe-publish
 
 	@echo "Release complete!"
