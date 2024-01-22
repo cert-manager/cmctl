@@ -117,14 +117,15 @@ endef
 ## for all release platforms and architectures. Additionally,
 ## this will create a checksums file, sboms and sign the binaries.
 ## @category [shared] Build
-exe-publish: | $(NEEDS_GO) $(NEEDS_GORELEASER) $(NEEDS_SYFT) $(NEEDS_YQ)
+exe-publish: | $(NEEDS_GO) $(NEEDS_GORELEASER) $(NEEDS_SYFT) $(NEEDS_YQ) $(NEEDS_COSIGN)
 	$(eval go_releaser_path := $(bin_dir)/scratch/exe-publish)
 	rm -rf $(CURDIR)/$(go_releaser_path)
 
 	cat $(gorelease_file) | \
 	$(foreach target,$(exe_build_names),$(call template_for_target,$(target))) \
 	$(YQ) '.dist = "$(CURDIR)/$(go_releaser_path)"' | \
-	$(YQ) 'with(.sboms[]; .cmd = "$(SYFT)" | .args = ["$$artifact", "--output", "spdx-json=$$document"] | .env = ["SYFT_FILE_METADATA_CATALOGER_ENABLED=true"])' \
+	$(YQ) 'with(.sboms[]; .cmd = "$(SYFT)" | .args = ["$$artifact", "--output", "spdx-json=$$document"] | .env = ["SYFT_FILE_METADATA_CATALOGER_ENABLED=true"])' | \
+	$(YQ) 'with(.signs[]; .cmd = "$(COSIGN)")' \
 	> $(CURDIR)/$(go_releaser_path).goreleaser_config.yaml
 
 	$(eval extra_args := )
