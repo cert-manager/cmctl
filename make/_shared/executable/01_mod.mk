@@ -117,7 +117,7 @@ endef
 ## for all release platforms and architectures. Additionally,
 ## this will create a checksums file, sboms and sign the binaries.
 ## @category [shared] Build
-exe-publish: | $(NEEDS_GO) $(NEEDS_GORELEASER) $(NEEDS_SYFT)
+exe-publish: | $(NEEDS_GO) $(NEEDS_GORELEASER) $(NEEDS_SYFT) $(NEEDS_YQ)
 	$(eval go_releaser_path := $(bin_dir)/scratch/exe-publish)
 	rm -rf $(CURDIR)/$(go_releaser_path)
 
