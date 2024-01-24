@@ -12,8 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-exe_operating_systems ?= darwin,linux,windows
-exe_architectures ?= amd64,arm,arm64,ppc64le,s390x
+exe_targets ?= darwin_amd64_v1,darwin_arm64,linux_amd64_v1,linux_arm_7,linux_arm64,linux_ppc64le,linux_s390x,windows_amd64_v1,windows_arm64
 
 ifndef bin_dir
 $(error bin_dir is not set)
@@ -112,8 +111,7 @@ define template_for_target
 	$(YQ) 'with(.builds[]; select(.id == "$(1)") | .ldflags[1] = "-w")' | \
 	$(YQ) 'with(.builds[]; select(.id == "$(1)") | .ldflags[2] = "$(go_$(1)_ldflags)")' | \
 	$(YQ) 'with(.builds[]; select(.id == "$(1)") | .gobinary = "$(GO)")' | \
-	os=$(exe_operating_systems) $(YQ) 'with(.builds[]; select(.id == "$(1)") | .goos = (env(os) | split(",")))' | \
-	archs=$(exe_architectures) $(YQ) 'with(.builds[]; select(.id == "$(1)") | .goarch = (env(archs) | split(",")))' |
+	targets=$(exe_targets) $(YQ) 'with(.builds[]; select(.id == "$(1)") | .targets = (env(targets) | split(",")))' |
 endef
 
 ## Build the go source for release. This will build the source
