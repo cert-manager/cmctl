@@ -10,40 +10,40 @@ targets:
     - folder_name: boilerplate
       repo_url: https://github.com/cert-manager/makefile-modules.git
       repo_ref: main
-      repo_hash: edeba4963e470a9f5e55ab1947aa15f5bdb2a2c3
+      repo_hash: 43dfc77ac0dc7b08fbeddef87a153b40b364929b
       repo_path: modules/boilerplate
     - folder_name: cert-manager
       repo_url: https://github.com/cert-manager/makefile-modules.git
       repo_ref: main
-      repo_hash: edeba4963e470a9f5e55ab1947aa15f5bdb2a2c3
+      repo_hash: 43dfc77ac0dc7b08fbeddef87a153b40b364929b
       repo_path: modules/cert-manager
     - folder_name: executable
       repo_url: https://github.com/cert-manager/makefile-modules.git
       repo_ref: main
-      repo_hash: edeba4963e470a9f5e55ab1947aa15f5bdb2a2c3
+      repo_hash: 43dfc77ac0dc7b08fbeddef87a153b40b364929b
       repo_path: modules/executable
     - folder_name: generate-verify
       repo_url: https://github.com/cert-manager/makefile-modules.git
       repo_ref: main
-      repo_hash: edeba4963e470a9f5e55ab1947aa15f5bdb2a2c3
+      repo_hash: 43dfc77ac0dc7b08fbeddef87a153b40b364929b
       repo_path: modules/generate-verify
     - folder_name: help
       repo_url: https://github.com/cert-manager/makefile-modules.git
       repo_ref: main
-      repo_hash: edeba4963e470a9f5e55ab1947aa15f5bdb2a2c3
+      repo_hash: 43dfc77ac0dc7b08fbeddef87a153b40b364929b
       repo_path: modules/help
     - folder_name: klone
       repo_url: https://github.com/cert-manager/makefile-modules.git
       repo_ref: main
-      repo_hash: edeba4963e470a9f5e55ab1947aa15f5bdb2a2c3
+      repo_hash: 43dfc77ac0dc7b08fbeddef87a153b40b364929b
       repo_path: modules/klone
     - folder_name: repository-base
       repo_url: https://github.com/cert-manager/makefile-modules.git
       repo_ref: main
-      repo_hash: edeba4963e470a9f5e55ab1947aa15f5bdb2a2c3
+      repo_hash: 43dfc77ac0dc7b08fbeddef87a153b40b364929b
       repo_path: modules/repository-base
     - folder_name: tools
       repo_url: https://github.com/cert-manager/makefile-modules.git
       repo_ref: main
-      repo_hash: edeba4963e470a9f5e55ab1947aa15f5bdb2a2c3
+      repo_hash: 43dfc77ac0dc7b08fbeddef87a153b40b364929b
       repo_path: modules/tools
