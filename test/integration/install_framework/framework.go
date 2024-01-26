@@ -20,11 +20,12 @@ import (
 	"os"
 	"testing"
 
+	"github.com/cert-manager/cert-manager/test/apiserver"
+	"github.com/go-logr/logr/testr"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"sigs.k8s.io/controller-runtime/pkg/envtest"
-
-	"github.com/cert-manager/cert-manager/test/apiserver"
+	"sigs.k8s.io/controller-runtime/pkg/log"
 )
 
 type TestInstallApiServer struct {
@@ -39,6 +40,8 @@ type TestInstallApiServer struct {
 type CleanupFunction func()
 
 func NewTestInstallApiServer(t *testing.T) (*TestInstallApiServer, CleanupFunction) {
+	log.SetLogger(testr.New(t))
+
 	env, stopFn := apiserver.RunBareControlPlane(t)
 
 	testUser, err := env.ControlPlane.AddUser(
