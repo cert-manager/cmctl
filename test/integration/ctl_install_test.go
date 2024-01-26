@@ -29,7 +29,7 @@ import (
 
 	"github.com/cert-manager/cmctl/v2/cmd"
 	"github.com/cert-manager/cmctl/v2/test/integration/install_framework"
-	"github.com/cert-manager/cmctl/v2/test/integration/internal/util"
+	logsapi "k8s.io/component-base/logs/api/v1"
 )
 
 func TestCtlInstall(t *testing.T) {
@@ -99,12 +99,11 @@ func executeCommandAndCheckOutput(
 	stdin := bytes.NewBufferString("")
 	stdout := bytes.NewBufferString("")
 
-	chartPath := util.GetTestPath("deploy", "charts", "cert-manager", "cert-manager.tgz")
+	logsapi.ResetForTest(nil)
 	cmd := cmd.NewCertManagerCtlCommand(ctx, stdin, stdout, stdout)
 	cmd.SetArgs(append([]string{
 		fmt.Sprintf("--kubeconfig=%s", kubeConfig),
 		"--wait=false",
-		fmt.Sprintf("--chart-name=%s", chartPath),
 		"x",
 		"install",
 	}, inputArgs...))
