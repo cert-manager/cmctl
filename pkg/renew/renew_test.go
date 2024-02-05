@@ -53,7 +53,6 @@ func TestValidate(t *testing.T) {
 				LabelSelector: "foo=bar",
 				All:           true,
 			},
-			args:   []string{""},
 			expErr: true,
 		},
 		"If there are all certificates selected, as well as arguments, error": {
