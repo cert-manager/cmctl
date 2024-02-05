@@ -96,24 +96,26 @@ func NewCmdRenew(ctx context.Context, ioStreams genericclioptions.IOStreams) *co
 
 // Validate validates the provided options
 func (o *Options) Validate(cmd *cobra.Command, args []string) error {
-	if len(o.LabelSelector) > 0 && len(args) > 0 {
-		return errors.New("cannot specify Certificate names in conjunction with label selectors")
-	}
-
 	if len(o.LabelSelector) > 0 && o.All {
 		return errors.New("cannot specify label selectors in conjunction with --all flag")
 	}
 
-	if o.All && len(args) > 0 {
-		return errors.New("cannot specify Certificate names in conjunction with --all flag")
-	}
+	if len(args) == 0 {
+		if !o.All && len(o.LabelSelector) == 0 {
+			return errors.New("please either supply one or more Certificate resource names, label selectors, or use the --all flag to renew all Certificate resources")
+		}
+	} else {
+		if len(o.LabelSelector) > 0 {
+			return errors.New("cannot specify Certificate names in conjunction with label selectors")
+		}
 
-	if o.All && cmd.PersistentFlags().Changed("namespace") {
-		return errors.New("cannot specify --namespace flag in conjunction with --all flag")
-	}
+		if o.All {
+			return errors.New("cannot specify Certificate names in conjunction with --all flag")
+		}
 
-	if !o.All && len(args) == 0 && len(o.LabelSelector) == 0 {
-		return errors.New("please either supply one or more Certificate resource names, label selectors, or use the --all flag to renew all Certificate resources")
+		if o.AllNamespaces {
+			return errors.New("cannot specify Certificate names in conjunction with --all-namespaces flag")
+		}
 	}
 
 	return nil
