@@ -112,8 +112,8 @@ func (o *Options) Validate(cmd *cobra.Command, args []string) error {
 		return errors.New("cannot specify --namespace flag in conjunction with --all flag")
 	}
 
-	if !o.All && len(args) == 0 {
-		return errors.New("please supply one or more Certificate resource names or use the --all flag to renew all Certificate resources")
+	if !o.All && len(args) == 0 && len(o.LabelSelector) == 0 {
+		return errors.New("please either supply one or more Certificate resource names, label selectors, or use the --all flag to renew all Certificate resources")
 	}
 
 	return nil

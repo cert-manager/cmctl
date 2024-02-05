@@ -95,6 +95,29 @@ func TestValidate(t *testing.T) {
 			},
 			expErr: false,
 		},
+		"If --label-selector specified with --all, error": {
+			options: &Options{
+				LabelSelector: "foo=bar",
+				All:           true,
+			},
+			expErr: true,
+		},
+		"If --label-selector specified with --all-namespaces, don't error": {
+			options: &Options{
+				AllNamespaces: true,
+				LabelSelector: "foo=bar",
+			},
+			expErr: false,
+		},
+		"If --label-selector specified with --namespace, don't error": {
+			options: &Options{
+				LabelSelector: "foo=bar",
+			},
+			setStringFlags: []stringFlag{
+				{name: "namespace", value: "foo"},
+			},
+			expErr: false,
+		},
 	}
 
 	for name, test := range tests {
