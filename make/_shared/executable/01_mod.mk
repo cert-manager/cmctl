@@ -80,24 +80,26 @@ ARGS ?= # default empty
 ## Any Go workfile is ignored.
 ## @category [shared] Build
 $(run_targets): run-%: | $(NEEDS_GO)
+	cd $(go_$*_mod_dir) && \
 	GOWORK=off \
 	CGO_ENABLED=$(CGO_ENABLED) \
 	GOEXPERIMENT=$(GOEXPERIMENT) \
 	$(GO) run \
 		-ldflags '$(go_$*_ldflags)' \
-		$(go_$*_source_path) $(ARGS)
+		$(go_$*_main_dir) $(ARGS)
 
 ## Build the go source locally for development/ testing
 ## on the local platform. Any Go workfile is ignored.
 ## @category [shared] Build
 $(build_targets): $(bin_dir)/bin/%: FORCE | $(NEEDS_GO)
+	cd $(go_$*_mod_dir) && \
 	GOWORK=off \
 	CGO_ENABLED=$(CGO_ENABLED) \
 	GOEXPERIMENT=$(GOEXPERIMENT) \
 	$(GO) build \
 		-ldflags '$(go_$*_ldflags)' \
 		-o $@ \
-		$(go_$*_source_path)
+		$(go_$*_main_dir)
 
 define template_for_target
 	$(YQ) 'with(.builds[]; select(.id == "$(1)") | .binary = "$(1)")' | \

@@ -95,7 +95,7 @@ TOOLS += goreleaser=v1.23.0
 # https://pkg.go.dev/github.com/anchore/syft/cmd/syft?tab=versions
 TOOLS += syft=v0.100.0
 # https://github.com/cert-manager/helm-tool
-TOOLS += helm-tool=v0.2.3
+TOOLS += helm-tool=v0.3.0
 
 # https://pkg.go.dev/k8s.io/code-generator/cmd?tab=versions
 K8S_CODEGEN_VERSION=v0.29.1
@@ -114,7 +114,7 @@ ADDITIONAL_TOOLS ?=
 TOOLS += $(ADDITIONAL_TOOLS)
 
 # https://go.dev/dl/
-VENDORED_GO_VERSION := 1.21.6
+VENDORED_GO_VERSION := 1.21.7
 
 # Print the go version which can be used in GH actions
 .PHONY: print-go-version
