@@ -41,12 +41,18 @@ func TestValidate(t *testing.T) {
 			args:   []string{"abc"},
 			expErr: true,
 		},
+		"If there are arguments, as well as --all-namespaces, error": {
+			options: &Options{
+				AllNamespaces: true,
+			},
+			args:   []string{"abc"},
+			expErr: true,
+		},
 		"If there are all certificates selected, as well as label selector, error": {
 			options: &Options{
 				LabelSelector: "foo=bar",
 				All:           true,
 			},
-			args:   []string{""},
 			expErr: true,
 		},
 		"If there are all certificates selected, as well as arguments, error": {
@@ -63,14 +69,14 @@ func TestValidate(t *testing.T) {
 			},
 			expErr: false,
 		},
-		"If --namespace and --all namespace specified, error": {
+		"If --namespace and --all specified, don't error": {
 			options: &Options{
 				All: true,
 			},
 			setStringFlags: []stringFlag{
 				{name: "namespace", value: "foo"},
 			},
-			expErr: true,
+			expErr: false,
 		},
 		"If --namespace specified without arguments, error": {
 			options: &Options{},
@@ -90,6 +96,29 @@ func TestValidate(t *testing.T) {
 		"If --namespace specified with multiple arguments, don't error": {
 			options: &Options{},
 			args:    []string{"bar", "abc"},
+			setStringFlags: []stringFlag{
+				{name: "namespace", value: "foo"},
+			},
+			expErr: false,
+		},
+		"If --label-selector specified with --all, error": {
+			options: &Options{
+				LabelSelector: "foo=bar",
+				All:           true,
+			},
+			expErr: true,
+		},
+		"If --label-selector specified with --all-namespaces, don't error": {
+			options: &Options{
+				AllNamespaces: true,
+				LabelSelector: "foo=bar",
+			},
+			expErr: false,
+		},
+		"If --label-selector specified with --namespace, don't error": {
+			options: &Options{
+				LabelSelector: "foo=bar",
+			},
 			setStringFlags: []stringFlag{
 				{name: "namespace", value: "foo"},
 			},
