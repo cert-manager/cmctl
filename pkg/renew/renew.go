@@ -20,6 +20,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/spf13/cobra"
 	corev1 "k8s.io/api/core/v1"
@@ -96,26 +97,37 @@ func NewCmdRenew(ctx context.Context, ioStreams genericclioptions.IOStreams) *co
 
 // Validate validates the provided options
 func (o *Options) Validate(cmd *cobra.Command, args []string) error {
-	if len(o.LabelSelector) > 0 && o.All {
-		return errors.New("cannot specify label selectors in conjunction with --all flag")
+	// The --all, --selector and args are mutually exclusive.
+	//   - --all is equivalent to a match-all label selector
+	//   - --selector filters by label selector
+	//   - args are an explicit list of Certificate names
+	// However, there must always be one of the three specified.
+
+	var flags []string
+	if len(args) > 0 {
+		flags = append(flags, fmt.Sprintf("the Certificate resource names %q", args))
+	}
+	if o.All {
+		flags = append(flags, "the --all flag")
+	}
+	if len(o.LabelSelector) > 0 {
+		flags = append(flags, "a label selector")
 	}
 
-	if len(args) == 0 {
-		if !o.All && len(o.LabelSelector) == 0 {
-			return errors.New("please either supply one or more Certificate resource names, label selectors, or use the --all flag to renew all Certificate resources")
-		}
-	} else {
-		if len(o.LabelSelector) > 0 {
-			return errors.New("cannot specify Certificate names in conjunction with label selectors")
-		}
+	// Ensure that only one of the three flags are specified
+	if len(flags) > 1 {
+		return fmt.Errorf("cannot specify %s in conjunction with %s", flags[0], strings.Join(flags[1:], " and "))
+	}
 
-		if o.All {
-			return errors.New("cannot specify Certificate names in conjunction with --all flag")
-		}
+	if len(flags) == 0 {
+		return errors.New("please either supply one or more Certificate resource names, label selectors, or use the --all flag to renew all Certificate resources")
+	}
 
-		if o.AllNamespaces {
-			return errors.New("cannot specify Certificate names in conjunction with --all-namespaces flag")
-		}
+	// The --all-namespaces flag overrides the --namespace flag.
+	// Additionally, we can only use --all-namespaces when not specifying a list of Certificate names
+
+	if o.AllNamespaces && len(args) > 0 {
+		return errors.New("cannot specify Certificate names in conjunction with --all-namespaces flag")
 	}
 
 	return nil
