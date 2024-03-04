@@ -20,7 +20,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"time"
 
 	"github.com/spf13/cobra"
 	"helm.sh/helm/v3/pkg/action"
@@ -36,10 +35,9 @@ type options struct {
 	settings *helm.NormalisedEnvSettings
 	client   *action.Uninstall
 
-	releaseName  string
-	disableHooks bool
-	dryRun       bool
-	wait         bool
+	releaseName string
+	dryRun      bool
+	wait        bool
 
 	genericclioptions.IOStreams
 }
@@ -100,11 +98,10 @@ func NewCmd(ctx context.Context, ioStreams genericclioptions.IOStreams) *cobra.C
 
 	settings.Setup(ctx, cmd)
 
-	cmd.Flags().DurationVar(&options.client.Timeout, "timeout", 5*time.Minute, "time to wait for any individual Kubernetes operation (like Jobs for hooks)")
+	helm.AddInstallUninstallFlags(cmd.Flags(), &options.client.Timeout, &options.wait)
+
 	cmd.Flags().StringVar(&options.releaseName, "release-name", releaseName, "name of the helm release to uninstall")
-	cmd.Flags().BoolVar(&options.wait, "wait", true, "if set, will wait until all the resources are deleted before returning. It will wait for as long as --timeout")
 	cmd.Flags().BoolVar(&options.dryRun, "dry-run", false, "simulate uninstall and output manifests to be deleted")
-	cmd.Flags().BoolVar(&options.disableHooks, "no-hooks", false, "prevent hooks from running during uninstallation (pre- and post-uninstall hooks)")
 
 	return cmd
 }
@@ -112,7 +109,8 @@ func NewCmd(ctx context.Context, ioStreams genericclioptions.IOStreams) *cobra.C
 // run assumes cert-manager was installed as a Helm release named cert-manager.
 // this is not configurable to avoid uninstalling non-cert-manager releases.
 func run(ctx context.Context, o options) (*release.UninstallReleaseResponse, error) {
-	o.client.DisableHooks = o.disableHooks
+	// The cert-manager Helm chart currently does not have any uninstall hooks.
+	o.client.DisableHooks = false
 	o.client.DryRun = o.dryRun
 	o.client.Wait = o.wait
 
