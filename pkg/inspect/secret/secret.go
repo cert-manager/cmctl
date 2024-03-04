@@ -57,13 +57,13 @@ const validityPeriodTemplate = `Validity period:
 
 const issuedByTemplate = `Issued By:
 	Common Name:	{{ .CommonName }}
-	Organization:	{{ .CommonName }}
+	Organization:	{{ .Organization }}
 	OrganizationalUnit:	{{ .OrganizationalUnit }}
 	Country:	{{ .Country }}`
 
 const issuedForTemplate = `Issued For:
 	Common Name:	{{ .CommonName }}
-	Organization:	{{ .CommonName }}
+	Organization:	{{ .Organization }}
 	OrganizationalUnit:	{{ .OrganizationalUnit }}
 	Country:	{{ .Country }}`
 
@@ -219,7 +219,7 @@ func describeIssuedBy(cert *x509.Certificate) string {
 	}{
 		CommonName:         printOrNone(cert.Issuer.CommonName),
 		Organization:       printSliceOrOne(cert.Issuer.Organization),
-		OrganizationalUnit: printSliceOrOne(cert.Issuer.Organization),
+		OrganizationalUnit: printSliceOrOne(cert.Issuer.OrganizationalUnit),
 		Country:            printSliceOrOne(cert.Issuer.Country),
 	})
 
@@ -236,7 +236,7 @@ func describeIssuedFor(cert *x509.Certificate) string {
 	}{
 		CommonName:         printOrNone(cert.Subject.CommonName),
 		Organization:       printSliceOrOne(cert.Subject.Organization),
-		OrganizationalUnit: printSliceOrOne(cert.Subject.Organization),
+		OrganizationalUnit: printSliceOrOne(cert.Subject.OrganizationalUnit),
 		Country:            printSliceOrOne(cert.Subject.Country),
 	})
 
