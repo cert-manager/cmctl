@@ -112,7 +112,7 @@ func NewCmdInstall(ctx context.Context, ioStreams genericclioptions.IOStreams) *
 
 	settings.Setup(ctx, cmd)
 
-	addInstallUninstallFlags(cmd.Flags(), &options.client.Timeout, &options.Wait)
+	helm.AddInstallUninstallFlags(cmd.Flags(), &options.client.Timeout, &options.Wait)
 
 	addInstallFlags(cmd.Flags(), options.client)
 	addValueOptionsFlags(cmd.Flags(), options.valueOpts)
