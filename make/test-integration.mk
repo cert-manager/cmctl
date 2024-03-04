@@ -47,12 +47,13 @@ shared_generate_targets += generate-testgroup
 .PHONY: test-integration
 ## Integration tests
 ## @category Testing
-test-integration: | $(cert_manager_crds) $(NEEDS_GO) $(NEEDS_GOTESTSUM) $(NEEDS_ETCD) $(NEEDS_KUBE-APISERVER) $(NEEDS_KUBECTL) $(ARTIFACTS)
+test-integration: | $(cert_manager_crds) $(NEEDS_GO) $(NEEDS_GOTESTSUM) $(NEEDS_ETCD) $(NEEDS_KUBE-APISERVER) $(NEEDS_KUBECTL) $(NEEDS_HELM) $(ARTIFACTS)
 	TEST_ASSET_ETCD=$(ETCD) \
 	TEST_ASSET_KUBE_APISERVER=$(KUBE-APISERVER) \
 	TEST_ASSET_KUBECTL=$(KUBECTL) \
 	TEST_CRDS=$(CURDIR)/test/integration/testdata/apis/testgroup \
 	CERT_MANAGER_CRDS=$(CURDIR)/$(cert_manager_crds) \
+	HELM_BIN=$(HELM) \
 	$(GOTESTSUM) \
 		--junitfile=$(ARTIFACTS)/junit-go-e2e.xml \
 		-- \

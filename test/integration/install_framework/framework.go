@@ -106,6 +106,10 @@ func createKubeConfigFile(t *testing.T, user *envtest.AuthenticatedUser) (string
 	}
 }
 
-func (s *TestInstallApiServer) KubeConfig() string {
+func (s *TestInstallApiServer) RestConfig() *rest.Config {
+	return s.testUser.Config()
+}
+
+func (s *TestInstallApiServer) KubeConfigFilePath() string {
 	return s.kubeConfig
 }

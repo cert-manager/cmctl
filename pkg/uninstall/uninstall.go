@@ -91,6 +91,7 @@ func NewCmd(ctx context.Context, ioStreams genericclioptions.IOStreams) *cobra.C
 				return nil
 			}
 
+			fmt.Fprintf(ioStreams.Out, "release \"%s\" uninstalled\n", options.releaseName)
 			return nil
 		},
 		SilenceUsage:  true,
