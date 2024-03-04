@@ -20,6 +20,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"io"
 	"regexp"
 	"strings"
 	"testing"
@@ -44,27 +45,27 @@ func TestCtlInstall(t *testing.T) {
 		expOutput string
 	}{
 		"install cert-manager": {
-			inputArgs: []string{},
+			inputArgs: []string{"x", "install", "--wait=false"},
 			expErr:    false,
 			expOutput: `STATUS: deployed`,
 		},
 		"install cert-manager (already installed)": {
 			prerun:       true,
-			preInputArgs: []string{},
+			preInputArgs: []string{"x", "install", "--wait=false"},
 			preExpErr:    false,
 			preExpOutput: `STATUS: deployed`,
 
-			inputArgs: []string{},
+			inputArgs: []string{"x", "install", "--wait=false"},
 			expErr:    true,
 			expOutput: `^Found existing installed cert-manager CRDs! Cannot continue with installation.$`,
 		},
 		"install cert-manager (already installed, in other namespace)": {
 			prerun:       true,
-			preInputArgs: []string{"--namespace=test"},
+			preInputArgs: []string{"x", "install", "--wait=false", "--namespace=test"},
 			preExpErr:    false,
 			preExpOutput: `STATUS: deployed`,
 
-			inputArgs: []string{},
+			inputArgs: []string{"x", "install", "--wait=false"},
 			expErr:    true,
 			expOutput: `^Found existing installed cert-manager CRDs! Cannot continue with installation.$`,
 		},
@@ -79,36 +80,34 @@ func TestCtlInstall(t *testing.T) {
 			defer cancel()
 
 			if test.prerun {
-				executeCommandAndCheckOutput(t, ctx, testApiServer.KubeConfig(), test.preInputArgs, test.preExpErr, test.preExpOutput)
+				executeCmctlAndCheckOutput(
+					t, ctx, testApiServer.KubeConfigFilePath(),
+					test.preInputArgs,
+					test.preExpErr,
+					test.preExpOutput,
+				)
 			}
 
-			executeCommandAndCheckOutput(t, ctx, testApiServer.KubeConfig(), test.inputArgs, test.expErr, test.expOutput)
+			executeCmctlAndCheckOutput(
+				t, ctx, testApiServer.KubeConfigFilePath(),
+				test.inputArgs,
+				test.expErr,
+				test.expOutput,
+			)
 		})
 	}
 }
 
-func executeCommandAndCheckOutput(
+func executeAndCheckOutput(
 	t *testing.T,
-	ctx context.Context,
-	kubeConfig string,
-	inputArgs []string,
+	f func(io.Reader, io.Writer) error,
 	expErr bool,
 	expOutput string,
 ) {
-	// Options to run status command
 	stdin := bytes.NewBufferString("")
 	stdout := bytes.NewBufferString("")
 
-	logsapi.ResetForTest(nil)
-	cmd := cmd.NewCertManagerCtlCommand(ctx, stdin, stdout, stdout)
-	cmd.SetArgs(append([]string{
-		fmt.Sprintf("--kubeconfig=%s", kubeConfig),
-		"--wait=false",
-		"x",
-		"install",
-	}, inputArgs...))
-
-	err := cmd.Execute()
+	err := f(stdin, stdout)
 	if err != nil {
 		fmt.Fprintf(stdout, "%s\n", err)
 
@@ -139,4 +138,22 @@ func executeCommandAndCheckOutput(
 			stdout.String(),
 		)
 	}
+}
+
+func executeCmctlAndCheckOutput(
+	t *testing.T,
+	ctx context.Context,
+	kubeConfig string,
+	inputArgs []string,
+	expErr bool,
+	expOutput string,
+) {
+	logsapi.ResetForTest(nil)
+
+	executeAndCheckOutput(t, func(stdin io.Reader, stdout io.Writer) error {
+		cmd := cmd.NewCertManagerCtlCommand(ctx, stdin, stdout, stdout)
+		cmd.SetArgs(append([]string{fmt.Sprintf("--kubeconfig=%s", kubeConfig)}, inputArgs...))
+
+		return cmd.Execute()
+	}, expErr, expOutput)
 }
