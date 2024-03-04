@@ -61,15 +61,13 @@ func (n *NormalisedEnvSettings) Setup(ctx context.Context, cmd *cobra.Command) {
 		// Add a PreRunE hook to initialise the action configuration.
 		existingPreRunE := cmd.PreRunE
 		cmd.PreRunE = func(cmd *cobra.Command, args []string) error {
-			if err := n.InitActionConfiguration(); err != nil {
-				return err
-			}
-
 			if existingPreRunE != nil {
-				return existingPreRunE(cmd, args)
+				if err := existingPreRunE(cmd, args); err != nil {
+					return err
+				}
 			}
 
-			return nil
+			return n.InitActionConfiguration()
 		}
 	}
 
