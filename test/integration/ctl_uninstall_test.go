@@ -25,6 +25,9 @@ import (
 	"time"
 
 	"github.com/cert-manager/cmctl/v2/test/integration/install_framework"
+	"github.com/stretchr/testify/require"
+	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset/typed/apiextensions/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 func TestCtlUninstall(t *testing.T) {
@@ -38,6 +41,8 @@ func TestCtlUninstall(t *testing.T) {
 		inputArgs []string
 		expErr    bool
 		expOutput string
+
+		didInstallCRDs bool
 	}{
 		"install and uninstall cert-manager": {
 			prerun:       true,
@@ -48,6 +53,8 @@ func TestCtlUninstall(t *testing.T) {
 			inputArgs: []string{"x", "uninstall", "--wait=false"},
 			expErr:    false,
 			expOutput: `release "cert-manager" uninstalled`,
+
+			didInstallCRDs: true,
 		},
 		"uninstall cert-manager installed by helm": {
 			prehelm: true,
@@ -66,7 +73,9 @@ func TestCtlUninstall(t *testing.T) {
 
 			inputArgs: []string{"x", "uninstall", "--wait=false"},
 			expErr:    false,
-			expOutput: `release "cert-manager" uninstalled`,
+			expOutput: `These resources were kept due to the resource policy:`,
+
+			didInstallCRDs: true,
 		},
 	}
 
@@ -100,6 +109,15 @@ func TestCtlUninstall(t *testing.T) {
 				test.expErr,
 				test.expOutput,
 			)
+
+			// if we installed CRDs, check that they were not deleted
+			if test.didInstallCRDs {
+				clientset, err := apiextensionsv1.NewForConfig(testApiServer.RestConfig())
+				require.NoError(t, err)
+
+				_, err = clientset.CustomResourceDefinitions().Get(ctx, "certificates.cert-manager.io", metav1.GetOptions{})
+				require.NoError(t, err)
+			}
 		})
 	}
 }

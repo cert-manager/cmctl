@@ -20,12 +20,19 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"sort"
+	"strings"
 
 	"github.com/spf13/cobra"
+	"golang.org/x/exp/maps"
 	"helm.sh/helm/v3/pkg/action"
+	"helm.sh/helm/v3/pkg/chartutil"
 	"helm.sh/helm/v3/pkg/release"
+	"helm.sh/helm/v3/pkg/releaseutil"
 	"helm.sh/helm/v3/pkg/storage/driver"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
+	"sigs.k8s.io/yaml"
 
 	"github.com/cert-manager/cmctl/v2/pkg/build"
 	"github.com/cert-manager/cmctl/v2/pkg/install/helm"
@@ -47,9 +54,11 @@ const (
 )
 
 func description() string {
-	return build.WithTemplate(`This command uninstalls any Helm-managed release of cert-manager.
+	return build.WithTemplate(`This command safely uninstalls any Helm-managed release of cert-manager.
 
-The CRDs will be deleted if you installed cert-manager with the option --set CRDs=true.
+This command is safe because it will not delete any of the cert-manager CRDs even if they were
+installed as part of the Helm release. This is to avoid accidentally deleting CRDs and custom resources.
+This feature is why this command should always be used instead of 'helm uninstall'.
 
 Most of the features supported by 'helm uninstall' are also supported by this command.
 
@@ -89,6 +98,10 @@ func NewCmd(ctx context.Context, ioStreams genericclioptions.IOStreams) *cobra.C
 				return nil
 			}
 
+			if res != nil && res.Info != "" {
+				fmt.Fprintln(ioStreams.Out, res.Info)
+			}
+
 			fmt.Fprintf(ioStreams.Out, "release \"%s\" uninstalled\n", options.releaseName)
 			return nil
 		},
@@ -113,6 +126,19 @@ func run(ctx context.Context, o options) (*release.UninstallReleaseResponse, err
 	o.client.DisableHooks = false
 	o.client.DryRun = o.dryRun
 	o.client.Wait = o.wait
+	if o.client.Wait {
+		o.client.DeletionPropagation = "foreground"
+	} else {
+		o.client.DeletionPropagation = "background"
+	}
+	o.client.KeepHistory = false
+	o.client.IgnoreNotFound = true
+
+	if !o.client.DryRun {
+		if err := addCRDAnnotations(ctx, o); err != nil {
+			return nil, err
+		}
+	}
 
 	res, err := o.client.Run(o.releaseName)
 
@@ -121,4 +147,93 @@ func run(ctx context.Context, o options) (*release.UninstallReleaseResponse, err
 	}
 
 	return res, nil
+}
+
+func addCRDAnnotations(ctx context.Context, o options) error {
+	if err := o.settings.ActionConfiguration.KubeClient.IsReachable(); err != nil {
+		return err
+	}
+
+	if err := chartutil.ValidateReleaseName(o.releaseName); err != nil {
+		return fmt.Errorf("uninstall: %v", err)
+	}
+
+	lastRelease, err := o.settings.ActionConfiguration.Releases.Last(o.releaseName)
+	if err != nil {
+		return fmt.Errorf("uninstall: %v", err)
+	}
+
+	if lastRelease.Info.Status != release.StatusDeployed {
+		return fmt.Errorf("release %v is in a non-deployed state: %v", o.releaseName, lastRelease.Info.Status)
+	}
+
+	const (
+		customResourceDefinitionApiVersionV1      = "apiextensions.k8s.io/v1"
+		customResourceDefinitionApiVersionV1Beta1 = "apiextensions.k8s.io/v1beta1"
+		customResourceDefinitionKind              = "CustomResourceDefinition"
+	)
+
+	// Check if the release manifest contains CRDs. If it does, we need to modify the
+	// release manifest to add the "helm.sh/resource-policy: keep" annotation to the CRDs.
+	manifests := releaseutil.SplitManifests(lastRelease.Manifest)
+	foundNonAnnotatedCRD := false
+	for key, manifest := range manifests {
+		var entry releaseutil.SimpleHead
+		if err := yaml.Unmarshal([]byte(manifest), &entry); err != nil {
+			return fmt.Errorf("failed to unmarshal manifest: %v", err)
+		}
+
+		if entry.Kind != customResourceDefinitionKind || (entry.Version != customResourceDefinitionApiVersionV1 &&
+			entry.Version != customResourceDefinitionApiVersionV1Beta1) {
+			continue
+		}
+
+		if entry.Metadata != nil && entry.Metadata.Annotations != nil && entry.Metadata.Annotations["helm.sh/resource-policy"] == "keep" {
+			continue
+		}
+
+		foundNonAnnotatedCRD = true
+
+		var object unstructured.Unstructured
+		if err := yaml.Unmarshal([]byte(manifest), &object); err != nil {
+			return fmt.Errorf("failed to unmarshal manifest: %v", err)
+		}
+
+		annotations := object.GetAnnotations()
+		if annotations == nil {
+			annotations = make(map[string]string)
+		}
+		annotations["helm.sh/resource-policy"] = "keep"
+		object.SetAnnotations(annotations)
+
+		updatedManifestJSON, err := object.MarshalJSON()
+		if err != nil {
+			return fmt.Errorf("failed to marshal manifest: %v", err)
+		}
+
+		updatedManifest, err := yaml.JSONToYAML(updatedManifestJSON)
+		if err != nil {
+			return fmt.Errorf("failed to convert manifest to YAML: %v", err)
+		}
+
+		manifests[key] = string(updatedManifest)
+	}
+
+	if foundNonAnnotatedCRD {
+		manifestNames := releaseutil.BySplitManifestsOrder(maps.Keys(manifests))
+		sort.Sort(manifestNames)
+		var fullManifest strings.Builder
+		for _, manifest := range manifestNames {
+			fullManifest.WriteString(manifests[manifest])
+			fullManifest.WriteString("\n---\n")
+		}
+
+		lastRelease.Manifest = fullManifest.String()
+
+		if err := o.settings.ActionConfiguration.Releases.Update(lastRelease); err != nil {
+			o.settings.ActionConfiguration.Log("uninstall: Failed to store updated release: %s", err)
+		}
+	}
+
+	return nil
 }
