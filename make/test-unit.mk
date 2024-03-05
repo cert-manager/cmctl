@@ -12,6 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+.PHONY: generate-versionchecker-testdata
+## Generate versionchecker testdata
+## @category Testing
+generate-versionchecker-testdata: | $(NEEDS_GO)
+	cd ./internal/versionchecker/test/testdata/ && \
+		$(GO) run . \
+			$(CURDIR)/internal/versionchecker/test/testdata/test_manifests.yaml \
+			$(cert_manager_version)
+
+shared_generate_targets += generate-versionchecker-testdata
+
 .PHONY: test-unit
 ## Unit tests
 ## @category Testing

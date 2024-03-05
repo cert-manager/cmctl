@@ -29,7 +29,7 @@ import (
 	"sigs.k8s.io/yaml"
 
 	"github.com/cert-manager/cert-manager/pkg/util"
-	"github.com/cert-manager/cert-manager/pkg/util/versionchecker"
+	"github.com/cert-manager/cmctl/v2/internal/versionchecker"
 	"github.com/cert-manager/cmctl/v2/pkg/build"
 	"github.com/cert-manager/cmctl/v2/pkg/factory"
 )
