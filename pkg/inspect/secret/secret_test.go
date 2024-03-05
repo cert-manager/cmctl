@@ -83,7 +83,6 @@ func init() {
 		gen.SetCertificateIPs("10.0.0.1"),
 		gen.SetCertificateURIs("spiffe://cert-manager.test"),
 		gen.SetCertificateEmails("test@cert-manager.io"),
-		gen.SetCertificateIsCA(true),
 		gen.SetCertificateKeyAlgorithm(v1.ECDSAKeyAlgorithm),
 		gen.SetCertificateIsCA(false),
 		gen.SetCertificateKeySize(256),
@@ -221,8 +220,8 @@ func Test_describeIssuedBy(t *testing.T) {
 			cert: MustParseCertificate(t, testCert),
 			want: `Issued By:
 	Common Name:	testing-ca
-	Organization:	testing-ca
-	OrganizationalUnit:	Internet Widgets, Inc.
+	Organization:	Internet Widgets, Inc.
+	OrganizationalUnit:	WWW
 	Country:	US`,
 		},
 	}
@@ -246,8 +245,8 @@ func Test_describeIssuedFor(t *testing.T) {
 			cert: MustParseCertificate(t, testCert),
 			want: `Issued For:
 	Common Name:	<none>
-	Organization:	<none>
-	OrganizationalUnit:	cncf
+	Organization:	cncf
+	OrganizationalUnit:	cert-manager
 	Country:	GB`,
 		},
 	}
