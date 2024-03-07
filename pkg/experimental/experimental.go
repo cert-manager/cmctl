@@ -28,7 +28,7 @@ import (
 	"github.com/cert-manager/cmctl/v2/pkg/uninstall"
 )
 
-func NewCmdExperimental(ctx context.Context, ioStreams genericclioptions.IOStreams) *cobra.Command {
+func NewCmdExperimental(setupCtx context.Context, ioStreams genericclioptions.IOStreams) *cobra.Command {
 	cmds := &cobra.Command{
 		Use:     "experimental",
 		Aliases: []string{"x"},
@@ -37,10 +37,10 @@ func NewCmdExperimental(ctx context.Context, ioStreams genericclioptions.IOStrea
 	}
 
 	create := create.NewCmdCreateBare()
-	create.AddCommand(certificatesigningrequest.NewCmdCreateCSR(ctx, ioStreams))
+	create.AddCommand(certificatesigningrequest.NewCmdCreateCSR(setupCtx, ioStreams))
 	cmds.AddCommand(create)
-	cmds.AddCommand(install.NewCmdInstall(ctx, ioStreams))
-	cmds.AddCommand(uninstall.NewCmd(ctx, ioStreams))
+	cmds.AddCommand(install.NewCmdInstall(setupCtx, ioStreams))
+	cmds.AddCommand(uninstall.NewCmd(setupCtx, ioStreams))
 
 	return cmds
 }

@@ -25,7 +25,6 @@ import (
 	"github.com/spf13/cobra"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
-	cmdutil "k8s.io/kubectl/pkg/cmd/util"
 	"sigs.k8s.io/yaml"
 
 	"github.com/cert-manager/cert-manager/pkg/util"
@@ -92,17 +91,22 @@ or
 }
 
 // NewCmdVersion returns a cobra command for fetching versions
-func NewCmdVersion(ctx context.Context, ioStreams genericclioptions.IOStreams) *cobra.Command {
+func NewCmdVersion(setupCtx context.Context, ioStreams genericclioptions.IOStreams) *cobra.Command {
 	o := NewOptions(ioStreams)
 
 	cmd := &cobra.Command{
 		Use:   "version",
 		Short: "Print the cert-manager CLI version and the deployed cert-manager version",
 		Long:  versionLong(),
-		Run: func(cmd *cobra.Command, args []string) {
-			cmdutil.CheckErr(o.Validate())
-			cmdutil.CheckErr(o.Complete())
-			cmdutil.CheckErr(o.Run(ctx))
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if err := o.Validate(); err != nil {
+				return err
+			}
+
+			return o.Complete()
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return o.Run(cmd.Context())
 		},
 	}
 
@@ -110,7 +114,7 @@ func NewCmdVersion(ctx context.Context, ioStreams genericclioptions.IOStreams) *
 	cmd.Flags().BoolVar(&o.Short, "short", o.Short, "If true, print just the version number.")
 	cmd.Flags().StringVarP(&o.Output, "output", "o", o.Output, "One of 'yaml' or 'json'.")
 
-	o.Factory = factory.New(ctx, cmd)
+	o.Factory = factory.New(cmd)
 
 	return cmd
 }

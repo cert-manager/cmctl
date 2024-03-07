@@ -54,8 +54,8 @@ func (n *NormalisedEnvSettings) Setup(ctx context.Context, cmd *cobra.Command) {
 	log := logf.FromContext(ctx)
 	n.logger = log
 
-	n.Factory = factory.New(ctx, cmd)
-	n.setupEnvSettings(ctx, cmd)
+	n.Factory = factory.New(cmd)
+	n.setupEnvSettings(cmd)
 
 	{
 		// Add a PreRunE hook to initialise the action configuration.
@@ -76,7 +76,7 @@ func (n *NormalisedEnvSettings) Setup(ctx context.Context, cmd *cobra.Command) {
 	cmd.Flag("namespace").Value.Set(defaultCertManagerNamespace)
 }
 
-func (n *NormalisedEnvSettings) setupEnvSettings(ctx context.Context, cmd *cobra.Command) {
+func (n *NormalisedEnvSettings) setupEnvSettings(cmd *cobra.Command) {
 	{
 		// Create a tempoary flag set to add the EnvSettings flags to, this
 		// can then be iterated over to copy the flags we want to the command

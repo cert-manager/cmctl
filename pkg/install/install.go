@@ -75,7 +75,7 @@ pass in a file or use the '--set' flag and pass configuration from the command l
 `)
 }
 
-func NewCmdInstall(ctx context.Context, ioStreams genericclioptions.IOStreams) *cobra.Command {
+func NewCmdInstall(setupCtx context.Context, ioStreams genericclioptions.IOStreams) *cobra.Command {
 	settings := helm.NewNormalisedEnvSettings()
 
 	options := &InstallOptions{
@@ -93,7 +93,7 @@ func NewCmdInstall(ctx context.Context, ioStreams genericclioptions.IOStreams) *
 		RunE: func(cmd *cobra.Command, args []string) error {
 			options.client.Namespace = settings.Namespace()
 
-			rel, err := options.runInstall(ctx)
+			rel, err := options.runInstall(cmd.Context())
 			if err != nil {
 				return err
 			}
@@ -106,11 +106,9 @@ func NewCmdInstall(ctx context.Context, ioStreams genericclioptions.IOStreams) *
 			printReleaseSummary(ioStreams.Out, rel)
 			return nil
 		},
-		SilenceUsage:  true,
-		SilenceErrors: true,
 	}
 
-	settings.Setup(ctx, cmd)
+	settings.Setup(setupCtx, cmd)
 
 	helm.AddInstallUninstallFlags(cmd.Flags(), &options.client.Timeout, &options.Wait)
 

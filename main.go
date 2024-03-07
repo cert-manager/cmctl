@@ -24,6 +24,7 @@ import (
 	"strings"
 
 	cmdutil "k8s.io/kubectl/pkg/cmd/util"
+	ctrl "sigs.k8s.io/controller-runtime"
 
 	logf "github.com/cert-manager/cert-manager/pkg/logs"
 	ctlcmd "github.com/cert-manager/cmctl/v2/cmd"
@@ -31,11 +32,13 @@ import (
 )
 
 func main() {
-	stopCh, exit := util.SetupExitHandler(util.AlwaysErrCode)
+	ctx, exit := util.SetupExitHandler(context.Background(), util.AlwaysErrCode)
 	defer exit() // This function might call os.Exit, so defer last
 
 	logf.InitLogs()
 	defer logf.FlushLogs()
+	ctrl.SetLogger(logf.Log)
+	ctx = logf.NewContext(ctx, logf.Log, "cmctl")
 
 	// In cmctl, we are using cmdutil.CheckErr, a kubectl utility function that creates human readable
 	// error messages from errors. By default, this function will call os.Exit(1) if it receives an error.
@@ -56,10 +59,9 @@ func main() {
 		runtime.Goexit() // Do soft exit (handle all defers, that should set correct exit code)
 	})
 
-	ctx := util.ContextWithStopCh(context.Background(), stopCh)
 	cmd := ctlcmd.NewCertManagerCtlCommand(ctx, os.Stdin, os.Stdout, os.Stderr)
 
-	if err := cmd.Execute(); err != nil {
+	if err := cmd.ExecuteContext(ctx); err != nil {
 		cmdutil.CheckErr(err)
 	}
 }

@@ -24,7 +24,6 @@ import (
 	"github.com/spf13/cobra"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
-	cmdutil "k8s.io/kubectl/pkg/cmd/util"
 	"k8s.io/kubectl/pkg/util/i18n"
 	"k8s.io/kubectl/pkg/util/templates"
 
@@ -68,7 +67,7 @@ func newOptions(ioStreams genericclioptions.IOStreams) *Options {
 	}
 }
 
-func NewCmdApprove(ctx context.Context, ioStreams genericclioptions.IOStreams) *cobra.Command {
+func NewCmdApprove(setupCtx context.Context, ioStreams genericclioptions.IOStreams) *cobra.Command {
 	o := newOptions(ioStreams)
 
 	cmd := &cobra.Command{
@@ -76,10 +75,12 @@ func NewCmdApprove(ctx context.Context, ioStreams genericclioptions.IOStreams) *
 		Short:             "Approve a CertificateRequest",
 		Long:              `Mark a CertificateRequest as Approved, so it may be signed by a configured Issuer.`,
 		Example:           example,
-		ValidArgsFunction: factory.ValidArgsListCertificateRequests(ctx, &o.Factory),
-		Run: func(cmd *cobra.Command, args []string) {
-			cmdutil.CheckErr(o.Validate(args))
-			cmdutil.CheckErr(o.Run(ctx, args))
+		ValidArgsFunction: factory.ValidArgsListCertificateRequests(&o.Factory),
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			return o.Validate(args)
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return o.Run(cmd.Context(), args)
 		},
 	}
 
@@ -88,7 +89,7 @@ func NewCmdApprove(ctx context.Context, ioStreams genericclioptions.IOStreams) *
 	cmd.Flags().StringVar(&o.Message, "message", fmt.Sprintf("manually approved by %q", build.Name()),
 		"The message to give as to why this CertificateRequest was approved.")
 
-	o.Factory = factory.New(ctx, cmd)
+	o.Factory = factory.New(cmd)
 
 	return cmd
 }

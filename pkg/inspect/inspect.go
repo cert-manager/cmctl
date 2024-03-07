@@ -25,14 +25,14 @@ import (
 	"github.com/cert-manager/cmctl/v2/pkg/inspect/secret"
 )
 
-func NewCmdInspect(ctx context.Context, ioStreams genericclioptions.IOStreams) *cobra.Command {
+func NewCmdInspect(setupCtx context.Context, ioStreams genericclioptions.IOStreams) *cobra.Command {
 	cmds := &cobra.Command{
 		Use:   "inspect",
 		Short: "Get details on certificate related resources",
 		Long:  `Get details on certificate related resources, e.g. secrets`,
 	}
 
-	cmds.AddCommand(secret.NewCmdInspectSecret(ctx, ioStreams))
+	cmds.AddCommand(secret.NewCmdInspectSecret(setupCtx, ioStreams))
 
 	return cmds
 }

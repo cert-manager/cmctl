@@ -85,7 +85,7 @@ func NewOptions(ioStreams genericclioptions.IOStreams) *Options {
 }
 
 // NewCmdConvert returns a cobra command for converting cert-manager resources
-func NewCmdConvert(ctx context.Context, ioStreams genericclioptions.IOStreams) *cobra.Command {
+func NewCmdConvert(setupCtx context.Context, ioStreams genericclioptions.IOStreams) *cobra.Command {
 	o := NewOptions(ioStreams)
 
 	cmd := &cobra.Command{
@@ -94,9 +94,11 @@ func NewCmdConvert(ctx context.Context, ioStreams genericclioptions.IOStreams) *
 		Long:                  longDesc,
 		Example:               example,
 		DisableFlagsInUseLine: true,
-		Run: func(cmd *cobra.Command, args []string) {
-			cmdutil.CheckErr(o.Complete())
-			cmdutil.CheckErr(o.Run())
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			return o.Complete()
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return o.Run()
 		},
 	}
 

@@ -19,7 +19,6 @@ package completion
 import (
 	"github.com/spf13/cobra"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
-	"k8s.io/kubectl/pkg/cmd/util"
 
 	"github.com/cert-manager/cmctl/v2/pkg/build"
 )
@@ -39,8 +38,8 @@ Bash:
   $ {{.BuildName}} completion bash > /usr/local/etc/bash_completion.d/{{.BuildName}}
 `),
 		DisableFlagsInUseLine: true,
-		Run: func(cmd *cobra.Command, args []string) {
-			util.CheckErr(cmd.Root().GenBashCompletion(ioStreams.Out))
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return cmd.Root().GenBashCompletion(ioStreams.Out)
 		},
 	}
 }

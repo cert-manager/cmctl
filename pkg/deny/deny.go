@@ -24,7 +24,6 @@ import (
 	"github.com/spf13/cobra"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
-	cmdutil "k8s.io/kubectl/pkg/cmd/util"
 	"k8s.io/kubectl/pkg/util/i18n"
 	"k8s.io/kubectl/pkg/util/templates"
 
@@ -68,7 +67,7 @@ func NewOptions(ioStreams genericclioptions.IOStreams) *Options {
 	}
 }
 
-func NewCmdDeny(ctx context.Context, ioStreams genericclioptions.IOStreams) *cobra.Command {
+func NewCmdDeny(setupCtx context.Context, ioStreams genericclioptions.IOStreams) *cobra.Command {
 	o := NewOptions(ioStreams)
 
 	cmd := &cobra.Command{
@@ -76,10 +75,12 @@ func NewCmdDeny(ctx context.Context, ioStreams genericclioptions.IOStreams) *cob
 		Short:             "Deny a CertificateRequest",
 		Long:              `Mark a CertificateRequest as Denied, so it may never be signed by a configured Issuer.`,
 		Example:           example,
-		ValidArgsFunction: factory.ValidArgsListCertificateRequests(ctx, &o.Factory),
-		Run: func(cmd *cobra.Command, args []string) {
-			cmdutil.CheckErr(o.Validate(args))
-			cmdutil.CheckErr(o.Run(ctx, args))
+		ValidArgsFunction: factory.ValidArgsListCertificateRequests(&o.Factory),
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			return o.Validate(args)
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return o.Run(cmd.Context(), args)
 		},
 	}
 
@@ -88,7 +89,7 @@ func NewCmdDeny(ctx context.Context, ioStreams genericclioptions.IOStreams) *cob
 	cmd.Flags().StringVar(&o.Message, "message", fmt.Sprintf("manually denied by %q", build.Name()),
 		"The message to give as to why this CertificateRequest was denied.")
 
-	o.Factory = factory.New(ctx, cmd)
+	o.Factory = factory.New(cmd)
 
 	return cmd
 }
