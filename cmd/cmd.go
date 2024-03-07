@@ -47,6 +47,7 @@ func NewCertManagerCtlCommand(ctx context.Context, in io.Reader, out, err io.Wri
 			return logf.ValidateAndApply(logOptions)
 		},
 		SilenceErrors: true, // Errors are already logged when calling cmd.Execute()
+		SilenceUsage:  true, // Don't print usage when an error occurs
 	}
 	cmds.SetUsageTemplate(usageTemplate())
 

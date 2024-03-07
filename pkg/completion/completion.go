@@ -23,7 +23,7 @@ import (
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 )
 
-func NewCmdCompletion(ctx context.Context, ioStreams genericclioptions.IOStreams) *cobra.Command {
+func NewCmdCompletion(setupCtx context.Context, ioStreams genericclioptions.IOStreams) *cobra.Command {
 	cmds := &cobra.Command{
 		Use:   "completion",
 		Short: "Generate completion scripts for the cert-manager CLI",

@@ -26,7 +26,6 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
-	cmdutil "k8s.io/kubectl/pkg/cmd/util"
 	"k8s.io/kubectl/pkg/util/i18n"
 	"k8s.io/kubectl/pkg/util/templates"
 
@@ -83,22 +82,24 @@ func (o *Options) Complete() error {
 }
 
 // NewCmdCheckApi returns a cobra command for checking creating cert-manager resources against the K8S API server
-func NewCmdCheckApi(ctx context.Context, ioStreams genericclioptions.IOStreams) *cobra.Command {
+func NewCmdCheckApi(setupCtx context.Context, ioStreams genericclioptions.IOStreams) *cobra.Command {
 	o := NewOptions(ioStreams)
 
 	cmd := &cobra.Command{
 		Use:   "api",
 		Short: "Check if the cert-manager API is ready",
 		Long:  checkApiDesc,
-		Run: func(cmd *cobra.Command, args []string) {
-			cmdutil.CheckErr(o.Complete())
-			cmdutil.CheckErr(o.Run(ctx))
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			return o.Complete()
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return o.Run(cmd.Context())
 		},
 	}
 	cmd.Flags().DurationVar(&o.Wait, "wait", 0, "Wait until the cert-manager API is ready (default 0s = poll once)")
 	cmd.Flags().DurationVar(&o.Interval, "interval", 5*time.Second, "Time between checks when waiting, must include unit, e.g. 1m or 10m")
 
-	o.Factory = factory.New(ctx, cmd)
+	o.Factory = factory.New(cmd)
 
 	return cmd
 }

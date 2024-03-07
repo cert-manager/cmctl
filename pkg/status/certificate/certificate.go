@@ -28,7 +28,6 @@ import (
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/reference"
-	cmdutil "k8s.io/kubectl/pkg/cmd/util"
 	"k8s.io/kubectl/pkg/util/i18n"
 	"k8s.io/kubectl/pkg/util/templates"
 
@@ -85,7 +84,7 @@ func NewOptions(ioStreams genericclioptions.IOStreams) *Options {
 }
 
 // NewCmdStatusCert returns a cobra command for status certificate
-func NewCmdStatusCert(ctx context.Context, ioStreams genericclioptions.IOStreams) *cobra.Command {
+func NewCmdStatusCert(setupCtx context.Context, ioStreams genericclioptions.IOStreams) *cobra.Command {
 	o := NewOptions(ioStreams)
 
 	cmd := &cobra.Command{
@@ -93,14 +92,16 @@ func NewCmdStatusCert(ctx context.Context, ioStreams genericclioptions.IOStreams
 		Short:             "Get details about the current status of a cert-manager Certificate resource",
 		Long:              long,
 		Example:           example,
-		ValidArgsFunction: factory.ValidArgsListCertificates(ctx, &o.Factory),
-		Run: func(cmd *cobra.Command, args []string) {
-			cmdutil.CheckErr(o.Validate(args))
-			cmdutil.CheckErr(o.Run(ctx, args))
+		ValidArgsFunction: factory.ValidArgsListCertificates(&o.Factory),
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			return o.Validate(args)
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return o.Run(cmd.Context(), args)
 		},
 	}
 
-	o.Factory = factory.New(ctx, cmd)
+	o.Factory = factory.New(cmd)
 
 	return cmd
 }

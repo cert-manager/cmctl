@@ -31,7 +31,6 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
-	cmdutil "k8s.io/kubectl/pkg/cmd/util"
 	"k8s.io/kubectl/pkg/util/i18n"
 	"k8s.io/kubectl/pkg/util/templates"
 	k8sclock "k8s.io/utils/clock"
@@ -105,7 +104,7 @@ func NewOptions(ioStreams genericclioptions.IOStreams) *Options {
 }
 
 // NewCmdInspectSecret returns a cobra command for status certificate
-func NewCmdInspectSecret(ctx context.Context, ioStreams genericclioptions.IOStreams) *cobra.Command {
+func NewCmdInspectSecret(setupCtx context.Context, ioStreams genericclioptions.IOStreams) *cobra.Command {
 	o := NewOptions(ioStreams)
 
 	cmd := &cobra.Command{
@@ -113,14 +112,16 @@ func NewCmdInspectSecret(ctx context.Context, ioStreams genericclioptions.IOStre
 		Short:             "Get details about a kubernetes.io/tls typed secret",
 		Long:              long,
 		Example:           example,
-		ValidArgsFunction: factory.ValidArgsListSecrets(ctx, &o.Factory),
-		Run: func(cmd *cobra.Command, args []string) {
-			cmdutil.CheckErr(o.Validate(args))
-			cmdutil.CheckErr(o.Run(ctx, args))
+		ValidArgsFunction: factory.ValidArgsListSecrets(&o.Factory),
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			return o.Validate(args)
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return o.Run(cmd.Context(), args)
 		},
 	}
 
-	o.Factory = factory.New(ctx, cmd)
+	o.Factory = factory.New(cmd)
 
 	return cmd
 }

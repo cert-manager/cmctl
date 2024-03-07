@@ -26,9 +26,9 @@ import (
 )
 
 // NewCmdCheck returns a cobra command for checking cert-manager components.
-func NewCmdCheck(ctx context.Context, ioStreams genericclioptions.IOStreams) *cobra.Command {
+func NewCmdCheck(setupCtx context.Context, ioStreams genericclioptions.IOStreams) *cobra.Command {
 	cmds := NewCmdCreateBare()
-	cmds.AddCommand(api.NewCmdCheckApi(ctx, ioStreams))
+	cmds.AddCommand(api.NewCmdCheckApi(setupCtx, ioStreams))
 
 	return cmds
 }

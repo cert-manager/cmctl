@@ -73,7 +73,7 @@ or
 `)
 }
 
-func NewCmd(ctx context.Context, ioStreams genericclioptions.IOStreams) *cobra.Command {
+func NewCmd(setupCtx context.Context, ioStreams genericclioptions.IOStreams) *cobra.Command {
 	settings := helm.NewNormalisedEnvSettings()
 
 	options := options{
@@ -88,7 +88,7 @@ func NewCmd(ctx context.Context, ioStreams genericclioptions.IOStreams) *cobra.C
 		Short: "Uninstall cert-manager",
 		Long:  description(),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			res, err := run(ctx, options)
+			res, err := run(cmd.Context(), options)
 			if err != nil {
 				return err
 			}
@@ -105,11 +105,9 @@ func NewCmd(ctx context.Context, ioStreams genericclioptions.IOStreams) *cobra.C
 			fmt.Fprintf(ioStreams.Out, "release \"%s\" uninstalled\n", options.releaseName)
 			return nil
 		},
-		SilenceUsage:  true,
-		SilenceErrors: true,
 	}
 
-	settings.Setup(ctx, cmd)
+	settings.Setup(setupCtx, cmd)
 
 	helm.AddInstallUninstallFlags(cmd.Flags(), &options.client.Timeout, &options.wait)
 

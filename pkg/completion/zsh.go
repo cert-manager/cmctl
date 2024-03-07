@@ -19,7 +19,6 @@ package completion
 import (
 	"github.com/spf13/cobra"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
-	"k8s.io/kubectl/pkg/cmd/util"
 
 	"github.com/cert-manager/cmctl/v2/pkg/build"
 )
@@ -38,8 +37,8 @@ func newCmdCompletionZSH(ioStreams genericclioptions.IOStreams) *cobra.Command {
   # You will need to start a new shell for this setup to take effect.
 `),
 		DisableFlagsInUseLine: true,
-		Run: func(cmd *cobra.Command, args []string) {
-			util.CheckErr(cmd.Root().GenZshCompletion(ioStreams.Out))
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return cmd.Root().GenZshCompletion(ioStreams.Out)
 		},
 	}
 }

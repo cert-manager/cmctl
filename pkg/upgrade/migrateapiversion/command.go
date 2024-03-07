@@ -23,7 +23,6 @@ import (
 	apiextinstall "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/install"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
-	cmdutil "k8s.io/kubectl/pkg/cmd/util"
 	"k8s.io/kubectl/pkg/util/i18n"
 	"k8s.io/kubectl/pkg/util/templates"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -73,17 +72,22 @@ func NewOptions(ioStreams genericclioptions.IOStreams) *Options {
 
 // NewCmdMigrate returns a cobra command for updating resources in an apiserver
 // to force a new storage version to be used.
-func NewCmdMigrate(ctx context.Context, ioStreams genericclioptions.IOStreams) *cobra.Command {
+func NewCmdMigrate(setupCtx context.Context, ioStreams genericclioptions.IOStreams) *cobra.Command {
 	o := NewOptions(ioStreams)
 	cmd := &cobra.Command{
 		Use:     "migrate-api-version",
 		Short:   "Migrate all existing persisted cert-manager resources to the v1 API version",
 		Long:    long,
 		Example: example,
-		Run: func(cmd *cobra.Command, args []string) {
-			cmdutil.CheckErr(o.Validate(args))
-			cmdutil.CheckErr(o.Complete())
-			cmdutil.CheckErr(o.Run(ctx, args))
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if err := o.Validate(args); err != nil {
+				return err
+			}
+
+			return o.Complete()
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return o.Run(cmd.Context(), args)
 		},
 	}
 
@@ -92,7 +96,7 @@ func NewCmdMigrate(ctx context.Context, ioStreams genericclioptions.IOStreams) *
 		"Use this mode if you have previously manually modified the 'status.storedVersions' field on CRD resources.")
 	cmd.Flags().Float32Var(&o.qps, "qps", 5, "Indicates the maximum QPS to the apiserver from the client.")
 	cmd.Flags().IntVar(&o.burst, "burst", 10, "Maximum burst value for queries set to the apiserver from the client.")
-	o.Factory = factory.New(ctx, cmd)
+	o.Factory = factory.New(cmd)
 
 	return cmd
 }

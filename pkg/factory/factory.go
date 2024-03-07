@@ -17,8 +17,6 @@ limitations under the License.
 package factory
 
 import (
-	"context"
-
 	"github.com/spf13/cobra"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"k8s.io/client-go/kubernetes"
@@ -66,14 +64,14 @@ type Factory struct {
 // populated when the command is executed using the cobra PreRunE. If a PreRunE
 // is already defined, it will be executed _after_ Factory has been populated,
 // making it available.
-func New(ctx context.Context, cmd *cobra.Command) *Factory {
+func New(cmd *cobra.Command) *Factory {
 	f := new(Factory)
 
 	kubeConfigFlags := genericclioptions.NewConfigFlags(true)
 	f.factory = util.NewFactory(kubeConfigFlags)
 
 	kubeConfigFlags.AddFlags(cmd.Flags())
-	cmd.RegisterFlagCompletionFunc("namespace", validArgsListNamespaces(ctx, f))
+	cmd.RegisterFlagCompletionFunc("namespace", validArgsListNamespaces(f))
 
 	// Setup a PreRunE to populate the Factory. Catch the existing PreRunE command
 	// if one was defined, and execute it second.

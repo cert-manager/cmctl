@@ -25,14 +25,14 @@ import (
 	"github.com/cert-manager/cmctl/v2/pkg/status/certificate"
 )
 
-func NewCmdStatus(ctx context.Context, ioStreams genericclioptions.IOStreams) *cobra.Command {
+func NewCmdStatus(setupCtx context.Context, ioStreams genericclioptions.IOStreams) *cobra.Command {
 	cmds := &cobra.Command{
 		Use:   "status",
 		Short: "Get details on current status of cert-manager resources",
 		Long:  `Get details on current status of cert-manager resources, e.g. Certificate`,
 	}
 
-	cmds.AddCommand(certificate.NewCmdStatusCert(ctx, ioStreams))
+	cmds.AddCommand(certificate.NewCmdStatusCert(setupCtx, ioStreams))
 
 	return cmds
 }

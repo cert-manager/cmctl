@@ -25,9 +25,9 @@ import (
 	"github.com/cert-manager/cmctl/v2/pkg/create/certificaterequest"
 )
 
-func NewCmdCreate(ctx context.Context, ioStreams genericclioptions.IOStreams) *cobra.Command {
+func NewCmdCreate(setupCtx context.Context, ioStreams genericclioptions.IOStreams) *cobra.Command {
 	cmds := NewCmdCreateBare()
-	cmds.AddCommand(certificaterequest.NewCmdCreateCR(ctx, ioStreams))
+	cmds.AddCommand(certificaterequest.NewCmdCreateCR(setupCtx, ioStreams))
 
 	return cmds
 }

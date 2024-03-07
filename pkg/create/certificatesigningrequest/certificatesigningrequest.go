@@ -35,7 +35,6 @@ import (
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"k8s.io/cli-runtime/pkg/resource"
 	"k8s.io/client-go/discovery"
-	cmdutil "k8s.io/kubectl/pkg/cmd/util"
 	"k8s.io/kubectl/pkg/util/i18n"
 	"k8s.io/kubectl/pkg/util/templates"
 
@@ -115,7 +114,7 @@ func NewOptions(ioStreams genericclioptions.IOStreams) *Options {
 }
 
 // NewCmdCreateCSR returns a cobra command for create CertificateSigningRequest
-func NewCmdCreateCSR(ctx context.Context, ioStreams genericclioptions.IOStreams) *cobra.Command {
+func NewCmdCreateCSR(setupCtx context.Context, ioStreams genericclioptions.IOStreams) *cobra.Command {
 	o := NewOptions(ioStreams)
 
 	cmd := &cobra.Command{
@@ -124,10 +123,12 @@ func NewCmdCreateCSR(ctx context.Context, ioStreams genericclioptions.IOStreams)
 		Short:             "Create a Kubernetes CertificateSigningRequest resource, using a Certificate resource as a template",
 		Long:              long,
 		Example:           example,
-		ValidArgsFunction: factory.ValidArgsListCertificateSigningRequests(ctx, &o.Factory),
-		Run: func(cmd *cobra.Command, args []string) {
-			cmdutil.CheckErr(o.Validate(args))
-			cmdutil.CheckErr(o.Run(ctx, args))
+		ValidArgsFunction: factory.ValidArgsListCertificateSigningRequests(&o.Factory),
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			return o.Validate(args)
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return o.Run(cmd.Context(), args)
 		},
 	}
 	cmd.Flags().StringVarP(&o.InputFilename, "from-certificate-file", "f", o.InputFilename,
@@ -141,7 +142,7 @@ func NewCmdCreateCSR(ctx context.Context, ioStreams genericclioptions.IOStreams)
 	cmd.Flags().DurationVar(&o.Timeout, "timeout", 5*time.Minute,
 		"Time before timeout when waiting for CertificateSigningRequest to be signed, must include unit, e.g. 10m or 1h")
 
-	o.Factory = factory.New(ctx, cmd)
+	o.Factory = factory.New(cmd)
 
 	return cmd
 }

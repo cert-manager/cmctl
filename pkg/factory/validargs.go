@@ -17,15 +17,13 @@ limitations under the License.
 package factory
 
 import (
-	"context"
-
 	"github.com/spf13/cobra"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 // ValidArgsListCertificates returns a cobra ValidArgsFunction for listing Certificates.
-func ValidArgsListCertificates(ctx context.Context, factory **Factory) func(_ *cobra.Command, args []string, _ string) ([]string, cobra.ShellCompDirective) {
-	return func(_ *cobra.Command, args []string, _ string) ([]string, cobra.ShellCompDirective) {
+func ValidArgsListCertificates(factory **Factory) func(*cobra.Command, []string, string) ([]string, cobra.ShellCompDirective) {
+	return func(cmd *cobra.Command, args []string, _ string) ([]string, cobra.ShellCompDirective) {
 		if len(args) > 0 {
 			return nil, cobra.ShellCompDirectiveNoFileComp
 		}
@@ -35,7 +33,7 @@ func ValidArgsListCertificates(ctx context.Context, factory **Factory) func(_ *c
 			return nil, cobra.ShellCompDirectiveNoFileComp
 		}
 
-		certList, err := f.CMClient.CertmanagerV1().Certificates(f.Namespace).List(ctx, metav1.ListOptions{})
+		certList, err := f.CMClient.CertmanagerV1().Certificates(f.Namespace).List(cmd.Context(), metav1.ListOptions{})
 		if err != nil {
 			return nil, cobra.ShellCompDirectiveError
 		}
@@ -50,8 +48,8 @@ func ValidArgsListCertificates(ctx context.Context, factory **Factory) func(_ *c
 }
 
 // ValidArgsListSecrets returns a cobra ValidArgsFunction for listing Secrets.
-func ValidArgsListSecrets(ctx context.Context, factory **Factory) func(_ *cobra.Command, args []string, _ string) ([]string, cobra.ShellCompDirective) {
-	return func(_ *cobra.Command, args []string, _ string) ([]string, cobra.ShellCompDirective) {
+func ValidArgsListSecrets(factory **Factory) func(*cobra.Command, []string, string) ([]string, cobra.ShellCompDirective) {
+	return func(cmd *cobra.Command, args []string, _ string) ([]string, cobra.ShellCompDirective) {
 		if len(args) > 0 {
 			return nil, cobra.ShellCompDirectiveNoFileComp
 		}
@@ -61,7 +59,7 @@ func ValidArgsListSecrets(ctx context.Context, factory **Factory) func(_ *cobra.
 			return nil, cobra.ShellCompDirectiveNoFileComp
 		}
 
-		secretsList, err := f.KubeClient.CoreV1().Secrets(f.Namespace).List(ctx, metav1.ListOptions{})
+		secretsList, err := f.KubeClient.CoreV1().Secrets(f.Namespace).List(cmd.Context(), metav1.ListOptions{})
 		if err != nil {
 			return nil, cobra.ShellCompDirectiveError
 		}
@@ -77,8 +75,8 @@ func ValidArgsListSecrets(ctx context.Context, factory **Factory) func(_ *cobra.
 
 // ValidArgsListCertificateSigningRequests returns a cobra ValidArgsFunction for
 // listing CertificateSigningRequests.
-func ValidArgsListCertificateSigningRequests(ctx context.Context, factory **Factory) func(_ *cobra.Command, args []string, _ string) ([]string, cobra.ShellCompDirective) {
-	return func(_ *cobra.Command, args []string, _ string) ([]string, cobra.ShellCompDirective) {
+func ValidArgsListCertificateSigningRequests(factory **Factory) func(*cobra.Command, []string, string) ([]string, cobra.ShellCompDirective) {
+	return func(cmd *cobra.Command, args []string, _ string) ([]string, cobra.ShellCompDirective) {
 		if len(args) > 0 {
 			return nil, cobra.ShellCompDirectiveNoFileComp
 		}
@@ -88,7 +86,7 @@ func ValidArgsListCertificateSigningRequests(ctx context.Context, factory **Fact
 			return nil, cobra.ShellCompDirectiveNoFileComp
 		}
 
-		csrList, err := f.KubeClient.CertificatesV1().CertificateSigningRequests().List(ctx, metav1.ListOptions{})
+		csrList, err := f.KubeClient.CertificatesV1().CertificateSigningRequests().List(cmd.Context(), metav1.ListOptions{})
 		if err != nil {
 			return nil, cobra.ShellCompDirectiveError
 		}
@@ -104,8 +102,8 @@ func ValidArgsListCertificateSigningRequests(ctx context.Context, factory **Fact
 
 // ValidArgsListCertificateRequests returns a cobra ValidArgsFunction for listing
 // CertificateRequests.
-func ValidArgsListCertificateRequests(ctx context.Context, factory **Factory) func(_ *cobra.Command, args []string, _ string) ([]string, cobra.ShellCompDirective) {
-	return func(_ *cobra.Command, args []string, _ string) ([]string, cobra.ShellCompDirective) {
+func ValidArgsListCertificateRequests(factory **Factory) func(*cobra.Command, []string, string) ([]string, cobra.ShellCompDirective) {
+	return func(cmd *cobra.Command, args []string, _ string) ([]string, cobra.ShellCompDirective) {
 		if len(args) > 0 {
 			return nil, cobra.ShellCompDirectiveNoFileComp
 		}
@@ -113,7 +111,7 @@ func ValidArgsListCertificateRequests(ctx context.Context, factory **Factory) fu
 		if err := f.complete(); err != nil {
 			return nil, cobra.ShellCompDirectiveNoFileComp
 		}
-		crList, err := f.CMClient.CertmanagerV1().CertificateRequests(f.Namespace).List(ctx, metav1.ListOptions{})
+		crList, err := f.CMClient.CertmanagerV1().CertificateRequests(f.Namespace).List(cmd.Context(), metav1.ListOptions{})
 		if err != nil {
 			return nil, cobra.ShellCompDirectiveError
 		}
@@ -127,8 +125,8 @@ func ValidArgsListCertificateRequests(ctx context.Context, factory **Factory) fu
 
 // validArgsListNamespaces returns a cobra ValidArgsFunction for listing
 // namespaces.
-func validArgsListNamespaces(ctx context.Context, factory *Factory) func(_ *cobra.Command, args []string, _ string) ([]string, cobra.ShellCompDirective) {
-	return func(_ *cobra.Command, args []string, _ string) ([]string, cobra.ShellCompDirective) {
+func validArgsListNamespaces(factory *Factory) func(*cobra.Command, []string, string) ([]string, cobra.ShellCompDirective) {
+	return func(cmd *cobra.Command, args []string, _ string) ([]string, cobra.ShellCompDirective) {
 		if len(args) > 0 {
 			return nil, cobra.ShellCompDirectiveNoFileComp
 		}
@@ -137,7 +135,7 @@ func validArgsListNamespaces(ctx context.Context, factory *Factory) func(_ *cobr
 			return nil, cobra.ShellCompDirectiveNoFileComp
 		}
 
-		namespaceList, err := factory.KubeClient.CoreV1().Namespaces().List(ctx, metav1.ListOptions{})
+		namespaceList, err := factory.KubeClient.CoreV1().Namespaces().List(cmd.Context(), metav1.ListOptions{})
 		if err != nil {
 			return nil, cobra.ShellCompDirectiveError
 		}

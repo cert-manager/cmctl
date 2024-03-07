@@ -19,7 +19,6 @@ package completion
 import (
 	"github.com/spf13/cobra"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
-	"k8s.io/kubectl/pkg/cmd/util"
 
 	"github.com/cert-manager/cmctl/v2/pkg/build"
 )
@@ -36,8 +35,8 @@ func newCmdCompletionPowerShell(ioStreams genericclioptions.IOStreams) *cobra.Co
   # and source this file from your PowerShell profile.
 `),
 		DisableFlagsInUseLine: true,
-		Run: func(cmd *cobra.Command, args []string) {
-			util.CheckErr(cmd.Root().GenPowerShellCompletion(ioStreams.Out))
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return cmd.Root().GenPowerShellCompletion(ioStreams.Out)
 		},
 	}
 }

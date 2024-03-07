@@ -25,14 +25,14 @@ import (
 	"github.com/cert-manager/cmctl/v2/pkg/upgrade/migrateapiversion"
 )
 
-func NewCmdUpgrade(ctx context.Context, ioStreams genericclioptions.IOStreams) *cobra.Command {
+func NewCmdUpgrade(setupCtx context.Context, ioStreams genericclioptions.IOStreams) *cobra.Command {
 	cmds := &cobra.Command{
 		Use:   "upgrade",
 		Short: "Tools that assist in upgrading cert-manager",
 		Long:  `Note: this command does NOT actually upgrade cert-manager installations`,
 	}
 
-	cmds.AddCommand(migrateapiversion.NewCmdMigrate(ctx, ioStreams))
+	cmds.AddCommand(migrateapiversion.NewCmdMigrate(setupCtx, ioStreams))
 
 	return cmds
 }
