@@ -17,7 +17,6 @@ issues:
         - staticcheck
         - dupword
         - noctx
-        - predeclared
       text: ".*"
 linters:
   # Explicitly define all enabled linters
