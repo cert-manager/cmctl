@@ -186,9 +186,6 @@ func Test_printSliceOrOne(t *testing.T) {
 }
 
 func Test_splitPEMs(t *testing.T) {
-	type args struct {
-		certData []byte
-	}
 	tests := []struct {
 		name     string
 		certData []byte

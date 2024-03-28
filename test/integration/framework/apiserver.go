@@ -24,7 +24,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/cert-manager/cert-manager/pkg/webhook/handlers"
 	"github.com/cert-manager/cert-manager/test/apiserver"
 	webhooktesting "github.com/cert-manager/cert-manager/test/webhook"
 	admissionregistrationv1 "k8s.io/api/admissionregistration/v1"
@@ -48,8 +47,7 @@ type StopFunc func()
 // controlPlaneOptions has parameters for the control plane of the integration
 // test framework which can be overridden in tests.
 type controlPlaneOptions struct {
-	crdsDir                  *string
-	webhookConversionHandler handlers.ConversionHook
+	crdsDir *string
 }
 
 type RunControlPlaneOption func(*controlPlaneOptions)

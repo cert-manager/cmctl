@@ -7,12 +7,11 @@ issues:
         - gosec
         - misspell
         - unparam
-        - unused
+        - gosimple
         - nilerr
         - nilnil
         - staticcheck
         - noctx
-        - gosimple
       text: ".*"
 linters:
   # Explicitly define all enabled linters

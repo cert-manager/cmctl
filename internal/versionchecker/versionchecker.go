@@ -46,10 +46,6 @@ type Version struct {
 	Sources map[string]string `json:"sources"`
 }
 
-func shouldReturn(err error) bool {
-	return (err == nil) || (!errors.Is(err, ErrVersionNotDetected))
-}
-
 // Interface is used to check what cert-manager version is installed
 type Interface interface {
 	Version(context.Context) (*Version, error)
