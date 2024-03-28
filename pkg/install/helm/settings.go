@@ -22,12 +22,13 @@ import (
 	"os"
 
 	logf "github.com/cert-manager/cert-manager/pkg/logs"
-	"github.com/cert-manager/cmctl/v2/pkg/factory"
 	"github.com/go-logr/logr"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"helm.sh/helm/v3/pkg/action"
 	"helm.sh/helm/v3/pkg/cli"
+
+	"github.com/cert-manager/cmctl/v2/pkg/factory"
 )
 
 const defaultCertManagerNamespace = "cert-manager"
@@ -73,7 +74,9 @@ func (n *NormalisedEnvSettings) Setup(ctx context.Context, cmd *cobra.Command) {
 
 	// Fix the default namespace to be cert-manager
 	cmd.Flag("namespace").DefValue = defaultCertManagerNamespace
-	cmd.Flag("namespace").Value.Set(defaultCertManagerNamespace)
+	if err := cmd.Flag("namespace").Value.Set(defaultCertManagerNamespace); err != nil {
+		panic(err)
+	}
 }
 
 func (n *NormalisedEnvSettings) setupEnvSettings(cmd *cobra.Command) {

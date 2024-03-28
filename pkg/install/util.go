@@ -28,22 +28,34 @@ import (
 
 func addInstallFlags(f *pflag.FlagSet, client *action.Install) {
 	f.StringVar(&client.ReleaseName, "release-name", "cert-manager", "Name of the helm release")
-	f.MarkHidden("release-name")
+	if err := f.MarkHidden("release-name"); err != nil {
+		panic(err)
+	}
 	f.BoolVarP(&client.GenerateName, "generate-name", "g", false, "Generate the name (instead of using the default 'cert-manager' value)")
-	f.MarkHidden("generate-name")
+	if err := f.MarkHidden("generate-name"); err != nil {
+		panic(err)
+	}
 	f.StringVar(&client.NameTemplate, "name-template", "", "Specify template used to name the release")
-	f.MarkHidden("name-template")
+	if err := f.MarkHidden("name-template"); err != nil {
+		panic(err)
+	}
 	f.StringVar(&client.Description, "description", "cert-manager was installed using the cert-manager CLI", "Add a custom description")
-	f.MarkHidden("description")
+	if err := f.MarkHidden("description"); err != nil {
+		panic(err)
+	}
 }
 
 func addValueOptionsFlags(f *pflag.FlagSet, v *values.Options) {
 	f.StringSliceVarP(&v.ValueFiles, "values", "f", []string{}, "Specify values in a YAML file or a URL (can specify multiple)")
 	f.StringArrayVar(&v.Values, "set", []string{}, "Set values on the command line (can specify multiple or separate values with commas: key1=val1,key2=val2)")
 	f.StringArrayVar(&v.StringValues, "set-string", []string{}, "Set STRING values on the command line (can specify multiple or separate values with commas: key1=val1,key2=val2)")
-	f.MarkHidden("set-string")
+	if err := f.MarkHidden("set-string"); err != nil {
+		panic(err)
+	}
 	f.StringArrayVar(&v.FileValues, "set-file", []string{}, "Set values from respective files specified via the command line (can specify multiple or separate values with commas: key1=path1,key2=path2)")
-	f.MarkHidden("set-file")
+	if err := f.MarkHidden("set-file"); err != nil {
+		panic(err)
+	}
 }
 
 // defaultKeyring returns the expanded path to the default keyring.

@@ -21,11 +21,11 @@ import (
 	"fmt"
 	"io"
 
+	logf "github.com/cert-manager/cert-manager/pkg/logs"
 	"github.com/spf13/cobra"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"k8s.io/component-base/logs"
 
-	logf "github.com/cert-manager/cert-manager/pkg/logs"
 	"github.com/cert-manager/cmctl/v2/pkg/build"
 	"github.com/cert-manager/cmctl/v2/pkg/build/commands"
 )

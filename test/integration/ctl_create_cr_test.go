@@ -25,14 +25,14 @@ import (
 	"testing"
 	"time"
 
+	cmapiv1 "github.com/cert-manager/cert-manager/pkg/apis/certmanager/v1"
+	cmmeta "github.com/cert-manager/cert-manager/pkg/apis/meta/v1"
+	"github.com/cert-manager/cert-manager/pkg/util/pki"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 
-	cmapiv1 "github.com/cert-manager/cert-manager/pkg/apis/certmanager/v1"
-	cmmeta "github.com/cert-manager/cert-manager/pkg/apis/meta/v1"
-	"github.com/cert-manager/cert-manager/pkg/util/pki"
 	"github.com/cert-manager/cmctl/v2/pkg/create/certificaterequest"
 	"github.com/cert-manager/cmctl/v2/pkg/factory"
 	"github.com/cert-manager/cmctl/v2/test/integration/framework"
@@ -315,7 +315,7 @@ func TestCtlCreateCRSuccessful(t *testing.T) {
 					err = wait.PollUntilContextCancel(pollCtx, time.Second, true, func(ctx context.Context) (done bool, err error) {
 						req, err = cmCl.CertmanagerV1().CertificateRequests(test.inputNamespace).Get(ctx, test.inputArgs[0], metav1.GetOptions{})
 						if err != nil {
-							return false, nil
+							return false, nil // nolint: nilerr // Retry and keep polling until context is cancelled
 						}
 						return true, nil
 					})

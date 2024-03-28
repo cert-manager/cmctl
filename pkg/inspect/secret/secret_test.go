@@ -17,17 +17,16 @@ limitations under the License.
 package secret
 
 import (
+	"context"
 	"crypto/x509"
 	"strings"
 	"testing"
 	"time"
 
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	fakeclock "k8s.io/utils/clock/testing"
-
 	v1 "github.com/cert-manager/cert-manager/pkg/apis/certmanager/v1"
 	"github.com/cert-manager/cert-manager/pkg/util/pki"
 	"github.com/cert-manager/cert-manager/test/unit/gen"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 var (
@@ -64,7 +63,7 @@ func init() {
 		Localities:          []string{"San Francisco"},
 		Provinces:           []string{"California"},
 	}
-	caX509Cert, err := pki.GenerateTemplate(caCertificateTemplate)
+	caX509Cert, err := pki.CertificateTemplateFromCertificate(caCertificateTemplate)
 	if err != nil {
 		panic(err)
 	}
@@ -100,7 +99,7 @@ func init() {
 		Countries:           []string{"GB"},
 		OrganizationalUnits: []string{"cert-manager"},
 	}
-	testX509Cert, err := pki.GenerateTemplate(testCertTemplate)
+	testX509Cert, err := pki.CertificateTemplateFromCertificate(testCertTemplate)
 	if err != nil {
 		panic(err)
 	}
@@ -140,7 +139,7 @@ func Test_describeCRL(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := describeCRL(tt.cert); got != tt.want {
+			if got := describeCRL(context.TODO(), tt.cert); got != tt.want {
 				t.Errorf("describeCRL() = %v, want %v", makeInvisibleVisible(got), makeInvisibleVisible(tt.want))
 			}
 		})
@@ -168,8 +167,12 @@ func Test_describeCertificate(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := describeCertificate(tt.cert); got != tt.want {
+			got, err := describeCertificate(tt.cert)
+			if got != tt.want {
 				t.Errorf("describeCertificate() = %v, want %v", makeInvisibleVisible(got), makeInvisibleVisible(tt.want))
+			}
+			if err != nil {
+				t.Errorf("describeCertificate() error = %v", err)
 			}
 		})
 	}
@@ -202,8 +205,12 @@ func Test_describeDebugging(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := describeDebugging(tt.args.cert, tt.args.intermediates, tt.args.ca); got != tt.want {
+			got, err := describeDebugging(context.TODO(), tt.args.cert, tt.args.intermediates, tt.args.ca)
+			if got != tt.want {
 				t.Errorf("describeDebugging() = %v, want %v", makeInvisibleVisible(got), makeInvisibleVisible(tt.want))
+			}
+			if err != nil {
+				t.Errorf("describeCertificate() error = %v", err)
 			}
 		})
 	}
@@ -227,8 +234,12 @@ func Test_describeIssuedBy(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := describeIssuedBy(tt.cert); got != tt.want {
+			got, err := describeIssuedBy(tt.cert)
+			if got != tt.want {
 				t.Errorf("describeIssuedBy() = %v, want %v", makeInvisibleVisible(got), makeInvisibleVisible(tt.want))
+			}
+			if err != nil {
+				t.Errorf("describeIssuedBy() error = %v", err)
 			}
 		})
 	}
@@ -252,8 +263,12 @@ func Test_describeIssuedFor(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := describeIssuedFor(tt.cert); got != tt.want {
+			got, err := describeIssuedFor(tt.cert)
+			if got != tt.want {
 				t.Errorf("describeIssuedFor() = %v, want %v", makeInvisibleVisible(got), makeInvisibleVisible(tt.want))
+			}
+			if err != nil {
+				t.Errorf("describeCertificate() error = %v", err)
 			}
 		})
 	}
@@ -280,7 +295,7 @@ func Test_describeOCSP(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := describeOCSP(tt.args.cert, tt.args.intermediates, tt.args.ca); got != tt.want {
+			if got := describeOCSP(context.TODO(), tt.args.cert, tt.args.intermediates, tt.args.ca); got != tt.want {
 				t.Errorf("describeOCSP() = %v, want %v", makeInvisibleVisible(got), makeInvisibleVisible(tt.want))
 			}
 		})
@@ -288,9 +303,6 @@ func Test_describeOCSP(t *testing.T) {
 }
 
 func Test_describeTrusted(t *testing.T) {
-	// set clock to when our test cert was trusted
-	t1, _ := time.Parse("Thu, 27 Nov 2020 10:00:00 UTC", time.RFC1123)
-	clock = fakeclock.NewFakeClock(t1)
 	type args struct {
 		cert          *x509.Certificate
 		intermediates [][]byte
@@ -353,8 +365,12 @@ func Test_describeValidFor(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := describeValidFor(tt.cert); got != tt.want {
+			got, err := describeValidFor(tt.cert)
+			if got != tt.want {
 				t.Errorf("describeValidFor() = %v, want %v", makeInvisibleVisible(got), makeInvisibleVisible(tt.want))
+			}
+			if err != nil {
+				t.Errorf("describeIssuedBy() error = %v", err)
 			}
 		})
 	}
@@ -376,16 +392,20 @@ func Test_describeValidityPeriod(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := describeValidityPeriod(tt.cert); got != tt.want {
+			got, err := describeValidityPeriod(tt.cert)
+			if got != tt.want {
 				t.Errorf("describeValidityPeriod() = %v, want %v", makeInvisibleVisible(got), makeInvisibleVisible(tt.want))
+			}
+			if err != nil {
+				t.Errorf("describeValidityPeriod() error = %v", err)
 			}
 		})
 	}
 }
 
 func makeInvisibleVisible(in string) string {
-	in = strings.Replace(in, "\n", "\\n\n", -1)
-	in = strings.Replace(in, "\t", "\\t", -1)
+	in = strings.ReplaceAll(in, "\n", "\\n\n")
+	in = strings.ReplaceAll(in, "\t", "\\t")
 
 	return in
 }

@@ -23,6 +23,7 @@ import (
 	"strings"
 	"time"
 
+	logf "github.com/cert-manager/cert-manager/pkg/logs"
 	"github.com/spf13/cobra"
 	"helm.sh/helm/v3/pkg/action"
 	"helm.sh/helm/v3/pkg/chart"
@@ -33,7 +34,6 @@ import (
 	"helm.sh/helm/v3/pkg/release"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 
-	logf "github.com/cert-manager/cert-manager/pkg/logs"
 	"github.com/cert-manager/cmctl/v2/pkg/build"
 	"github.com/cert-manager/cmctl/v2/pkg/install/helm"
 )
@@ -117,9 +117,13 @@ func NewCmdInstall(setupCtx context.Context, ioStreams genericclioptions.IOStrea
 	addChartPathOptionsFlags(cmd.Flags(), &options.client.ChartPathOptions)
 
 	cmd.Flags().BoolVar(&options.client.CreateNamespace, "create-namespace", true, "Create the release namespace if not present")
-	cmd.Flags().MarkHidden("create-namespace")
+	if err := cmd.Flags().MarkHidden("create-namespace"); err != nil {
+		panic(err)
+	}
 	cmd.Flags().StringVar(&options.ChartName, "chart-name", "cert-manager", "Name of the chart to install")
-	cmd.Flags().MarkHidden("chart-name")
+	if err := cmd.Flags().MarkHidden("chart-name"); err != nil {
+		panic(err)
+	}
 	cmd.Flags().BoolVar(&options.DryRun, "dry-run", false, "Simulate install and output manifest")
 
 	return cmd

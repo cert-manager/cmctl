@@ -22,12 +22,12 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/cert-manager/cert-manager/pkg/util"
 	"github.com/spf13/cobra"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"sigs.k8s.io/yaml"
 
-	"github.com/cert-manager/cert-manager/pkg/util"
 	"github.com/cert-manager/cmctl/v2/internal/versionchecker"
 	"github.com/cert-manager/cmctl/v2/pkg/build"
 	"github.com/cert-manager/cmctl/v2/pkg/factory"
@@ -69,7 +69,7 @@ func versionLong() string {
 The CLI version is embedded in the binary and directly displayed. Determining
 the deployed cert-manager version is done by querying the cert-manger
 resources.  First, the tool looks at the labels of the cert-manager CRD
-resources. Then, it searches for the labels of the resources related the the
+resources. Then, it searches for the labels of the resources related the
 cert-manager webhook linked in the CRDs.  It also tries to derive the version
 from the docker image tag of that webhook service.  After gathering all this
 version information, the tool checks if all versions are the same and returns

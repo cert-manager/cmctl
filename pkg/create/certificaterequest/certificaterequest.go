@@ -24,6 +24,11 @@ import (
 	"os"
 	"time"
 
+	apiutil "github.com/cert-manager/cert-manager/pkg/api/util"
+	cmapi "github.com/cert-manager/cert-manager/pkg/apis/certmanager/v1"
+	cmmeta "github.com/cert-manager/cert-manager/pkg/apis/meta/v1"
+	"github.com/cert-manager/cert-manager/pkg/ctl"
+	"github.com/cert-manager/cert-manager/pkg/util/pki"
 	"github.com/spf13/cobra"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -34,11 +39,6 @@ import (
 	"k8s.io/kubectl/pkg/util/i18n"
 	"k8s.io/kubectl/pkg/util/templates"
 
-	apiutil "github.com/cert-manager/cert-manager/pkg/api/util"
-	cmapi "github.com/cert-manager/cert-manager/pkg/apis/certmanager/v1"
-	cmmeta "github.com/cert-manager/cert-manager/pkg/apis/meta/v1"
-	"github.com/cert-manager/cert-manager/pkg/ctl"
-	"github.com/cert-manager/cert-manager/pkg/util/pki"
 	"github.com/cert-manager/cmctl/v2/pkg/build"
 	"github.com/cert-manager/cmctl/v2/pkg/factory"
 )
@@ -249,7 +249,7 @@ func (o *Options) Run(ctx context.Context, args []string) error {
 		err = wait.PollUntilContextTimeout(ctx, time.Second, o.Timeout, false, func(ctx context.Context) (done bool, err error) {
 			req, err = o.CMClient.CertmanagerV1().CertificateRequests(req.Namespace).Get(ctx, req.Name, metav1.GetOptions{})
 			if err != nil {
-				return false, nil
+				return false, nil // nolint: nilerr // Retry and keep polling until context is cancelled
 			}
 			return apiutil.CertificateRequestHasCondition(req, cmapi.CertificateRequestCondition{
 				Type:   cmapi.CertificateRequestConditionReady,
