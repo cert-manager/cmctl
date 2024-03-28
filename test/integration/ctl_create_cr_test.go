@@ -315,7 +315,7 @@ func TestCtlCreateCRSuccessful(t *testing.T) {
 					err = wait.PollUntilContextCancel(pollCtx, time.Second, true, func(ctx context.Context) (done bool, err error) {
 						req, err = cmCl.CertmanagerV1().CertificateRequests(test.inputNamespace).Get(ctx, test.inputArgs[0], metav1.GetOptions{})
 						if err != nil {
-							return false, nil
+							return false, nil // nolint: nilerr // Retry and keep polling until context is cancelled
 						}
 						return true, nil
 					})
