@@ -347,7 +347,7 @@ func listVersions(ctx context.Context, maxVersion string) (map[string]struct{}, 
 func downloadManifests(ctx context.Context, version string) ([]byte, error) {
 	url := fmt.Sprintf(downloadURL, version)
 
-	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		return nil, err
 	}

@@ -19,7 +19,6 @@ issues:
         - noctx
         - predeclared
         - unconvert
-        - usestdlibvars
       text: ".*"
 linters:
   # Explicitly define all enabled linters
