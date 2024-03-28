@@ -19,10 +19,9 @@ package helm
 import (
 	"time"
 
+	logf "github.com/cert-manager/cert-manager/pkg/logs"
 	"helm.sh/helm/v3/pkg/action"
 	"k8s.io/cli-runtime/pkg/resource"
-
-	logf "github.com/cert-manager/cert-manager/pkg/logs"
 )
 
 // CreateCRDs creates cert manager CRDs. Before calling this function, we

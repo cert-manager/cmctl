@@ -17,6 +17,7 @@ limitations under the License.
 package factory
 
 import (
+	cmclient "github.com/cert-manager/cert-manager/pkg/client/clientset/versioned"
 	"github.com/spf13/cobra"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"k8s.io/client-go/kubernetes"
@@ -25,8 +26,6 @@ import (
 
 	// Load all auth plugins
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
-
-	cmclient "github.com/cert-manager/cert-manager/pkg/client/clientset/versioned"
 )
 
 // Factory provides a set of clients and configurations to authenticate and

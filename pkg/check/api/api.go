@@ -22,6 +22,8 @@ import (
 	"fmt"
 	"time"
 
+	logf "github.com/cert-manager/cert-manager/pkg/logs"
+	"github.com/cert-manager/cert-manager/pkg/util/cmapichecker"
 	"github.com/spf13/cobra"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/wait"
@@ -29,8 +31,6 @@ import (
 	"k8s.io/kubectl/pkg/util/i18n"
 	"k8s.io/kubectl/pkg/util/templates"
 
-	logf "github.com/cert-manager/cert-manager/pkg/logs"
-	"github.com/cert-manager/cert-manager/pkg/util/cmapichecker"
 	cmcmdutil "github.com/cert-manager/cmctl/v2/internal/util"
 	"github.com/cert-manager/cmctl/v2/pkg/factory"
 )

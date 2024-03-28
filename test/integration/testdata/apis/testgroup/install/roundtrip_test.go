@@ -19,9 +19,8 @@ package install
 import (
 	"testing"
 
-	"k8s.io/apimachinery/pkg/api/apitesting/roundtrip"
-
 	"github.com/cert-manager/cert-manager/pkg/webhook/handlers/testdata/apis/testgroup/fuzzer"
+	"k8s.io/apimachinery/pkg/api/apitesting/roundtrip"
 )
 
 func TestRoundTripTypes(t *testing.T) {

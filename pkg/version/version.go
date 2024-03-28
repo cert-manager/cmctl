@@ -22,12 +22,12 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/cert-manager/cert-manager/pkg/util"
 	"github.com/spf13/cobra"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"sigs.k8s.io/yaml"
 
-	"github.com/cert-manager/cert-manager/pkg/util"
 	"github.com/cert-manager/cmctl/v2/internal/versionchecker"
 	"github.com/cert-manager/cmctl/v2/pkg/build"
 	"github.com/cert-manager/cmctl/v2/pkg/factory"

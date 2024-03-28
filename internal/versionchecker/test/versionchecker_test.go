@@ -19,7 +19,6 @@ package versionchecker
 import (
 	"bytes"
 	"context"
-	_ "embed"
 	"errors"
 	"fmt"
 	"io"
@@ -38,6 +37,8 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
 
 	"github.com/cert-manager/cmctl/v2/internal/versionchecker"
+
+	_ "embed"
 )
 
 const dummyVersion = "v99.99.99"

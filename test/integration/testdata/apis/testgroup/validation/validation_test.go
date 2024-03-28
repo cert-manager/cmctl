@@ -20,10 +20,9 @@ import (
 	"reflect"
 	"testing"
 
-	"k8s.io/apimachinery/pkg/util/validation/field"
-
 	"github.com/cert-manager/cert-manager/pkg/webhook/handlers/testdata/apis/testgroup"
 	v1 "github.com/cert-manager/cert-manager/pkg/webhook/handlers/testdata/apis/testgroup/v1"
+	"k8s.io/apimachinery/pkg/util/validation/field"
 )
 
 func TestValidateTestType(t *testing.T) {
