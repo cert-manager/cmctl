@@ -193,8 +193,6 @@ func (o *Options) GetResources(ctx context.Context, crtName string) (*Data, erro
 	req, reqErr := findMatchingCR(o.CMClient, ctx, crt)
 	if reqErr != nil {
 		reqErr = fmt.Errorf("error when finding CertificateRequest: %w\n", reqErr)
-	} else if req == nil {
-		reqErr = errors.New("No CertificateRequest found for this Certificate\n")
 	}
 
 	var reqEvents *corev1.EventList
@@ -223,8 +221,6 @@ func (o *Options) GetResources(ctx context.Context, crtName string) (*Data, erro
 		order, orderErr = findMatchingOrder(o.CMClient, ctx, req)
 		if orderErr != nil {
 			orderErr = fmt.Errorf("error when finding Order: %w\n", orderErr)
-		} else if order == nil {
-			orderErr = errors.New("No Order found for this Certificate\n")
 		}
 
 		if order != nil {
@@ -317,7 +313,7 @@ func findMatchingCR(cmClient cmclient.Interface, ctx context.Context, crt *cmapi
 
 	switch {
 	case len(possibleMatches) < 1:
-		return nil, nil
+		return nil, errors.New("no CertificateRequest found for this Certificate")
 	case len(possibleMatches) == 1:
 		return possibleMatches[0], nil
 	default:
@@ -345,7 +341,7 @@ func findMatchingOrder(cmClient cmclient.Interface, ctx context.Context, req *cm
 
 	switch {
 	case len(possibleMatches) < 1:
-		return nil, nil
+		return nil, fmt.Errorf("no Order found for CertificateRequest %s", req.Name)
 	case len(possibleMatches) == 1:
 		return possibleMatches[0], nil
 	default:

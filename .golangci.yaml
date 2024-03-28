@@ -5,7 +5,6 @@ issues:
         - gosec
         - prealloc
         - errorlint
-        - nilnil
       text: ".*"
 linters:
   # Explicitly define all enabled linters
