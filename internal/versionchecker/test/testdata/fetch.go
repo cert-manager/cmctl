@@ -376,20 +376,20 @@ func cleanupManifests(manifests []byte, version string) ([]byte, error) {
 
 	decoder := yaml.NewDecoder(bytes.NewBuffer(manifests))
 	for {
-		var spec map[string]interface{}
+		var manifest map[string]interface{}
 
-		err := decoder.Decode(&spec)
+		err := decoder.Decode(&manifest)
 		if errors.Is(err, io.EOF) {
 			break
 		}
 		if err != nil {
 			return nil, fmt.Errorf("failed to decode manifest: %v", err)
 		}
-		if spec == nil {
+		if manifest == nil {
 			continue
 		}
 
-		kind, ok := spec["kind"].(string)
+		kind, ok := manifest["kind"].(string)
 		if !ok {
 			return nil, fmt.Errorf("kind is missing from manifest")
 		}
@@ -397,15 +397,15 @@ func cleanupManifests(manifests []byte, version string) ([]byte, error) {
 		switch kind {
 		case "CustomResourceDefinition":
 			// remove all CRD schemas from yaml file
-			switch spec["spec"].(type) {
+			switch spec := manifest["spec"].(type) {
 			case map[string]interface{}:
-				spec["spec"].(map[string]interface{})["versions"] = []interface{}{}
+				spec["versions"] = []interface{}{}
 			case map[interface{}]interface{}:
-				spec["spec"].(map[interface{}]interface{})["versions"] = []interface{}{}
+				spec["versions"] = []interface{}{}
 			}
 
 			// remove status from CRD
-			delete(spec, "status")
+			delete(manifest, "status")
 
 		case "Service", "Deployment":
 			// keep only the CRD, Service and Deployment resources from yaml file
@@ -413,7 +413,7 @@ func cleanupManifests(manifests []byte, version string) ([]byte, error) {
 			continue
 		}
 
-		yamlData, err := yaml.Marshal(spec)
+		yamlData, err := yaml.Marshal(manifest)
 		if err != nil {
 			return nil, fmt.Errorf("failed to marshal manifest: %v", err)
 		}

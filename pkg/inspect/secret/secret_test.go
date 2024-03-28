@@ -383,8 +383,8 @@ func Test_describeValidityPeriod(t *testing.T) {
 }
 
 func makeInvisibleVisible(in string) string {
-	in = strings.Replace(in, "\n", "\\n\n", -1)
-	in = strings.Replace(in, "\t", "\\t", -1)
+	in = strings.ReplaceAll(in, "\n", "\\n\n")
+	in = strings.ReplaceAll(in, "\t", "\\t")
 
 	return in
 }
