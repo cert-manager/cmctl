@@ -16,7 +16,6 @@ issues:
         - noctx
         - predeclared
         - unconvert
-        - usestdlibvars
         - gosimple
       text: ".*"
 linters:
