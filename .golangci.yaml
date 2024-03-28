@@ -5,7 +5,6 @@ issues:
         - gosec
         - misspell
         - unparam
-        - gosimple
         - nilerr
         - nilnil
         - staticcheck
