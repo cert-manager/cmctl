@@ -65,11 +65,17 @@ func NewClients(t *testing.T, config *rest.Config) (kubernetes.Interface, cmclie
 	cmFactory := cminformers.NewSharedInformerFactory(cmCl, 0)
 
 	scheme := runtime.NewScheme()
-	kscheme.AddToScheme(scheme)
-	certmgrscheme.AddToScheme(scheme)
-	apiext.AddToScheme(scheme)
-	apireg.AddToScheme(scheme)
-	gwapi.AddToScheme(scheme)
+	for _, err := range []error{
+		kscheme.AddToScheme(scheme),
+		certmgrscheme.AddToScheme(scheme),
+		apiext.AddToScheme(scheme),
+		apireg.AddToScheme(scheme),
+		gwapi.AddToScheme(scheme),
+	} {
+		if err != nil {
+			t.Fatal(err)
+		}
+	}
 
 	return cl, cmCl, cmFactory, scheme
 }
