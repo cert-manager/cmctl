@@ -7,7 +7,6 @@ issues:
         - nilerr
         - nilnil
         - staticcheck
-        - noctx
       text: ".*"
 linters:
   # Explicitly define all enabled linters
