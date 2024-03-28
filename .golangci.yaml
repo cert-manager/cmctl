@@ -18,7 +18,6 @@ issues:
         - dupword
         - noctx
         - predeclared
-        - unconvert
       text: ".*"
 linters:
   # Explicitly define all enabled linters
