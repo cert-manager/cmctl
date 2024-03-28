@@ -6,7 +6,6 @@ issues:
         - prealloc
         - errorlint
         - nilnil
-        - staticcheck
       text: ".*"
 linters:
   # Explicitly define all enabled linters

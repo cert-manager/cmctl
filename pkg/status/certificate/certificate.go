@@ -127,7 +127,7 @@ func (o *Options) Run(ctx context.Context, args []string) error {
 	// Build status of Certificate with data gathered
 	status := StatusFromResources(data)
 
-	fmt.Fprintf(o.Out, status.String())
+	fmt.Fprint(o.Out, status.String())
 
 	return nil
 }
