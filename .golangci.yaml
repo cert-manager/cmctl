@@ -7,7 +7,6 @@ issues:
         - prealloc
         - unparam
         - errorlint
-        - gosimple
         - nilerr
         - nilnil
         - staticcheck

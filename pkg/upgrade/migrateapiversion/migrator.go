@@ -189,7 +189,7 @@ func (m *Migrator) migrateResourcesForCRD(ctx context.Context, crd *apiext.Custo
 		}
 	}
 	// add 500ms to the duration to ensure we always round up
-	duration := time.Now().Sub(startTime) + (time.Millisecond * 500)
+	duration := time.Since(startTime) + (time.Millisecond * 500)
 	fmt.Fprintf(m.Out, " Successfully migrated %d %s objects in %s\n", len(list.Items), crd.Spec.Names.Kind, duration.Round(time.Second))
 	return nil
 }
