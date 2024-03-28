@@ -171,7 +171,7 @@ func (o *Options) Run(ctx context.Context, args []string, stdout io.Writer) erro
 		describeIssuedBy(x509Cert),
 		describeIssuedFor(x509Cert),
 		describeCertificate(x509Cert),
-		describeDebugging(x509Cert, intermediates, secret.Data[cmmeta.TLSCAKey]),
+		describeDebugging(ctx, x509Cert, intermediates, secret.Data[cmmeta.TLSCAKey]),
 	}
 
 	fmt.Fprintln(stdout, strings.Join(out, "\n\n"))
@@ -268,7 +268,7 @@ func describeCertificate(cert *x509.Certificate) string {
 	return b.String()
 }
 
-func describeDebugging(cert *x509.Certificate, intermediates [][]byte, ca []byte) string {
+func describeDebugging(ctx context.Context, cert *x509.Certificate, intermediates [][]byte, ca []byte) string {
 	var b bytes.Buffer
 	template.Must(template.New("debuggingTemplate").Parse(debuggingTemplate)).Execute(&b, struct {
 		TrustedByThisComputer string
@@ -276,14 +276,14 @@ func describeDebugging(cert *x509.Certificate, intermediates [][]byte, ca []byte
 		OCSPStatus            string
 	}{
 		TrustedByThisComputer: describeTrusted(cert, intermediates),
-		CRLStatus:             describeCRL(cert),
-		OCSPStatus:            describeOCSP(cert, intermediates, ca),
+		CRLStatus:             describeCRL(ctx, cert),
+		OCSPStatus:            describeOCSP(ctx, cert, intermediates, ca),
 	})
 
 	return b.String()
 }
 
-func describeCRL(cert *x509.Certificate) string {
+func describeCRL(ctx context.Context, cert *x509.Certificate) string {
 	if len(cert.CRLDistributionPoints) < 1 {
 		return "No CRL endpoints set"
 	}
@@ -299,7 +299,7 @@ func describeCRL(cert *x509.Certificate) string {
 		}
 
 		hasChecked = true
-		valid, err := checkCRLValidCert(cert, crlURL)
+		valid, err := checkCRLValidCert(ctx, cert, crlURL)
 		if err != nil {
 			return fmt.Sprintf("Cannot check CRL: %s", err.Error())
 		}
@@ -315,7 +315,7 @@ func describeCRL(cert *x509.Certificate) string {
 	return "Valid"
 }
 
-func describeOCSP(cert *x509.Certificate, intermediates [][]byte, ca []byte) string {
+func describeOCSP(ctx context.Context, cert *x509.Certificate, intermediates [][]byte, ca []byte) string {
 	if len(ca) > 1 {
 		intermediates = append([][]byte{ca}, intermediates...)
 	}
@@ -327,7 +327,7 @@ func describeOCSP(cert *x509.Certificate, intermediates [][]byte, ca []byte) str
 		return fmt.Sprintf("Cannot parse intermediate certificate: %s", err.Error())
 	}
 
-	valid, err := checkOCSPValidCert(cert, issuerCert)
+	valid, err := checkOCSPValidCert(ctx, cert, issuerCert)
 	if err != nil {
 		return fmt.Sprintf("Cannot check OCSP: %s", err.Error())
 	}

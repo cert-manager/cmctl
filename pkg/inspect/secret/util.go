@@ -18,6 +18,7 @@ package secret
 
 import (
 	"bytes"
+	"context"
 	"crypto"
 	"crypto/sha256"
 	"crypto/x509"
@@ -50,7 +51,7 @@ func fingerprintCert(cert *x509.Certificate) string {
 	return buf.String()
 }
 
-func checkOCSPValidCert(leafCert, issuerCert *x509.Certificate) (bool, error) {
+func checkOCSPValidCert(ctx context.Context, leafCert, issuerCert *x509.Certificate) (bool, error) {
 	if len(leafCert.OCSPServer) < 1 {
 		return false, errors.New("No OCSP Server set")
 	}
@@ -60,7 +61,7 @@ func checkOCSPValidCert(leafCert, issuerCert *x509.Certificate) (bool, error) {
 	}
 
 	for _, ocspServer := range leafCert.OCSPServer {
-		httpRequest, err := http.NewRequest(http.MethodPost, ocspServer, bytes.NewBuffer(buffer))
+		httpRequest, err := http.NewRequestWithContext(ctx, http.MethodPost, ocspServer, bytes.NewBuffer(buffer))
 		if err != nil {
 			return false, fmt.Errorf("error creating HTTP request: %w", err)
 		}
@@ -95,8 +96,13 @@ func checkOCSPValidCert(leafCert, issuerCert *x509.Certificate) (bool, error) {
 	return true, nil
 }
 
-func checkCRLValidCert(cert *x509.Certificate, url string) (bool, error) {
-	resp, err := http.Get(url)
+func checkCRLValidCert(ctx context.Context, cert *x509.Certificate, url string) (bool, error) {
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if err != nil {
+		return false, fmt.Errorf("error creating HTTP request: %w", err)
+	}
+
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return false, fmt.Errorf("error getting HTTP response: %w", err)
 	}
