@@ -74,7 +74,9 @@ func (n *NormalisedEnvSettings) Setup(ctx context.Context, cmd *cobra.Command) {
 
 	// Fix the default namespace to be cert-manager
 	cmd.Flag("namespace").DefValue = defaultCertManagerNamespace
-	cmd.Flag("namespace").Value.Set(defaultCertManagerNamespace)
+	if err := cmd.Flag("namespace").Value.Set(defaultCertManagerNamespace); err != nil {
+		panic(err)
+	}
 }
 
 func (n *NormalisedEnvSettings) setupEnvSettings(cmd *cobra.Command) {

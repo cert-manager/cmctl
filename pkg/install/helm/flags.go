@@ -25,7 +25,11 @@ import (
 // Flags that are shared between the Install and the Uninstall command
 func AddInstallUninstallFlags(f *pflag.FlagSet, timeout *time.Duration, wait *bool) {
 	f.DurationVar(timeout, "timeout", 300*time.Second, "Time to wait for any individual Kubernetes operation (like Jobs for hooks)")
-	f.MarkHidden("timeout")
+	if err := f.MarkHidden("timeout"); err != nil {
+		panic(err)
+	}
 	f.BoolVar(wait, "wait", true, "If set, will wait until all Pods, PVCs, Services, and minimum number of Pods of a Deployment, StatefulSet, or ReplicaSet are in a ready state before marking the release as successful. It will wait for as long as --timeout")
-	f.MarkHidden("wait")
+	if err := f.MarkHidden("wait"); err != nil {
+		panic(err)
+	}
 }

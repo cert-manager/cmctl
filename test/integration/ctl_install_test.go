@@ -148,7 +148,9 @@ func executeCmctlAndCheckOutput(
 	expErr bool,
 	expOutput string,
 ) {
-	logsapi.ResetForTest(nil)
+	if err := logsapi.ResetForTest(nil); err != nil {
+		t.Fatal(err)
+	}
 
 	executeAndCheckOutput(t, func(stdin io.Reader, stdout io.Writer) error {
 		cmd := cmd.NewCertManagerCtlCommand(ctx, stdin, stdout, stdout)

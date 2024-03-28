@@ -167,8 +167,12 @@ func Test_describeCertificate(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := describeCertificate(tt.cert); got != tt.want {
+			got, err := describeCertificate(tt.cert)
+			if got != tt.want {
 				t.Errorf("describeCertificate() = %v, want %v", makeInvisibleVisible(got), makeInvisibleVisible(tt.want))
+			}
+			if err != nil {
+				t.Errorf("describeCertificate() error = %v", err)
 			}
 		})
 	}
@@ -201,8 +205,12 @@ func Test_describeDebugging(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := describeDebugging(context.TODO(), tt.args.cert, tt.args.intermediates, tt.args.ca); got != tt.want {
+			got, err := describeDebugging(context.TODO(), tt.args.cert, tt.args.intermediates, tt.args.ca)
+			if got != tt.want {
 				t.Errorf("describeDebugging() = %v, want %v", makeInvisibleVisible(got), makeInvisibleVisible(tt.want))
+			}
+			if err != nil {
+				t.Errorf("describeCertificate() error = %v", err)
 			}
 		})
 	}
@@ -226,8 +234,12 @@ func Test_describeIssuedBy(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := describeIssuedBy(tt.cert); got != tt.want {
+			got, err := describeIssuedBy(tt.cert)
+			if got != tt.want {
 				t.Errorf("describeIssuedBy() = %v, want %v", makeInvisibleVisible(got), makeInvisibleVisible(tt.want))
+			}
+			if err != nil {
+				t.Errorf("describeIssuedBy() error = %v", err)
 			}
 		})
 	}
@@ -251,8 +263,12 @@ func Test_describeIssuedFor(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := describeIssuedFor(tt.cert); got != tt.want {
+			got, err := describeIssuedFor(tt.cert)
+			if got != tt.want {
 				t.Errorf("describeIssuedFor() = %v, want %v", makeInvisibleVisible(got), makeInvisibleVisible(tt.want))
+			}
+			if err != nil {
+				t.Errorf("describeCertificate() error = %v", err)
 			}
 		})
 	}
@@ -349,8 +365,12 @@ func Test_describeValidFor(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := describeValidFor(tt.cert); got != tt.want {
+			got, err := describeValidFor(tt.cert)
+			if got != tt.want {
 				t.Errorf("describeValidFor() = %v, want %v", makeInvisibleVisible(got), makeInvisibleVisible(tt.want))
+			}
+			if err != nil {
+				t.Errorf("describeIssuedBy() error = %v", err)
 			}
 		})
 	}
@@ -372,8 +392,12 @@ func Test_describeValidityPeriod(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := describeValidityPeriod(tt.cert); got != tt.want {
+			got, err := describeValidityPeriod(tt.cert)
+			if got != tt.want {
 				t.Errorf("describeValidityPeriod() = %v, want %v", makeInvisibleVisible(got), makeInvisibleVisible(tt.want))
+			}
+			if err != nil {
+				t.Errorf("describeValidityPeriod() error = %v", err)
 			}
 		})
 	}
