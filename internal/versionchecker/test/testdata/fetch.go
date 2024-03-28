@@ -272,7 +272,7 @@ func (inv *Inventory) write(manifestsPath string) error {
 
 		manifests = append(manifests, versionManifest{
 			versions: versions,
-			manifest: []byte(manifest),
+			manifest: manifest,
 		})
 	}
 

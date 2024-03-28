@@ -15,7 +15,6 @@ issues:
         - dupword
         - noctx
         - predeclared
-        - unconvert
         - gosimple
       text: ".*"
 linters:
