@@ -245,9 +245,9 @@ func storageVersionForCRD(crd *apiext.CustomResourceDefinition) string {
 
 // storedVersionsAdded returns a list of any versions added to the `status.storedVersions` field on
 // a CRD resource.
-func storedVersionsAdded(old, new *apiext.CustomResourceDefinition) sets.Set[string] {
-	oldStoredVersions := sets.New[string](old.Status.StoredVersions...)
-	newStoredVersions := sets.New[string](new.Status.StoredVersions...)
+func storedVersionsAdded(oldCRD, newCRD *apiext.CustomResourceDefinition) sets.Set[string] {
+	oldStoredVersions := sets.New[string](oldCRD.Status.StoredVersions...)
+	newStoredVersions := sets.New[string](newCRD.Status.StoredVersions...)
 	return newStoredVersions.Difference(oldStoredVersions)
 }
 
