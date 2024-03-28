@@ -27,7 +27,6 @@ import (
 	"github.com/cert-manager/cert-manager/pkg/util/pki"
 	"github.com/cert-manager/cert-manager/test/unit/gen"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	fakeclock "k8s.io/utils/clock/testing"
 )
 
 var (
@@ -64,7 +63,7 @@ func init() {
 		Localities:          []string{"San Francisco"},
 		Provinces:           []string{"California"},
 	}
-	caX509Cert, err := pki.GenerateTemplate(caCertificateTemplate)
+	caX509Cert, err := pki.CertificateTemplateFromCertificate(caCertificateTemplate)
 	if err != nil {
 		panic(err)
 	}
@@ -100,7 +99,7 @@ func init() {
 		Countries:           []string{"GB"},
 		OrganizationalUnits: []string{"cert-manager"},
 	}
-	testX509Cert, err := pki.GenerateTemplate(testCertTemplate)
+	testX509Cert, err := pki.CertificateTemplateFromCertificate(testCertTemplate)
 	if err != nil {
 		panic(err)
 	}
@@ -288,9 +287,6 @@ func Test_describeOCSP(t *testing.T) {
 }
 
 func Test_describeTrusted(t *testing.T) {
-	// set clock to when our test cert was trusted
-	t1, _ := time.Parse("Thu, 27 Nov 2020 10:00:00 UTC", time.RFC1123)
-	clock = fakeclock.NewFakeClock(t1)
 	type args struct {
 		cert          *x509.Certificate
 		intermediates [][]byte

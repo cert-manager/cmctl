@@ -4,7 +4,6 @@ issues:
         - errcheck
         - gosec
         - nilnil
-        - staticcheck
       text: ".*"
 linters:
   # Explicitly define all enabled linters
