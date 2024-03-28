@@ -5,7 +5,6 @@ issues:
         - gosec
         - misspell
         - prealloc
-        - unparam
         - errorlint
         - nilerr
         - nilnil
