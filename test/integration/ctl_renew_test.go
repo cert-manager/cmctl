@@ -21,15 +21,14 @@ import (
 	"testing"
 	"time"
 
-	corev1 "k8s.io/api/core/v1"
-
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/cli-runtime/pkg/genericclioptions"
-
 	apiutil "github.com/cert-manager/cert-manager/pkg/api/util"
 	cmapi "github.com/cert-manager/cert-manager/pkg/apis/certmanager/v1"
 	cmmeta "github.com/cert-manager/cert-manager/pkg/apis/meta/v1"
 	"github.com/cert-manager/cert-manager/test/unit/gen"
+	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/cli-runtime/pkg/genericclioptions"
+
 	"github.com/cert-manager/cmctl/v2/pkg/factory"
 	"github.com/cert-manager/cmctl/v2/pkg/renew"
 	"github.com/cert-manager/cmctl/v2/test/integration/framework"

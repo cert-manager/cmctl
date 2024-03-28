@@ -22,6 +22,11 @@ import (
 	"fmt"
 	"time"
 
+	cmacme "github.com/cert-manager/cert-manager/pkg/apis/acme/v1"
+	cmapi "github.com/cert-manager/cert-manager/pkg/apis/certmanager/v1"
+	cmclient "github.com/cert-manager/cert-manager/pkg/client/clientset/versioned"
+	"github.com/cert-manager/cert-manager/pkg/ctl"
+	"github.com/cert-manager/cert-manager/pkg/util/predicate"
 	"github.com/spf13/cobra"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -31,11 +36,6 @@ import (
 	"k8s.io/kubectl/pkg/util/i18n"
 	"k8s.io/kubectl/pkg/util/templates"
 
-	cmacme "github.com/cert-manager/cert-manager/pkg/apis/acme/v1"
-	cmapi "github.com/cert-manager/cert-manager/pkg/apis/certmanager/v1"
-	cmclient "github.com/cert-manager/cert-manager/pkg/client/clientset/versioned"
-	"github.com/cert-manager/cert-manager/pkg/ctl"
-	"github.com/cert-manager/cert-manager/pkg/util/predicate"
 	"github.com/cert-manager/cmctl/v2/pkg/build"
 	"github.com/cert-manager/cmctl/v2/pkg/factory"
 )

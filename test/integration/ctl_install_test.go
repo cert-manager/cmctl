@@ -27,10 +27,10 @@ import (
 	"time"
 
 	"github.com/sergi/go-diff/diffmatchpatch"
+	logsapi "k8s.io/component-base/logs/api/v1"
 
 	"github.com/cert-manager/cmctl/v2/cmd"
 	"github.com/cert-manager/cmctl/v2/test/integration/install_framework"
-	logsapi "k8s.io/component-base/logs/api/v1"
 )
 
 func TestCtlInstall(t *testing.T) {

@@ -22,12 +22,11 @@ import (
 	"testing"
 	"time"
 
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	fakeclock "k8s.io/utils/clock/testing"
-
 	v1 "github.com/cert-manager/cert-manager/pkg/apis/certmanager/v1"
 	"github.com/cert-manager/cert-manager/pkg/util/pki"
 	"github.com/cert-manager/cert-manager/test/unit/gen"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	fakeclock "k8s.io/utils/clock/testing"
 )
 
 var (
