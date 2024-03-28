@@ -147,7 +147,7 @@ func run(ctx context.Context, o options) (*release.UninstallReleaseResponse, err
 	return res, nil
 }
 
-func addCRDAnnotations(ctx context.Context, o options) error {
+func addCRDAnnotations(_ context.Context, o options) error {
 	if err := o.settings.ActionConfiguration.KubeClient.IsReachable(); err != nil {
 		return err
 	}
