@@ -69,7 +69,7 @@ func versionLong() string {
 The CLI version is embedded in the binary and directly displayed. Determining
 the deployed cert-manager version is done by querying the cert-manger
 resources.  First, the tool looks at the labels of the cert-manager CRD
-resources. Then, it searches for the labels of the resources related the the
+resources. Then, it searches for the labels of the resources related the
 cert-manager webhook linked in the CRDs.  It also tries to derive the version
 from the docker image tag of that webhook service.  After gathering all this
 version information, the tool checks if all versions are the same and returns
