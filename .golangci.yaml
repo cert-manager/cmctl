@@ -2,7 +2,6 @@ issues:
   exclude-rules:
     - linters:
         - errcheck
-        - forbidigo
         - gocritic
         - gosec
         - misspell

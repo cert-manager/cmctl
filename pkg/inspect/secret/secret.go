@@ -22,6 +22,7 @@ import (
 	"crypto/x509"
 	"errors"
 	"fmt"
+	"io"
 	"net/url"
 	"strings"
 	"text/template"
@@ -117,7 +118,7 @@ func NewCmdInspectSecret(setupCtx context.Context, ioStreams genericclioptions.I
 			return o.Validate(args)
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return o.Run(cmd.Context(), args)
+			return o.Run(cmd.Context(), args, ioStreams.Out)
 		},
 	}
 
@@ -138,7 +139,7 @@ func (o *Options) Validate(args []string) error {
 }
 
 // Run executes status certificate command
-func (o *Options) Run(ctx context.Context, args []string) error {
+func (o *Options) Run(ctx context.Context, args []string, stdout io.Writer) error {
 	secret, err := o.KubeClient.CoreV1().Secrets(o.Namespace).Get(ctx, args[0], metav1.GetOptions{})
 	if err != nil {
 		return fmt.Errorf("error when finding Secret %q: %w\n", args[0], err)
@@ -173,7 +174,7 @@ func (o *Options) Run(ctx context.Context, args []string) error {
 		describeDebugging(x509Cert, intermediates, secret.Data[cmmeta.TLSCAKey]),
 	}
 
-	fmt.Println(strings.Join(out, "\n\n"))
+	fmt.Fprintln(stdout, strings.Join(out, "\n\n"))
 
 	return nil
 }

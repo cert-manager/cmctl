@@ -44,9 +44,10 @@ const dummyVersion = "v99.99.99"
 
 func main() {
 	ctx := context.Background()
+	stdOut := os.Stdout
 
 	if len(os.Args) != 3 && len(os.Args) != 4 {
-		fmt.Printf("Usage: %s <test_manifests.yaml> <max_version> [<force:bool>]\n", os.Args[0])
+		fmt.Fprintf(stdOut, "Usage: %s <test_manifests.yaml> <max_version> [<force:bool>]\n", os.Args[0])
 		os.Exit(1)
 	}
 
@@ -62,21 +63,21 @@ func main() {
 	// Read the inventory file
 	var inv Inventory
 	if err := inv.read(manifestsPath); err != nil {
-		fmt.Printf("Error reading inventory: %v\n", err)
+		fmt.Fprintf(stdOut, "Error reading inventory: %v\n", err)
 
 		inv.reset()
 	}
 
 	// If the passed version is identical to the latest version, we don't need to do anything
 	if inv.LatestVersion == maxVersion && !force {
-		fmt.Printf("Version %s is already the latest version\n", maxVersion)
+		fmt.Fprintf(stdOut, "Version %s is already the latest version\n", maxVersion)
 		os.Exit(0)
 	}
 
 	// Fetch the list of remote versions
 	remoteVersions, err := listVersions(ctx, maxVersion)
 	if err != nil {
-		fmt.Printf("Error listing versions: %v\n", err)
+		fmt.Fprintf(stdOut, "Error listing versions: %v\n", err)
 		os.Exit(1)
 	}
 
@@ -119,7 +120,7 @@ func main() {
 	}
 
 	if err := group.Wait(); err != nil {
-		fmt.Printf("Error downloading manifests: %v\n", err)
+		fmt.Fprintf(stdOut, "Error downloading manifests: %v\n", err)
 		os.Exit(1)
 	}
 
@@ -128,7 +129,7 @@ func main() {
 	for result := range results {
 		hash, err := manifestHash(result.manifest)
 		if err != nil {
-			fmt.Printf("Error hashing manifest: %v\n", err)
+			fmt.Fprintf(stdOut, "Error hashing manifest: %v\n", err)
 			os.Exit(1)
 		}
 
@@ -141,11 +142,11 @@ func main() {
 
 	// Write the inventory file
 	if err := inv.write(manifestsPath); err != nil {
-		fmt.Printf("Error writing inventory: %v\n", err)
+		fmt.Fprintf(stdOut, "Error writing inventory: %v\n", err)
 		os.Exit(1)
 	}
 
-	fmt.Printf("Updated inventory to version %s\n", maxVersion)
+	fmt.Fprintf(stdOut, "Updated inventory to version %s\n", maxVersion)
 }
 
 type Inventory struct {
