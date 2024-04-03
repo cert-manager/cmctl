@@ -32,3 +32,5 @@ go_kubectl_cert-manager_ldflags := \
 	-X $(repo_name)/pkg/build/commands.registerCompletion=false \
 	-X github.com/cert-manager/cert-manager/pkg/util/version.AppVersion=$(VERSION) \
 	-X github.com/cert-manager/cert-manager/pkg/util/version.AppGitCommit=$(GITCOMMIT)
+
+golangci_lint_config := .golangci.yaml
