@@ -22,6 +22,7 @@ import (
 	"github.com/spf13/cobra"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 
+	"github.com/cert-manager/cmctl/v2/pkg/benchmark"
 	"github.com/cert-manager/cmctl/v2/pkg/create"
 	"github.com/cert-manager/cmctl/v2/pkg/create/certificatesigningrequest"
 	"github.com/cert-manager/cmctl/v2/pkg/install"
@@ -41,6 +42,7 @@ func NewCmdExperimental(setupCtx context.Context, ioStreams genericclioptions.IO
 	cmds.AddCommand(create)
 	cmds.AddCommand(install.NewCmdInstall(setupCtx, ioStreams))
 	cmds.AddCommand(uninstall.NewCmd(setupCtx, ioStreams))
+	cmds.AddCommand(benchmark.NewCmd(setupCtx, ioStreams))
 
 	return cmds
 }
