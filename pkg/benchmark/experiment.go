@@ -32,7 +32,7 @@ func (o *experiment) run(ctx context.Context) error {
 	g, ctx := errgroup.WithContext(ctx)
 
 	g.Go(func() error {
-		t := time.NewTicker(time.Second * 10)
+		t := time.NewTicker(o.measurementInterval)
 		defer t.Stop()
 		for {
 			if err := o.measurements.new(ctx); err != nil {

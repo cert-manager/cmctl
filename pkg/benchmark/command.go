@@ -27,6 +27,7 @@ type options struct {
 	genericiooptions.IOStreams
 	*factory.Factory
 
+	measurementInterval          time.Duration
 	rampUpTargetCertificateCount int64
 	steadyStateDuration          time.Duration
 	finalMeasurementsDuration    time.Duration
@@ -53,13 +54,16 @@ func NewCmd(ctx context.Context, ioStreams genericiooptions.IOStreams) *cobra.Co
 		},
 	}
 
-	cmd.Flags().Int64Var(&options.rampUpTargetCertificateCount, "phases.ramp-up.target-certificate-count", 2000,
+	cmd.Flags().DurationVar(&options.measurementInterval, "benchmark.measurement-interval", time.Second*10,
+		"The interval between measurements.")
+
+	cmd.Flags().Int64Var(&options.rampUpTargetCertificateCount, "benchmark.phases.ramp-up.target-certificate-count", 2000,
 		"The number of Certificate resources to create during the ramp-up phase.")
 
-	cmd.Flags().DurationVar(&options.steadyStateDuration, "phases.steady-state.duration", time.Minute*10,
+	cmd.Flags().DurationVar(&options.steadyStateDuration, "benchmark.phases.steady-state.duration", time.Minute*10,
 		"The duration of the steady-state phase.")
 
-	cmd.Flags().DurationVar(&options.finalMeasurementsDuration, "phases.final-measurements.duration", time.Minute*2,
+	cmd.Flags().DurationVar(&options.finalMeasurementsDuration, "benchmark.phases.final-measurements.duration", time.Minute*2,
 		"The duration of the final-measurements phase.")
 
 	options.Factory = factory.New(cmd)
