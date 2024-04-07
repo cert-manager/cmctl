@@ -70,6 +70,7 @@ type options struct {
 	measurementInterval  time.Duration
 	certManagerNamepsace string
 
+	rampUpCertificateSize        int
 	rampUpTargetCertificateCount int64
 	steadyStateDuration          time.Duration
 	cleanupDisabled              bool
@@ -102,6 +103,9 @@ func NewCmd(ctx context.Context, ioStreams genericiooptions.IOStreams) *cobra.Co
 
 	cmd.Flags().StringVar(&options.certManagerNamepsace, "benchmark.cert-manager-namespace", "cert-manager",
 		"The namespace where cert-manager is installed.")
+
+	cmd.Flags().IntVar(&options.rampUpCertificateSize, "benchmark.phase1.certificate-size", 4096,
+		"The private key size of Certificate resources created during the ramp-up phase.")
 
 	cmd.Flags().Int64Var(&options.rampUpTargetCertificateCount, "benchmark.phase1.target-certificate-count", 2000,
 		"The number of Certificate resources to create during the ramp-up phase.")
