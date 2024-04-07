@@ -15,13 +15,53 @@ const (
 	label = "benchmark.cmctl.cert-manager.io/experiment"
 )
 
-func description() string {
-	return build.WithTemplate(`This command runs a cert-manager benchmark.
+const description = `
+This command runs a cert-manager benchmark which stress tests the cert-manager
+components and measures their CPU and memory.
 
-Some example uses:
-	$ {{.BuildName}} x benchmark
-`)
-}
+The default benchmark takes ~50 minutes with the default installation of cert-manager.
+There are five phases:
+
+1. ramp-up (~8 minutes)
+
+   Creates 2000 self-signed RSA(4096) Certificate resources spread across 200 namespaces;
+   1 self-signed Issuer per namespace.
+   Certificates are created in batches: 1 namespace, 1 issuer, 10 Certificates.
+   All the benchmark resources are labelled: 'benchmark.cmctl.cert-manager.io/experiment=true'
+   so that they can easily be identified and deleted afterwards.
+
+2. catch-up (~26 minutes)
+
+   Waits for cert-manager to reconcile all 2000 Certificates.
+
+3. steady-state (~10 minutes)
+
+   Continues to measure the cert-manager CPU and memory consumption for 10 minutes.
+
+4. cleanup (~3 minutes)
+
+   Deletes all 2000 Certificates and other benchmark resources.
+   The benchmark namespaces are deleted in batches of 10 per second.
+
+5. final-measurements (~2 minutes)
+
+   Continues to measure the cert-manager CPU and memory consumption for 2 minutes.
+
+Example:
+    kind create cluster
+
+    # Install metrics-server which is required for measuring cert-manager resource usage
+    helm upgrade metrics-server metrics-server \
+      --repo https://kubernetes-sigs.github.io/metrics-server/ \
+      --install \
+      --namespace kube-system \
+      --set args={--kubelet-insecure-tls}
+
+    # Install cert-manager
+    {{.BuildName}} x install
+
+    {{.BuildName}} x benchmark > data.json
+`
 
 type options struct {
 	genericiooptions.IOStreams
@@ -43,7 +83,7 @@ func NewCmd(ctx context.Context, ioStreams genericiooptions.IOStreams) *cobra.Co
 	cmd := &cobra.Command{
 		Use:   "benchmark",
 		Short: "benchmark cert-manager",
-		Long:  description(),
+		Long:  build.WithTemplate(description),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			e := experiment{
 				options:      options,
