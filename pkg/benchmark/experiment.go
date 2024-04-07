@@ -15,8 +15,9 @@ import (
 )
 
 type phase struct {
-	name string
-	f    func(context.Context) error
+	name     string
+	disabled bool
+	f        func(context.Context) error
 }
 
 type experiment struct {
@@ -99,7 +100,8 @@ func (o *experiment) run(ctx context.Context) error {
 			},
 		},
 		{
-			name: "cleanup",
+			name:     "cleanup",
+			disabled: o.cleanupDisabled,
 			f: func(ctx context.Context) error {
 				t := time.NewTicker(time.Second)
 				defer t.Stop()
@@ -147,6 +149,10 @@ func (o *experiment) run(ctx context.Context) error {
 
 	g.Go(func() error {
 		for _, phase := range phases {
+			if phase.disabled {
+				logger.Info("skipping-phase", "name", phase.name)
+				continue
+			}
 			logger.Info("new-phase", "name", phase.name)
 			if err := phase.f(ctx); err != nil {
 				return err
