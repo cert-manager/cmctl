@@ -159,28 +159,6 @@ func (o *experiment) run(ctx context.Context) error {
 	return g.Wait()
 }
 
-const temporaryCertificate = `
------BEGIN CERTIFICATE-----
-MIIBfTCCASOgAwIBAgIQOgHofT3NsY90KvQxEupCszAKBggqhkjOPQQDAjAPMQ0w
-CwYDVQQDEwR0ZW1wMB4XDTI0MDQwNjE2MDczMFoXDTI0MDQwNzE2MDczMFowDzEN
-MAsGA1UEAxMEdGVtcDBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABNzsmKL1RUX4
-zBikji79KRpnPcb1l8ssOHIbhLkGfiJipSYKr41eYaUXrkfCAVwbWKsKvSYEpEkD
-RmcNf3cHnI+jYTBfMA4GA1UdDwEB/wQEAwIHgDAdBgNVHSUEFjAUBggrBgEFBQcD
-AQYIKwYBBQUHAwIwHQYDVR0OBBYEFG/+YatittonIJ9mUzadrDDixXKzMA8GA1Ud
-EQQIMAaCBHRlbXAwCgYIKoZIzj0EAwIDSAAwRQIgdb95NABe8wTgHR0B1mIQSLwE
-AdRgTrVXE4v9hQLcW+4CIQDuO+aX7yTekT1WMBzfmLAu3Ba6f/NZLRD2FafHVt9R
-Lg==
------END CERTIFICATE-----
-`
-
-const temporaryKey = `
------BEGIN EC PRIVATE KEY-----
-MHcCAQEEIBp8t4zSAlX3Z6g43Z/+AaNRzt5nnHI0wb9EzzSPsitDoAoGCCqGSM49
-AwEHoUQDQgAE3OyYovVFRfjMGKSOLv0pGmc9xvWXyyw4chuEuQZ+ImKlJgqvjV5h
-pReuR8IBXBtYqwq9JgSkSQNGZw1/dwecjw==
------END EC PRIVATE KEY-----
-`
-
 func (o *experiment) load(ctx context.Context) error {
 	ns := &corev1.Namespace{
 		ObjectMeta: metav1.ObjectMeta{
@@ -217,36 +195,19 @@ func (o *experiment) load(ctx context.Context) error {
 	}
 
 	for i := 0; i < 10; i++ {
-		secret := &corev1.Secret{
-			ObjectMeta: metav1.ObjectMeta{
-				Namespace: ns.Name,
-				Name:      fmt.Sprintf("app-%d", i),
-				Labels: map[string]string{
-					label: "true",
-				},
-			},
-			Type: corev1.SecretTypeTLS,
-			Data: map[string][]byte{
-				"tls.key": []byte(temporaryKey),
-				"tls.crt": []byte(temporaryCertificate),
-			},
-		}
-		// secret, err := o.KubeClient.CoreV1().Secrets(secret.Namespace).Create(ctx, secret, metav1.CreateOptions{})
-		// if err != nil {
-		// 	return err
-		// }
+		secretName := fmt.Sprintf("app-%d", i)
 
 		certificate := &cmapi.Certificate{
 			ObjectMeta: metav1.ObjectMeta{
-				Name:      secret.Name,
+				Name:      secretName,
 				Namespace: issuer.Namespace,
 				Labels: map[string]string{
 					label: "true",
 				},
 			},
 			Spec: cmapi.CertificateSpec{
-				CommonName: secret.Name,
-				SecretName: secret.Name,
+				CommonName: secretName,
+				SecretName: secretName,
 				PrivateKey: &cmapi.CertificatePrivateKey{
 					Algorithm:      cmapi.RSAKeyAlgorithm,
 					Size:           4096,
