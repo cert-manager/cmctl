@@ -3,6 +3,7 @@ package benchmark
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"sync"
 	"time"
 
@@ -82,13 +83,14 @@ func (o *measurements) secretSize(ctx context.Context) error {
 }
 
 func (o *measurements) certManagerResources(ctx context.Context) error {
+	metricsURLPath := fmt.Sprintf("/apis/metrics.k8s.io/v1beta1/namespaces/%s/pods", o.certManagerNamepsace)
 	c, err := o.RESTClientGetter.ToDiscoveryClient()
 	if err != nil {
 		return err
 	}
 	res := c.RESTClient().
 		Get().
-		RequestURI("/apis/metrics.k8s.io/v1beta1/namespaces/cert-manager/pods").
+		RequestURI(metricsURLPath).
 		Do(ctx)
 	if err := res.Error(); err != nil {
 		return err

@@ -67,7 +67,8 @@ type options struct {
 	genericiooptions.IOStreams
 	*factory.Factory
 
-	measurementInterval time.Duration
+	measurementInterval  time.Duration
+	certManagerNamepsace string
 
 	rampUpTargetCertificateCount int64
 	steadyStateDuration          time.Duration
@@ -98,6 +99,9 @@ func NewCmd(ctx context.Context, ioStreams genericiooptions.IOStreams) *cobra.Co
 
 	cmd.Flags().DurationVar(&options.measurementInterval, "benchmark.measurement-interval", time.Second*10,
 		"The interval between measurements.")
+
+	cmd.Flags().StringVar(&options.certManagerNamepsace, "benchmark.cert-manager-namespace", "cert-manager",
+		"The namespace where cert-manager is installed.")
 
 	cmd.Flags().Int64Var(&options.rampUpTargetCertificateCount, "benchmark.phase1.target-certificate-count", 2000,
 		"The number of Certificate resources to create during the ramp-up phase.")
