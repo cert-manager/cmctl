@@ -1,0 +1,8 @@
+config:
+  apiVersion: controller.config.cert-manager.io/v1alpha1
+  kind: ControllerConfiguration
+  kubernetesAPIQPS: 9000
+  kubernetesAPIBurst: 9000
+  featureGates:
+    AllBeta: true
+    ServerSideApply: true
