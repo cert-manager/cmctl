@@ -1,0 +1,5 @@
+config:
+  apiVersion: controller.config.cert-manager.io/v1alpha1
+  kind: ControllerConfiguration
+  kubernetesAPIQPS: 10000
+  kubernetesAPIBurst: 10000
