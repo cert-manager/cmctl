@@ -4,8 +4,8 @@ To run a benchmark experiment:
 
 ```sh
 export experiment_id=YYYY-MM-DD-INDEX
-mkdir experiment-${experiment_id}
-cd experiment-${experiment_id}
+mkdir -p experiment.${experiment_id}
+cd experiment.${experiment_id}
 
 touch values.yaml
 # edit values.yaml with the cert-manager parameters for the experiment
