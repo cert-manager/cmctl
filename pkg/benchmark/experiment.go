@@ -68,7 +68,7 @@ func (o *experiment) run(ctx context.Context) error {
 		{
 			name: "ramp-up",
 			f: func(ctx context.Context) error {
-				t := time.NewTicker(time.Second)
+				t := time.NewTicker(o.rampUpLoadInterval)
 				defer t.Stop()
 				for {
 					remaining := o.rampUpTargetCertificateCount - o.measurements.latest().CertificateCount
