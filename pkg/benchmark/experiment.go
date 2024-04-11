@@ -231,7 +231,7 @@ func (o *experiment) load(ctx context.Context) error {
 				CommonName: secretName,
 				SecretName: secretName,
 				PrivateKey: &cmapi.CertificatePrivateKey{
-					Algorithm:      cmapi.RSAKeyAlgorithm,
+					Algorithm:      cmapi.PrivateKeyAlgorithm(o.rampUpCertificateAlgorithm),
 					Size:           o.rampUpCertificateSize,
 					RotationPolicy: cmapi.RotationPolicyAlways,
 				},
