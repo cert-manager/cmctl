@@ -106,7 +106,8 @@ func (f *Factory) complete() error {
 	if err != nil {
 		return err
 	}
-
+	f.RESTConfig.QPS = -1
+	f.RESTConfig.Burst = -1
 	f.KubeClient, err = kubernetes.NewForConfig(f.RESTConfig)
 	if err != nil {
 		return err

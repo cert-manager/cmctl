@@ -216,6 +216,8 @@ func (o *experiment) load(ctx context.Context) error {
 		return err
 	}
 
+	g, gCTX := errgroup.WithContext(ctx)
+	g.SetLimit(10)
 	for i := 0; i < 10; i++ {
 		secretName := fmt.Sprintf("app-%d", i)
 
@@ -240,10 +242,11 @@ func (o *experiment) load(ctx context.Context) error {
 				},
 			},
 		}
-		_, err = o.CMClient.CertmanagerV1().Certificates(certificate.Namespace).Create(ctx, certificate, metav1.CreateOptions{})
-		if err != nil {
+		g.Go(func() error {
+			_, err = o.CMClient.CertmanagerV1().Certificates(certificate.Namespace).Create(gCTX, certificate, metav1.CreateOptions{})
 			return err
-		}
+		})
 	}
-	return nil
+	return g.Wait()
+
 }
