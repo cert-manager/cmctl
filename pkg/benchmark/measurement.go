@@ -72,28 +72,37 @@ func (o *measurements) certificateRequestCount(ctx context.Context) error {
 	return nil
 }
 
-func (o *measurements) secretCount(ctx context.Context) error {
-	l, err := o.KubeClient.CoreV1().Secrets("").List(ctx, metav1.ListOptions{Limit: 1})
-	if err != nil {
-		return err
-	}
-	if l.RemainingItemCount != nil {
-		o.SecretCount = *l.RemainingItemCount + 1
-	}
-	return nil
-}
+func (o *measurements) secretCountAndSize(ctx context.Context) error {
+	logger := logf.FromContext(ctx, "benchmark", "secretSize")
+	const limit = 2000
+	var (
+		size          int64
+		count         int64
+		continueToken string
+	)
 
-func (o *measurements) secretSize(ctx context.Context) error {
-	l, err := o.KubeClient.CoreV1().Secrets("").List(ctx, metav1.ListOptions{})
-	if err != nil {
-		return err
-	}
-	var size int64
-	for _, s := range l.Items {
-		for _, d := range s.Data {
-			size += int64(len(d))
+	for {
+		logger.V(3).Info("page", "size", size, "continue", continueToken)
+		l, err := o.KubeClient.CoreV1().Secrets("").List(ctx, metav1.ListOptions{
+			Limit:    limit,
+			Continue: continueToken,
+		})
+		if err != nil {
+			return err
 		}
+		itemsLen := len(l.Items)
+		count += int64(itemsLen)
+		for i := 0; i < itemsLen; i++ {
+			for j := range l.Items[i].Data {
+				size += int64(len(l.Items[i].Data[j]))
+			}
+		}
+		if len(l.Items) < limit {
+			break
+		}
+		continueToken = l.Continue
 	}
+	o.SecretCount = count
 	o.SecretSize = size
 	return nil
 }
@@ -156,8 +165,7 @@ func (o *measurements) new(ctx context.Context) error {
 	for _, f := range []func(context.Context) error{
 		o.certificateCount,
 		o.certificateRequestCount,
-		o.secretCount,
-		o.secretSize,
+		o.secretCountAndSize,
 		o.certManagerResources,
 	} {
 		f := f
