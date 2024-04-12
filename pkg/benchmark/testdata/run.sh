@@ -23,4 +23,5 @@ go run ../../../../ x benchmark \
    --benchmark.phase1.target-certificate-count=$BENCHMARK_PHASE1_TARGET_CERTIFICATE_COUNT \
    --benchmark.phase1.certificate-algorithm=$BENCHMARK_PHASE1_CERTIFICATE_ALGORITHM \
    --benchmark.phase1.certificate-size=$BENCHMARK_PHASE1_CERTIFICATE_SIZE \
+   --benchmark.phase3.duration=$BENCHMARK_PHASE3_DURATION \
     | tee experiment.${EXPERIMENT_ID}.json
