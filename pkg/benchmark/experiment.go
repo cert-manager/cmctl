@@ -93,7 +93,7 @@ func (o *experiment) run(ctx context.Context) error {
 				defer t.Stop()
 				for {
 					r := o.measurements.latest()
-					if r.CertificateRequestCount == r.CertificateCount {
+					if r.CertificateRequestCount >= r.CertificateCount {
 						return nil
 					}
 					select {
