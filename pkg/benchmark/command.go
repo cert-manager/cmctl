@@ -92,6 +92,7 @@ type options struct {
 	rampUpTargetCertificateCount int64
 	steadyStateDuration          time.Duration
 	cleanupDisabled              bool
+	cleanupInterval              time.Duration
 	finalMeasurementsDuration    time.Duration
 }
 
@@ -123,10 +124,10 @@ func NewCmd(ctx context.Context, ioStreams genericiooptions.IOStreams) *cobra.Co
 		"The namespace where cert-manager is installed.")
 
 	cmd.Flags().DurationVar(&options.rampUpLoadInterval, "benchmark.phase1.load-interval", time.Second,
-		"The private key algorithm of Certificate resources created during the ramp-up phase: RSA, ECDSA")
+		"The interval between new batches of new Certificates.")
 
 	cmd.Flags().StringVar(&options.rampUpCertificateAlgorithm, "benchmark.phase1.certificate-algorithm", "RSA",
-		"The private key algorithm of Certificate resources created during the ramp-up phase: RSA, ECDSA")
+		"The private key algorithm of Certificate resources created during the ramp-up phase: RSA, ECDSA.")
 
 	cmd.Flags().IntVar(&options.rampUpCertificateSize, "benchmark.phase1.certificate-size", 4096,
 		"The private key size of Certificate resources created during the ramp-up phase.")
@@ -139,6 +140,9 @@ func NewCmd(ctx context.Context, ioStreams genericiooptions.IOStreams) *cobra.Co
 
 	cmd.Flags().BoolVar(&options.cleanupDisabled, "benchmark.phase4.disabled", false,
 		"Disable the cleanup phase.")
+
+	cmd.Flags().DurationVar(&options.cleanupInterval, "benchmark.phase4.cleanup-interval", time.Second,
+		"The interval between deletion of batches of namespaces.")
 
 	cmd.Flags().DurationVar(&options.finalMeasurementsDuration, "benchmark.phase5.duration", time.Minute*2,
 		"The duration of the final-measurements phase.")

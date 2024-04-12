@@ -24,4 +24,5 @@ go run ../../../../ x benchmark \
    --benchmark.phase1.certificate-algorithm=$BENCHMARK_PHASE1_CERTIFICATE_ALGORITHM \
    --benchmark.phase1.certificate-size=$BENCHMARK_PHASE1_CERTIFICATE_SIZE \
    --benchmark.phase3.duration=$BENCHMARK_PHASE3_DURATION \
-    | tee experiment.${EXPERIMENT_ID}.json
+   --benchmark.phase4.cleanup-interval=$BENCHMARK_PHASE4_CLEANUP_INTERVAL \
+    | tee -a experiment.${EXPERIMENT_ID}.json

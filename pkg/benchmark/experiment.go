@@ -119,16 +119,15 @@ func (o *experiment) run(ctx context.Context) error {
 			name:     "cleanup",
 			disabled: o.cleanupDisabled,
 			f: func(ctx context.Context) error {
-				t := time.NewTicker(time.Second)
+				t := time.NewTicker(o.cleanupInterval)
 				defer t.Stop()
 				for {
 					r := o.measurements.latest()
 					if r.CertificateCount == 0 {
 						return nil
 					}
-
 					nsList, err := o.KubeClient.CoreV1().Namespaces().List(ctx, metav1.ListOptions{
-						Limit:         10,
+						Limit:         100,
 						LabelSelector: fmt.Sprintf("%s=true", label),
 					})
 					if err != nil {
