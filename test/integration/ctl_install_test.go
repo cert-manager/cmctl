@@ -27,10 +27,10 @@ import (
 	"time"
 
 	"github.com/sergi/go-diff/diffmatchpatch"
+	logsapi "k8s.io/component-base/logs/api/v1"
 
 	"github.com/cert-manager/cmctl/v2/cmd"
 	"github.com/cert-manager/cmctl/v2/test/integration/install_framework"
-	logsapi "k8s.io/component-base/logs/api/v1"
 )
 
 func TestCtlInstall(t *testing.T) {
@@ -148,7 +148,9 @@ func executeCmctlAndCheckOutput(
 	expErr bool,
 	expOutput string,
 ) {
-	logsapi.ResetForTest(nil)
+	if err := logsapi.ResetForTest(nil); err != nil {
+		t.Fatal(err)
+	}
 
 	executeAndCheckOutput(t, func(stdin io.Reader, stdout io.Writer) error {
 		cmd := cmd.NewCertManagerCtlCommand(ctx, stdin, stdout, stdout)

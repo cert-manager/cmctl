@@ -21,6 +21,10 @@ import (
 	"testing"
 	"time"
 
+	cmclient "github.com/cert-manager/cert-manager/pkg/client/clientset/versioned"
+	certmgrscheme "github.com/cert-manager/cert-manager/pkg/client/clientset/versioned/scheme"
+	cminformers "github.com/cert-manager/cert-manager/pkg/client/informers/externalversions"
+	controllerpkg "github.com/cert-manager/cert-manager/pkg/controller"
 	"golang.org/x/sync/errgroup"
 	corev1 "k8s.io/api/core/v1"
 	apiext "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
@@ -35,11 +39,6 @@ import (
 	apireg "k8s.io/kube-aggregator/pkg/apis/apiregistration/v1"
 	"k8s.io/kubectl/pkg/util/openapi"
 	gwapi "sigs.k8s.io/gateway-api/apis/v1"
-
-	cmclient "github.com/cert-manager/cert-manager/pkg/client/clientset/versioned"
-	certmgrscheme "github.com/cert-manager/cert-manager/pkg/client/clientset/versioned/scheme"
-	cminformers "github.com/cert-manager/cert-manager/pkg/client/informers/externalversions"
-	controllerpkg "github.com/cert-manager/cert-manager/pkg/controller"
 )
 
 func NewEventRecorder(t *testing.T, scheme *runtime.Scheme) record.EventRecorder {
@@ -66,11 +65,17 @@ func NewClients(t *testing.T, config *rest.Config) (kubernetes.Interface, cmclie
 	cmFactory := cminformers.NewSharedInformerFactory(cmCl, 0)
 
 	scheme := runtime.NewScheme()
-	kscheme.AddToScheme(scheme)
-	certmgrscheme.AddToScheme(scheme)
-	apiext.AddToScheme(scheme)
-	apireg.AddToScheme(scheme)
-	gwapi.AddToScheme(scheme)
+	for _, err := range []error{
+		kscheme.AddToScheme(scheme),
+		certmgrscheme.AddToScheme(scheme),
+		apiext.AddToScheme(scheme),
+		apireg.AddToScheme(scheme),
+		gwapi.AddToScheme(scheme),
+	} {
+		if err != nil {
+			t.Fatal(err)
+		}
+	}
 
 	return cl, cmCl, cmFactory, scheme
 }

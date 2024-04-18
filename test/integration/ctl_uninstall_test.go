@@ -24,10 +24,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/cert-manager/cmctl/v2/test/integration/install_framework"
 	"github.com/stretchr/testify/require"
 	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset/typed/apiextensions/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+
+	"github.com/cert-manager/cmctl/v2/test/integration/install_framework"
 )
 
 func TestCtlUninstall(t *testing.T) {

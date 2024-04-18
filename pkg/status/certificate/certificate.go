@@ -22,6 +22,11 @@ import (
 	"fmt"
 	"time"
 
+	cmacme "github.com/cert-manager/cert-manager/pkg/apis/acme/v1"
+	cmapi "github.com/cert-manager/cert-manager/pkg/apis/certmanager/v1"
+	cmclient "github.com/cert-manager/cert-manager/pkg/client/clientset/versioned"
+	"github.com/cert-manager/cert-manager/pkg/ctl"
+	"github.com/cert-manager/cert-manager/pkg/util/predicate"
 	"github.com/spf13/cobra"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -31,11 +36,6 @@ import (
 	"k8s.io/kubectl/pkg/util/i18n"
 	"k8s.io/kubectl/pkg/util/templates"
 
-	cmacme "github.com/cert-manager/cert-manager/pkg/apis/acme/v1"
-	cmapi "github.com/cert-manager/cert-manager/pkg/apis/certmanager/v1"
-	cmclient "github.com/cert-manager/cert-manager/pkg/client/clientset/versioned"
-	"github.com/cert-manager/cert-manager/pkg/ctl"
-	"github.com/cert-manager/cert-manager/pkg/util/predicate"
 	"github.com/cert-manager/cmctl/v2/pkg/build"
 	"github.com/cert-manager/cmctl/v2/pkg/factory"
 )
@@ -127,7 +127,7 @@ func (o *Options) Run(ctx context.Context, args []string) error {
 	// Build status of Certificate with data gathered
 	status := StatusFromResources(data)
 
-	fmt.Fprintf(o.Out, status.String())
+	fmt.Fprint(o.Out, status.String())
 
 	return nil
 }
@@ -315,11 +315,12 @@ func findMatchingCR(cmClient cmclient.Interface, ctx context.Context, crt *cmapi
 		}
 	}
 
-	if len(possibleMatches) < 1 {
+	switch {
+	case len(possibleMatches) < 1:
 		return nil, nil
-	} else if len(possibleMatches) == 1 {
+	case len(possibleMatches) == 1:
 		return possibleMatches[0], nil
-	} else {
+	default:
 		return nil, errors.New("found multiple certificate requests with expected revision and owner")
 	}
 }
@@ -342,11 +343,12 @@ func findMatchingOrder(cmClient cmclient.Interface, ctx context.Context, req *cm
 		}
 	}
 
-	if len(possibleMatches) < 1 {
+	switch {
+	case len(possibleMatches) < 1:
 		return nil, nil
-	} else if len(possibleMatches) == 1 {
+	case len(possibleMatches) == 1:
 		return possibleMatches[0], nil
-	} else {
+	default:
 		return nil, fmt.Errorf("found multiple orders owned by CertificateRequest %s", req.Name)
 	}
 }
@@ -357,17 +359,18 @@ func getGenericIssuer(cmClient cmclient.Interface, ctx context.Context, crt *cma
 		issuerKind = "Issuer"
 	}
 
-	if crt.Spec.IssuerRef.Group != "cert-manager.io" && crt.Spec.IssuerRef.Group != "" {
+	switch {
+	case crt.Spec.IssuerRef.Group != "cert-manager.io" && crt.Spec.IssuerRef.Group != "":
 		// TODO: Support Issuers/ClusterIssuers from other groups as well
 		return nil, "", fmt.Errorf("The %s %q is not of the group cert-manager.io, this command currently does not support third party issuers.\nTo get more information about %q, try 'kubectl describe'\n",
 			issuerKind, crt.Spec.IssuerRef.Name, crt.Spec.IssuerRef.Name)
-	} else if issuerKind == "Issuer" {
+	case issuerKind == "Issuer":
 		issuer, issuerErr := cmClient.CertmanagerV1().Issuers(crt.Namespace).Get(ctx, crt.Spec.IssuerRef.Name, metav1.GetOptions{})
 		if issuerErr != nil {
 			issuerErr = fmt.Errorf("error when getting Issuer: %v\n", issuerErr)
 		}
 		return issuer, issuerKind, issuerErr
-	} else {
+	default:
 		// ClusterIssuer
 		clusterIssuer, issuerErr := cmClient.CertmanagerV1().ClusterIssuers().Get(ctx, crt.Spec.IssuerRef.Name, metav1.GetOptions{})
 		if issuerErr != nil {

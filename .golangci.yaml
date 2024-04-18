@@ -1,23 +1,8 @@
 issues:
   exclude-rules:
     - linters:
-        - errcheck
-        - forbidigo
-        - gci
-        - gocritic
         - gosec
-        - misspell
-        - unparam
-        - unused
-        - nilerr
         - nilnil
-        - staticcheck
-        - dupword
-        - noctx
-        - predeclared
-        - unconvert
-        - usestdlibvars
-        - gosimple
       text: ".*"
 linters:
   # Explicitly define all enabled linters

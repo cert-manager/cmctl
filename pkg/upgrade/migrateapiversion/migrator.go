@@ -22,14 +22,13 @@ import (
 	"io"
 	"time"
 
+	apiext "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/util/sets"
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/client-go/util/retry"
-
-	apiext "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -190,7 +189,7 @@ func (m *Migrator) migrateResourcesForCRD(ctx context.Context, crd *apiext.Custo
 		}
 	}
 	// add 500ms to the duration to ensure we always round up
-	duration := time.Now().Sub(startTime) + (time.Millisecond * 500)
+	duration := time.Since(startTime) + (time.Millisecond * 500)
 	fmt.Fprintf(m.Out, " Successfully migrated %d %s objects in %s\n", len(list.Items), crd.Spec.Names.Kind, duration.Round(time.Second))
 	return nil
 }
@@ -245,9 +244,9 @@ func storageVersionForCRD(crd *apiext.CustomResourceDefinition) string {
 
 // storedVersionsAdded returns a list of any versions added to the `status.storedVersions` field on
 // a CRD resource.
-func storedVersionsAdded(old, new *apiext.CustomResourceDefinition) sets.Set[string] {
-	oldStoredVersions := sets.New[string](old.Status.StoredVersions...)
-	newStoredVersions := sets.New[string](new.Status.StoredVersions...)
+func storedVersionsAdded(oldCRD, newCRD *apiext.CustomResourceDefinition) sets.Set[string] {
+	oldStoredVersions := sets.New[string](oldCRD.Status.StoredVersions...)
+	newStoredVersions := sets.New[string](newCRD.Status.StoredVersions...)
 	return newStoredVersions.Difference(oldStoredVersions)
 }
 

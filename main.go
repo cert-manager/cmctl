@@ -23,10 +23,10 @@ import (
 	"runtime"
 	"strings"
 
+	logf "github.com/cert-manager/cert-manager/pkg/logs"
 	cmdutil "k8s.io/kubectl/pkg/cmd/util"
 	ctrl "sigs.k8s.io/controller-runtime"
 
-	logf "github.com/cert-manager/cert-manager/pkg/logs"
 	ctlcmd "github.com/cert-manager/cmctl/v2/cmd"
 	"github.com/cert-manager/cmctl/v2/internal/util"
 )

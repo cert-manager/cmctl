@@ -46,10 +46,6 @@ type Version struct {
 	Sources map[string]string `json:"sources"`
 }
 
-func shouldReturn(err error) bool {
-	return (err == nil) || (!errors.Is(err, ErrVersionNotDetected))
-}
-
 // Interface is used to check what cert-manager version is installed
 type Interface interface {
 	Version(context.Context) (*Version, error)
@@ -127,7 +123,7 @@ func (o *VersionChecker) Version(ctx context.Context) (*Version, error) {
 		// Display both.
 		err = fmt.Errorf("%v: %v", detectionError, err)
 	} else if detectionError != nil {
-		// An error occured while trying to reduce the found versions to 1 version
+		// An error occurred while trying to reduce the found versions to 1 version
 		err = detectionError
 	}
 
