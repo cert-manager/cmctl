@@ -308,9 +308,8 @@ func findMatchingCR(cmClient cmclient.Interface, ctx context.Context, crt *cmapi
 		nextRevision = *crt.Status.Revision + 1
 	}
 	for _, req := range reqs.Items {
-		// #nosec G601 -- False positive. See https://github.com/golang/go/discussions/56010
-		if predicate.CertificateRequestRevision(nextRevision)(&req) &&
-			predicate.ResourceOwnedBy(crt)(&req) {
+		if predicate.CertificateRequestRevision(nextRevision)(&req) && /* #nosec G601 -- Pointer does not outlive function scope */
+			predicate.ResourceOwnedBy(crt)(&req) /* #nosec G601 -- Pointer does not outlive function scope */ {
 			possibleMatches = append(possibleMatches, req.DeepCopy())
 		}
 	}
@@ -337,8 +336,7 @@ func findMatchingOrder(cmClient cmclient.Interface, ctx context.Context, req *cm
 
 	possibleMatches := []*cmacme.Order{}
 	for _, order := range orders.Items {
-		// #nosec G601 -- False positive. See https://github.com/golang/go/discussions/56010
-		if predicate.ResourceOwnedBy(req)(&order) {
+		if predicate.ResourceOwnedBy(req)(&order) /* #nosec G601 -- Pointer does not outlive function scope */ {
 			possibleMatches = append(possibleMatches, order.DeepCopy())
 		}
 	}
@@ -390,8 +388,7 @@ func findMatchingChallenges(cmClient cmclient.Interface, ctx context.Context, or
 
 	possibleMatches := []*cmacme.Challenge{}
 	for _, challenge := range challenges.Items {
-		// #nosec G601 -- False positive. See https://github.com/golang/go/discussions/56010
-		if predicate.ResourceOwnedBy(order)(&challenge) {
+		if predicate.ResourceOwnedBy(order)(&challenge) /* #nosec G601 -- Pointer does not outlive function scope */ {
 			possibleMatches = append(possibleMatches, challenge.DeepCopy())
 		}
 	}

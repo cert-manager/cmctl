@@ -345,7 +345,7 @@ func (secretStatus *SecretStatus) String() string {
 		return secretStatus.Error.Error()
 	}
 
-	secretFormat := `Secret:
+	detailsFormat := `Secret:
   Name: %s
   Issuer Country: %s
   Issuer Organisation: %s
@@ -363,7 +363,7 @@ func (secretStatus *SecretStatus) String() string {
 	if err != nil {
 		extKeyUsageString = err.Error()
 	}
-	output := fmt.Sprintf(secretFormat, secretStatus.Name, strings.Join(secretStatus.IssuerCountry, ", "),
+	output := fmt.Sprintf(detailsFormat, secretStatus.Name, strings.Join(secretStatus.IssuerCountry, ", "),
 		strings.Join(secretStatus.IssuerOrganisation, ", "),
 		secretStatus.IssuerCommonName, keyUsageToString(secretStatus.KeyUsage),
 		extKeyUsageString, secretStatus.PublicKeyAlgorithm, secretStatus.SignatureAlgorithm,

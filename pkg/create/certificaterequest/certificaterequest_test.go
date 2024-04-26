@@ -206,7 +206,7 @@ spec:
 
 	for name, test := range tests {
 		t.Run(name, func(t *testing.T) {
-			if err := os.WriteFile("testfile.yaml", []byte(test.inputFileContent), 0644); err != nil {
+			if err := os.WriteFile("testfile.yaml", []byte(test.inputFileContent), 0600); err != nil {
 				t.Fatalf("error creating test file %#v", err)
 			}
 			defer os.Remove("testfile.yaml")
