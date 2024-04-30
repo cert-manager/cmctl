@@ -29,16 +29,20 @@ import (
 
 	ctlcmd "github.com/cert-manager/cmctl/v2/cmd"
 	"github.com/cert-manager/cmctl/v2/internal/util"
+	"github.com/cert-manager/cmctl/v2/pkg/build"
 )
 
 func main() {
 	ctx, exit := util.SetupExitHandler(context.Background(), util.AlwaysErrCode)
 	defer exit() // This function might call os.Exit, so defer last
 
+	ctlName, isKubectlPlugin := build.DetectCtlInfo(os.Args)
+
 	logf.InitLogs()
 	defer logf.FlushLogs()
 	ctrl.SetLogger(logf.Log)
-	ctx = logf.NewContext(ctx, logf.Log, "cmctl")
+	ctx = logf.NewContext(ctx, logf.Log, ctlName)
+	ctx = build.WithCtlInfo(ctx, ctlName, isKubectlPlugin)
 
 	// In cmctl, we are using cmdutil.CheckErr, a kubectl utility function that creates human readable
 	// error messages from errors. By default, this function will call os.Exit(1) if it receives an error.

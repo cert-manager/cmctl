@@ -18,7 +18,6 @@ package commands
 
 import (
 	"context"
-	"strings"
 
 	"github.com/spf13/cobra"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
@@ -36,11 +35,6 @@ import (
 	"github.com/cert-manager/cmctl/v2/pkg/upgrade"
 	"github.com/cert-manager/cmctl/v2/pkg/version"
 )
-
-// registerCompletion gates whether the completion command is registered.
-// Specifically useful when building the CLI as a kubectl plugin which does not
-// support completion.
-var registerCompletion = "false"
 
 type RegisterCommandFunc func(context.Context, genericclioptions.IOStreams) *cobra.Command
 
@@ -61,10 +55,8 @@ func Commands() []RegisterCommandFunc {
 
 		// Experimental features
 		experimental.NewCmdExperimental,
-	}
 
-	if strings.ToLower(registerCompletion) == "true" {
-		cmds = append(cmds, completion.NewCmdCompletion)
+		completion.NewCmdCompletion,
 	}
 
 	return cmds

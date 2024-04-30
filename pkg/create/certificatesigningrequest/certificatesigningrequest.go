@@ -40,33 +40,10 @@ import (
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"k8s.io/cli-runtime/pkg/resource"
 	"k8s.io/client-go/discovery"
-	"k8s.io/kubectl/pkg/util/i18n"
 	"k8s.io/kubectl/pkg/util/templates"
 
 	"github.com/cert-manager/cmctl/v2/pkg/build"
 	"github.com/cert-manager/cmctl/v2/pkg/factory"
-)
-
-var (
-	long = templates.LongDesc(i18n.T(`
-Experimental. Only supported for Kubernetes versions 1.19+. Requires
-cert-manager versions 1.4+ with experimental controllers enabled.
-
-Create a new CertificateSigningRequest resource based on a Certificate resource, by generating a private key locally and create a 'certificate signing request' to be submitted to a cert-manager Issuer.`))
-
-	example = templates.Examples(i18n.T(build.WithTemplate(`
-# Create a CertificateSigningRequest with the name 'my-csr', saving the private key in a file named 'my-cr.key'.
-{{.BuildName}} x create certificatesigningrequest my-csr --from-certificate-file my-certificate.yaml
-
-# Create a CertificateSigningRequest and store private key in file 'new.key'.
-{{.BuildName}} x create certificatesigningrequest my-csr --from-certificate-file my-certificate.yaml --output-key-file new.key
-
-# Create a CertificateSigningRequest, wait for it to be signed for up to 5 minutes (default) and store the x509 certificate in file 'new.crt'.
-{{.BuildName}} x create csr my-cr -f my-certificate.yaml -c new.crt -w
-
-# Create a CertificateSigningRequest, wait for it to be signed for up to 20 minutes and store the x509 certificate in file 'my-cr.crt'.
-{{.BuildName}} x create csr my-cr --from-certificate-file my-certificate.yaml --fetch-certificate --timeout 20m
-`)))
 )
 
 var (
@@ -118,11 +95,27 @@ func NewCmdCreateCSR(setupCtx context.Context, ioStreams genericclioptions.IOStr
 	o := NewOptions(ioStreams)
 
 	cmd := &cobra.Command{
-		Use:               "certificatesigningrequest",
-		Aliases:           []string{"csr"},
-		Short:             "Create a Kubernetes CertificateSigningRequest resource, using a Certificate resource as a template",
-		Long:              long,
-		Example:           example,
+		Use:     "certificatesigningrequest",
+		Aliases: []string{"csr"},
+		Short:   "Create a Kubernetes CertificateSigningRequest resource, using a Certificate resource as a template",
+		Long: templates.LongDesc(`
+Experimental. Only supported for Kubernetes versions 1.19+. Requires
+cert-manager versions 1.4+ with experimental controllers enabled.
+
+Create a new CertificateSigningRequest resource based on a Certificate resource, by generating a private key locally and create a 'certificate signing request' to be submitted to a cert-manager Issuer.`),
+		Example: templates.Examples(build.WithTemplate(setupCtx, `
+# Create a CertificateSigningRequest with the name 'my-csr', saving the private key in a file named 'my-cr.key'.
+{{.BuildName}} x create certificatesigningrequest my-csr --from-certificate-file my-certificate.yaml
+
+# Create a CertificateSigningRequest and store private key in file 'new.key'.
+{{.BuildName}} x create certificatesigningrequest my-csr --from-certificate-file my-certificate.yaml --output-key-file new.key
+
+# Create a CertificateSigningRequest, wait for it to be signed for up to 5 minutes (default) and store the x509 certificate in file 'new.crt'.
+{{.BuildName}} x create csr my-cr -f my-certificate.yaml -c new.crt -w
+
+# Create a CertificateSigningRequest, wait for it to be signed for up to 20 minutes and store the x509 certificate in file 'my-cr.crt'.
+{{.BuildName}} x create csr my-cr --from-certificate-file my-certificate.yaml --fetch-certificate --timeout 20m
+`)),
 		ValidArgsFunction: factory.ValidArgsListCertificateSigningRequests(&o.Factory),
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			return o.Validate(args)

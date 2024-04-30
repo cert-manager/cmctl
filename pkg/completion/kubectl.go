@@ -18,6 +18,7 @@ package completion
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/spf13/cobra"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
@@ -25,23 +26,20 @@ import (
 	"github.com/cert-manager/cmctl/v2/pkg/build"
 )
 
-func newCmdCompletionBash(setupCtx context.Context, ioStreams genericclioptions.IOStreams) *cobra.Command {
+func newCmdCompletionKubectl(setupCtx context.Context, ioStreams genericclioptions.IOStreams) *cobra.Command {
 	return &cobra.Command{
-		Use:   "bash",
-		Short: "Generate cert-manager CLI scripts for a Bash shell",
+		Use:   "kubectl",
+		Short: "Generate cert-manager CLI scripts for Kubectl",
 		Long: build.WithTemplate(setupCtx, `To load completions:
-Bash:
-  $ source <({{.BuildName}} completion bash)
-  # To load completions for each session, execute once:
-  # Linux:
-  $ {{.BuildName}} completion bash > /etc/bash_completion.d/{{.BuildName}}
-
-  # macOS:
-  $ {{.BuildName}} completion bash > /usr/local/etc/bash_completion.d/{{.BuildName}}
+$ {{.BuildName}} completion kubectl > kubectl_complete-cert_manager
+$ sudo install kubectl_complete-cert_manager /usr/local/bin
 `),
 		DisableFlagsInUseLine: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return cmd.Root().GenBashCompletion(ioStreams.Out)
+			_, err := fmt.Fprint(ioStreams.Out, `#!/usr/bin/env sh
+kubectl cert-manager __complete "$@"
+`)
+			return err
 		},
 	}
 }

@@ -28,7 +28,6 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
-	"k8s.io/kubectl/pkg/util/i18n"
 	"k8s.io/kubectl/pkg/util/templates"
 
 	cmcmdutil "github.com/cert-manager/cmctl/v2/internal/util"
@@ -51,7 +50,7 @@ type Options struct {
 	*factory.Factory
 }
 
-var checkApiDesc = templates.LongDesc(i18n.T(`
+var checkApiDesc = templates.LongDesc((`
 This check attempts to perform a dry-run create of a cert-manager *v1alpha2*
 Certificate resource in order to verify that CRDs are installed and all the
 required webhooks are reachable by the K8S API server.

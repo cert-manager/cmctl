@@ -64,8 +64,8 @@ func NewOptions(ioStreams genericclioptions.IOStreams) *Options {
 	}
 }
 
-func versionLong() string {
-	return build.WithTemplate(`Print the cert-manager CLI version and the deployed cert-manager version.
+func versionLong(ctx context.Context) string {
+	return build.WithTemplate(ctx, `Print the cert-manager CLI version and the deployed cert-manager version.
 The CLI version is embedded in the binary and directly displayed. Determining
 the deployed cert-manager version is done by querying the cert-manger
 resources.  First, the tool looks at the labels of the cert-manager CRD
@@ -97,7 +97,7 @@ func NewCmdVersion(setupCtx context.Context, ioStreams genericclioptions.IOStrea
 	cmd := &cobra.Command{
 		Use:   "version",
 		Short: "Print the cert-manager CLI version and the deployed cert-manager version",
-		Long:  versionLong(),
+		Long:  versionLong(setupCtx),
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			if err := o.Validate(); err != nil {
 				return err

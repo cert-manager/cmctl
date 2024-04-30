@@ -53,8 +53,8 @@ const (
 	releaseName = "cert-manager"
 )
 
-func description() string {
-	return build.WithTemplate(`This command safely uninstalls any Helm-managed release of cert-manager.
+func description(ctx context.Context) string {
+	return build.WithTemplate(ctx, `This command safely uninstalls any Helm-managed release of cert-manager.
 
 This command is safe because it will not delete any of the cert-manager CRDs even if they were
 installed as part of the Helm release. This is to avoid accidentally deleting CRDs and custom resources.
@@ -86,7 +86,7 @@ func NewCmd(setupCtx context.Context, ioStreams genericclioptions.IOStreams) *co
 	cmd := &cobra.Command{
 		Use:   "uninstall",
 		Short: "Uninstall cert-manager",
-		Long:  description(),
+		Long:  description(setupCtx),
 		// nolint:contextcheck // False positive
 		RunE: func(cmd *cobra.Command, args []string) error {
 			res, err := run(cmd.Context(), options)

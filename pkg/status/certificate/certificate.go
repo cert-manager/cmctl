@@ -33,21 +33,10 @@ import (
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/reference"
-	"k8s.io/kubectl/pkg/util/i18n"
 	"k8s.io/kubectl/pkg/util/templates"
 
 	"github.com/cert-manager/cmctl/v2/pkg/build"
 	"github.com/cert-manager/cmctl/v2/pkg/factory"
-)
-
-var (
-	long = templates.LongDesc(i18n.T(`
-Get details about the current status of a cert-manager Certificate resource, including information on related resources like CertificateRequest or Order.`))
-
-	example = templates.Examples(i18n.T(build.WithTemplate(`
-# Query status of Certificate with name 'my-crt' in namespace 'my-namespace'
-{{.BuildName}} status certificate my-crt --namespace my-namespace
-`)))
 )
 
 // Options is a struct to support status certificate command
@@ -88,10 +77,14 @@ func NewCmdStatusCert(setupCtx context.Context, ioStreams genericclioptions.IOSt
 	o := NewOptions(ioStreams)
 
 	cmd := &cobra.Command{
-		Use:               "certificate",
-		Short:             "Get details about the current status of a cert-manager Certificate resource",
-		Long:              long,
-		Example:           example,
+		Use:   "certificate",
+		Short: "Get details about the current status of a cert-manager Certificate resource",
+		Long: templates.LongDesc(`
+Get details about the current status of a cert-manager Certificate resource, including information on related resources like CertificateRequest or Order.`),
+		Example: templates.Examples(build.WithTemplate(setupCtx, `
+# Query status of Certificate with name 'my-crt' in namespace 'my-namespace'
+{{.BuildName}} status certificate my-crt --namespace my-namespace
+`)),
 		ValidArgsFunction: factory.ValidArgsListCertificates(&o.Factory),
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			return o.Validate(args)

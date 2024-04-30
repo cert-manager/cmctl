@@ -21,6 +21,8 @@ import (
 
 	"github.com/spf13/cobra"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
+
+	"github.com/cert-manager/cmctl/v2/pkg/build"
 )
 
 func NewCmdCompletion(setupCtx context.Context, ioStreams genericclioptions.IOStreams) *cobra.Command {
@@ -30,10 +32,14 @@ func NewCmdCompletion(setupCtx context.Context, ioStreams genericclioptions.IOSt
 		Long:  "Generate completion for the cert-manager CLI so arguments and flags can be suggested and auto-completed",
 	}
 
-	cmds.AddCommand(newCmdCompletionBash(ioStreams))
-	cmds.AddCommand(newCmdCompletionZSH(ioStreams))
-	cmds.AddCommand(newCmdCompletionFish(ioStreams))
-	cmds.AddCommand(newCmdCompletionPowerShell(ioStreams))
+	if build.IsKubectlPlugin(setupCtx) {
+		cmds.AddCommand(newCmdCompletionKubectl(setupCtx, ioStreams))
+	} else {
+		cmds.AddCommand(newCmdCompletionBash(setupCtx, ioStreams))
+		cmds.AddCommand(newCmdCompletionZSH(setupCtx, ioStreams))
+		cmds.AddCommand(newCmdCompletionFish(setupCtx, ioStreams))
+		cmds.AddCommand(newCmdCompletionPowerShell(setupCtx, ioStreams))
+	}
 
 	return cmds
 }

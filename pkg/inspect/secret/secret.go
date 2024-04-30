@@ -34,7 +34,6 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
-	"k8s.io/kubectl/pkg/util/i18n"
 	"k8s.io/kubectl/pkg/util/templates"
 	k8sclock "k8s.io/utils/clock"
 
@@ -81,16 +80,6 @@ const debuggingTemplate = `Debugging:
 	CRL Status:	{{ .CRLStatus }}
 	OCSP Status:	{{ .OCSPStatus }}`
 
-var (
-	long = templates.LongDesc(i18n.T(`
-Get details about a kubernetes.io/tls typed secret`))
-
-	example = templates.Examples(i18n.T(build.WithTemplate(`
-# Query information about a secret with name 'my-crt' in namespace 'my-namespace'
-{{.BuildName}} inspect secret my-crt --namespace my-namespace
-`)))
-)
-
 // Options is a struct to support status certificate command
 type Options struct {
 	genericclioptions.IOStreams
@@ -109,10 +98,14 @@ func NewCmdInspectSecret(setupCtx context.Context, ioStreams genericclioptions.I
 	o := NewOptions(ioStreams)
 
 	cmd := &cobra.Command{
-		Use:               "secret",
-		Short:             "Get details about a kubernetes.io/tls typed secret",
-		Long:              long,
-		Example:           example,
+		Use:   "secret",
+		Short: "Get details about a kubernetes.io/tls typed secret",
+		Long: templates.LongDesc(`
+Get details about a kubernetes.io/tls typed secret`),
+		Example: templates.Examples(build.WithTemplate(setupCtx, `
+# Query information about a secret with name 'my-crt' in namespace 'my-namespace'
+{{.BuildName}} inspect secret my-crt --namespace my-namespace
+`)),
 		ValidArgsFunction: factory.ValidArgsListSecrets(&o.Factory),
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			return o.Validate(args)

@@ -14,23 +14,13 @@
 
 repo_name := github.com/cert-manager/cmctl/v2
 
-exe_build_names := cmctl kubectl_cert-manager
+exe_build_names := cmctl
 gorelease_file := .goreleaser.yml
 
 go_cmctl_main_dir := .
 go_cmctl_mod_dir := .
 go_cmctl_ldflags := \
-	-X $(repo_name)/pkg/build.name=cmctl \
-	-X $(repo_name)/pkg/build/commands.registerCompletion=true \
 	-X github.com/cert-manager/cert-manager/pkg/util.AppVersion=$(VERSION) \
 	-X github.com/cert-manager/cert-manager/pkg/util.AppGitCommit=$(GITCOMMIT)
-
-go_kubectl_cert-manager_main_dir := .
-go_kubectl_cert-manager_mod_dir := .
-go_kubectl_cert-manager_ldflags := \
-	-X $(repo_name)/pkg/build.name=kubectl \
-	-X $(repo_name)/pkg/build/commands.registerCompletion=false \
-	-X github.com/cert-manager/cert-manager/pkg/util/version.AppVersion=$(VERSION) \
-	-X github.com/cert-manager/cert-manager/pkg/util/version.AppGitCommit=$(GITCOMMIT)
 
 golangci_lint_config := .golangci.yaml

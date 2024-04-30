@@ -23,33 +23,11 @@ import (
 	apiextinstall "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/install"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
-	"k8s.io/kubectl/pkg/util/i18n"
 	"k8s.io/kubectl/pkg/util/templates"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	"github.com/cert-manager/cmctl/v2/pkg/build"
 	"github.com/cert-manager/cmctl/v2/pkg/factory"
-)
-
-var (
-	long = templates.LongDesc(i18n.T(`
-Ensures resources in your Kubernetes cluster are persisted in the v1 API version.
-
-This must be run prior to upgrading to ensure your cluster is ready to upgrade to cert-manager v1.7 and beyond.
-
-This command must be run with a cluster running cert-manager v1.0 or greater.`))
-
-	example = templates.Examples(i18n.T(build.WithTemplate(`
-# Check the cert-manager installation is ready to be upgraded to v1.7 and perform necessary migrations
-# to ensure that the kube-apiserver has stored only v1 API versions.
-{{.BuildName}} upgrade migrate-api-version
-
-# Force migrations to be run, even if the 'status.storedVersion' field on the CRDs does not contain
-# old, deprecated API versions.
-# This should only be used if you have manually edited/patched the CRDs already.
-# It will force a read and a write of ALL cert-manager resources unconditionally.
-{{.BuildName}} upgrade migrate-api-version --skip-stored-version-check
-`)))
 )
 
 // Options is a struct to support renew command
@@ -75,10 +53,25 @@ func NewOptions(ioStreams genericclioptions.IOStreams) *Options {
 func NewCmdMigrate(setupCtx context.Context, ioStreams genericclioptions.IOStreams) *cobra.Command {
 	o := NewOptions(ioStreams)
 	cmd := &cobra.Command{
-		Use:     "migrate-api-version",
-		Short:   "Migrate all existing persisted cert-manager resources to the v1 API version",
-		Long:    long,
-		Example: example,
+		Use:   "migrate-api-version",
+		Short: "Migrate all existing persisted cert-manager resources to the v1 API version",
+		Long: templates.LongDesc(`
+Ensures resources in your Kubernetes cluster are persisted in the v1 API version.
+
+This must be run prior to upgrading to ensure your cluster is ready to upgrade to cert-manager v1.7 and beyond.
+
+This command must be run with a cluster running cert-manager v1.0 or greater.`),
+		Example: templates.Examples(build.WithTemplate(setupCtx, `
+# Check the cert-manager installation is ready to be upgraded to v1.7 and perform necessary migrations
+# to ensure that the kube-apiserver has stored only v1 API versions.
+{{.BuildName}} upgrade migrate-api-version
+
+# Force migrations to be run, even if the 'status.storedVersion' field on the CRDs does not contain
+# old, deprecated API versions.
+# This should only be used if you have manually edited/patched the CRDs already.
+# It will force a read and a write of ALL cert-manager resources unconditionally.
+{{.BuildName}} upgrade migrate-api-version --skip-stored-version-check
+`)),
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			if err := o.Validate(args); err != nil {
 				return err
