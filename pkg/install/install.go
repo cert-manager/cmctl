@@ -90,6 +90,7 @@ func NewCmdInstall(setupCtx context.Context, ioStreams genericclioptions.IOStrea
 		Use:   "install",
 		Short: "Install cert-manager",
 		Long:  installDesc(),
+		// nolint:contextcheck // False positive
 		RunE: func(cmd *cobra.Command, args []string) error {
 			options.client.Namespace = settings.Namespace()
 
