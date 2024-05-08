@@ -86,6 +86,7 @@ func NewCmdMigrate(setupCtx context.Context, ioStreams genericclioptions.IOStrea
 
 			return o.Complete()
 		},
+		// nolint:contextcheck // False positive
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return o.Run(cmd.Context(), args)
 		},

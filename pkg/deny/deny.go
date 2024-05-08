@@ -79,6 +79,7 @@ func NewCmdDeny(setupCtx context.Context, ioStreams genericclioptions.IOStreams)
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			return o.Validate(args)
 		},
+		// nolint:contextcheck // False positive
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return o.Run(cmd.Context(), args)
 		},
