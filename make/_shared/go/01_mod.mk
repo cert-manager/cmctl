@@ -75,6 +75,7 @@ shared_generate_targets += generate-golangci-lint-config
 ## @category [shared] Generate/ Verify
 verify-golangci-lint: | $(NEEDS_GO) $(NEEDS_GOLANGCI-LINT) $(NEEDS_YQ) $(bin_dir)/scratch
 	@find . -name go.mod -not \( -path "./$(bin_dir)/*" -or -path "./make/_shared/*" \) \
+	    | xargs dirname \
 		| while read d; do \
 				target=$$(dirname $${d}); \
 				echo "Running '$(bin_dir)/tools/golangci-lint run --go $(VENDORED_GO_VERSION) -c $(CURDIR)/$(golangci_lint_config)' in directory '$${target}'"; \
@@ -98,6 +99,7 @@ fix-golangci-lint: | $(NEEDS_GOLANGCI-LINT) $(NEEDS_YQ) $(NEEDS_GCI) $(bin_dir)/
 		-s "dot" .
 
 	@find . -name go.mod -not \( -path "./$(bin_dir)/*" -or -path "./make/_shared/*" \) \
+		| xargs dirname \
 		| while read d; do \
 				target=$$(dirname $${d}); \
 				echo "Running '$(bin_dir)/tools/golangci-lint run --go $(VENDORED_GO_VERSION) -c $(CURDIR)/$(golangci_lint_config) --fix' in directory '$${target}'"; \
