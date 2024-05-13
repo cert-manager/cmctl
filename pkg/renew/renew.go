@@ -212,8 +212,7 @@ func (o *Options) Run(ctx context.Context, args []string) error {
 	}
 
 	for _, crt := range crts {
-		// #nosec G601 -- False positive. See https://github.com/golang/go/discussions/56010
-		if err := o.renewCertificate(ctx, &crt); err != nil {
+		if err := o.renewCertificate(ctx, &crt); /* #nosec G601 -- Pointer does not outlive function scope */ err != nil {
 			return err
 		}
 	}

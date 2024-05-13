@@ -290,7 +290,7 @@ func (inv *Inventory) write(manifestsPath string) error {
 		invBytes.WriteString("\n---\n")
 	}
 
-	if err := os.WriteFile(manifestsPath, invBytes.Bytes(), 0644); err != nil {
+	if err := os.WriteFile(manifestsPath, invBytes.Bytes(), 0600); err != nil {
 		return fmt.Errorf("failed to write inventory file: %v", err)
 	}
 
