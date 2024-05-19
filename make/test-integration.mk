@@ -30,17 +30,13 @@ generate-testgroup: | $(NEEDS_CONTROLLER-GEN) $(NEEDS_DEFAULTER-GEN) $(NEEDS_CON
 
 	$(DEFAULTER-GEN) \
 		--go-header-file=$(go_header_file) \
-		--input-dirs=./test/integration/testdata/apis/testgroup/v{1,2}/... \
-		--trim-path-prefix="$(repo_name)" \
-		-O=zz_generated.defaults \
-		--output-base=./
+		--output-file=zz_generated.defaults.go \
+		./test/integration/testdata/apis/testgroup/v{1,2}/...
 	
 	$(CONVERSION-GEN) \
 		--go-header-file=$(go_header_file) \
-		--input-dirs=./test/integration/testdata/apis/testgroup/v{1,2}/... \
-		--trim-path-prefix="$(repo_name)" \
-		-O=zz_generated.conversion \
-		--output-base=./
+		--output-file=zz_generated.conversion.go \
+		./test/integration/testdata/apis/testgroup/v{1,2}/...
 
 shared_generate_targets += generate-testgroup
 
