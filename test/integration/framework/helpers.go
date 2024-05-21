@@ -70,7 +70,7 @@ func NewClients(t *testing.T, config *rest.Config) (kubernetes.Interface, cmclie
 		certmgrscheme.AddToScheme(scheme),
 		apiext.AddToScheme(scheme),
 		apireg.AddToScheme(scheme),
-		gwapi.AddToScheme(scheme),
+		gwapi.Install(scheme),
 	} {
 		if err != nil {
 			t.Fatal(err)
