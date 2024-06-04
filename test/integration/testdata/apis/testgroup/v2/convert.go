@@ -19,8 +19,9 @@ package v2
 import (
 	"unsafe"
 
-	"github.com/cert-manager/cmctl/v2/test/integration/testdata/apis/testgroup"
 	"k8s.io/apimachinery/pkg/conversion"
+
+	"github.com/cert-manager/cmctl/v2/test/integration/testdata/apis/testgroup"
 )
 
 func Convert_v2_TestType_To_testgroup_TestType(in *TestType, out *testgroup.TestType, s conversion.Scope) error {
