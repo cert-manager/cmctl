@@ -28,6 +28,8 @@ import (
 	"text/template"
 	"time"
 
+	apiutil "github.com/cert-manager/cert-manager/pkg/api/util"
+	cmapi "github.com/cert-manager/cert-manager/pkg/apis/certmanager/v1"
 	cmmeta "github.com/cert-manager/cert-manager/pkg/apis/meta/v1"
 	"github.com/cert-manager/cert-manager/pkg/util/pki"
 	"github.com/spf13/cobra"
@@ -211,10 +213,18 @@ func describeValidFor(cert *x509.Certificate) (string, error) {
 		URIs:           printSlice(pki.URLsToString(cert.URIs)),
 		IPAddresses:    printSlice(pki.IPAddressesToString(cert.IPAddresses)),
 		EmailAddresses: printSlice(cert.EmailAddresses),
-		KeyUsage:       printKeyUsage(pki.BuildCertManagerKeyUsages(cert.KeyUsage, cert.ExtKeyUsage)),
+		KeyUsage:       printKeyUsage(buildCertManagerKeyUsages(cert.KeyUsage, cert.ExtKeyUsage)),
 	})
 
 	return b.String(), err
+}
+
+func buildCertManagerKeyUsages(ku x509.KeyUsage, eku []x509.ExtKeyUsage) []cmapi.KeyUsage {
+	var usages []cmapi.KeyUsage
+	usages = append(usages, apiutil.KeyUsageStrings(ku)...)
+	usages = append(usages, apiutil.ExtKeyUsageStrings(eku)...)
+
+	return usages
 }
 
 func describeValidityPeriod(cert *x509.Certificate) (string, error) {
