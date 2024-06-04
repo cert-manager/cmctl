@@ -17,7 +17,7 @@ limitations under the License.
 package v1
 
 import (
-	"github.com/cert-manager/cert-manager/pkg/webhook/handlers/testdata/apis/testgroup"
+	"github.com/cert-manager/cmctl/v2/test/integration/testdata/apis/testgroup"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"

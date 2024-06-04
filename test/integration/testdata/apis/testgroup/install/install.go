@@ -19,9 +19,9 @@ limitations under the License.
 package install
 
 import (
-	"github.com/cert-manager/cert-manager/pkg/webhook/handlers/testdata/apis/testgroup"
-	v1 "github.com/cert-manager/cert-manager/pkg/webhook/handlers/testdata/apis/testgroup/v1"
-	v2 "github.com/cert-manager/cert-manager/pkg/webhook/handlers/testdata/apis/testgroup/v2"
+	"github.com/cert-manager/cmctl/v2/test/integration/testdata/apis/testgroup"
+	v1 "github.com/cert-manager/cmctl/v2/test/integration/testdata/apis/testgroup/v1"
+	v2 "github.com/cert-manager/cmctl/v2/test/integration/testdata/apis/testgroup/v2"
 	"k8s.io/apimachinery/pkg/runtime"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 )

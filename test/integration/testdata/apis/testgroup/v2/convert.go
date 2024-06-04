@@ -19,7 +19,7 @@ package v2
 import (
 	"unsafe"
 
-	"github.com/cert-manager/cert-manager/pkg/webhook/handlers/testdata/apis/testgroup"
+	"github.com/cert-manager/cmctl/v2/test/integration/testdata/apis/testgroup"
 	"k8s.io/apimachinery/pkg/conversion"
 )
 

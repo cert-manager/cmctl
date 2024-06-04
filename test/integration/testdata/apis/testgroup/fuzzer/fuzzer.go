@@ -17,7 +17,7 @@ limitations under the License.
 package fuzzer
 
 import (
-	"github.com/cert-manager/cert-manager/pkg/webhook/handlers/testdata/apis/testgroup"
+	"github.com/cert-manager/cmctl/v2/test/integration/testdata/apis/testgroup"
 	fuzz "github.com/google/gofuzz"
 	runtimeserializer "k8s.io/apimachinery/pkg/runtime/serializer"
 	"k8s.io/utils/ptr"

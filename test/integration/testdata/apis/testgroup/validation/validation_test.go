@@ -20,8 +20,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/cert-manager/cert-manager/pkg/webhook/handlers/testdata/apis/testgroup"
-	v1 "github.com/cert-manager/cert-manager/pkg/webhook/handlers/testdata/apis/testgroup/v1"
+	"github.com/cert-manager/cmctl/v2/test/integration/testdata/apis/testgroup"
+	v1 "github.com/cert-manager/cmctl/v2/test/integration/testdata/apis/testgroup/v1"
 	"k8s.io/apimachinery/pkg/util/validation/field"
 )
 

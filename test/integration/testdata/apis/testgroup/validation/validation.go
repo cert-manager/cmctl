@@ -17,8 +17,8 @@ limitations under the License.
 package validation
 
 import (
-	"github.com/cert-manager/cert-manager/pkg/webhook/handlers/testdata/apis/testgroup"
-	v1 "github.com/cert-manager/cert-manager/pkg/webhook/handlers/testdata/apis/testgroup/v1"
+	"github.com/cert-manager/cmctl/v2/test/integration/testdata/apis/testgroup"
+	v1 "github.com/cert-manager/cmctl/v2/test/integration/testdata/apis/testgroup/v1"
 	admissionv1 "k8s.io/api/admission/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/validation/field"
