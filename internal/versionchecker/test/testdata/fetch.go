@@ -42,6 +42,10 @@ const downloadURL = "https://github.com/cert-manager/cert-manager/releases/downl
 
 const dummyVersion = "v99.99.99"
 
+var ignoredVersions = map[string]struct{}{
+	"v1.15.0-beta.0": {}, // This beta release was abandoned when we detected a bug in the release process.
+}
+
 func main() {
 	ctx := context.Background()
 	stdOut := os.Stdout
@@ -79,6 +83,11 @@ func main() {
 	if err != nil {
 		fmt.Fprintf(stdOut, "Error listing versions: %v\n", err)
 		os.Exit(1)
+	}
+
+	// Remove any ignored versions
+	for version := range ignoredVersions {
+		delete(remoteVersions, version)
 	}
 
 	// List the remote versions that are not in the inventory
