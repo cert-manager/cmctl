@@ -95,7 +95,7 @@ func StartInformersAndControllers(t *testing.T, cmFactory cminformers.SharedInfo
 		for _, c := range cs {
 			func(c controllerpkg.Interface) {
 				group.Go(func() error {
-					return c.Run(1, rootCtx.Done())
+					return c.Run(1, rootCtx)
 				})
 			}(c)
 		}
