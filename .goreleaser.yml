@@ -34,6 +34,10 @@ signs:
 archives:
   - name_template: "{{ .Binary }}_{{ .Os }}_{{ .Arch }}"
     format: binary
+    
+  - id: tar-gz-archives
+    name_template: "{{ .Binary }}_{{ .Os }}_{{ .Arch }}"
+    format: tar.gz
 
 release:
   draft: true
