@@ -50,12 +50,12 @@ type Options struct {
 	*factory.Factory
 }
 
-var checkApiDesc = templates.LongDesc((`
+var checkApiDesc = templates.LongDesc(`
 This check attempts to perform a dry-run create of a cert-manager *v1alpha2*
 Certificate resource in order to verify that CRDs are installed and all the
 required webhooks are reachable by the K8S API server.
 We use v1alpha2 API to ensure that the API server has also connected to the
-cert-manager conversion webhook.`))
+cert-manager conversion webhook.`)
 
 // NewOptions returns initialized Options
 func NewOptions(ioStreams genericclioptions.IOStreams) *Options {
