@@ -2,7 +2,6 @@
 # to this builds array (environment variables, flags, ...)
 builds:
   - id: cmctl
-  - id: kubectl_cert-manager
 
 # config the checksum filename
 # https://goreleaser.com/customization/checksum

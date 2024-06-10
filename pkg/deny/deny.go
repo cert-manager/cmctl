@@ -27,24 +27,10 @@ import (
 	"github.com/spf13/cobra"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
-	"k8s.io/kubectl/pkg/util/i18n"
 	"k8s.io/kubectl/pkg/util/templates"
 
 	"github.com/cert-manager/cmctl/v2/pkg/build"
 	"github.com/cert-manager/cmctl/v2/pkg/factory"
-)
-
-var (
-	example = templates.Examples(i18n.T(build.WithTemplate(`
-# Deny a CertificateRequest with the name 'my-cr'
-{{.BuildName}} deny my-cr
-
-# Deny a CertificateRequest in namespace default
-{{.BuildName}} deny my-cr --namespace default
-
-# Deny a CertificateRequest giving a custom reason and message
-{{.BuildName}} deny my-cr --reason "ManualDenial" --reason "Denied by PKI department"
-`)))
 )
 
 // Options is a struct to support create certificaterequest command
@@ -71,10 +57,19 @@ func NewCmdDeny(setupCtx context.Context, ioStreams genericclioptions.IOStreams)
 	o := NewOptions(ioStreams)
 
 	cmd := &cobra.Command{
-		Use:               "deny",
-		Short:             "Deny a CertificateRequest",
-		Long:              `Mark a CertificateRequest as Denied, so it may never be signed by a configured Issuer.`,
-		Example:           example,
+		Use:   "deny",
+		Short: "Deny a CertificateRequest",
+		Long:  `Mark a CertificateRequest as Denied, so it may never be signed by a configured Issuer.`,
+		Example: templates.Examples(build.WithTemplate(setupCtx, `
+# Deny a CertificateRequest with the name 'my-cr'
+{{.BuildName}} deny my-cr
+
+# Deny a CertificateRequest in namespace default
+{{.BuildName}} deny my-cr --namespace default
+
+# Deny a CertificateRequest giving a custom reason and message
+{{.BuildName}} deny my-cr --reason "ManualDenial" --reason "Denied by PKI department"
+`)),
 		ValidArgsFunction: factory.ValidArgsListCertificateRequests(&o.Factory),
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			return o.Validate(args)
@@ -87,7 +82,7 @@ func NewCmdDeny(setupCtx context.Context, ioStreams genericclioptions.IOStreams)
 
 	cmd.Flags().StringVar(&o.Reason, "reason", "KubectlCertManager",
 		"The reason to give as to what denied this CertificateRequest.")
-	cmd.Flags().StringVar(&o.Message, "message", fmt.Sprintf("manually denied by %q", build.Name()),
+	cmd.Flags().StringVar(&o.Message, "message", fmt.Sprintf("manually denied by %q", build.Name(setupCtx)),
 		"The message to give as to why this CertificateRequest was denied.")
 
 	o.Factory = factory.New(cmd)

@@ -17,17 +17,19 @@ limitations under the License.
 package completion
 
 import (
+	"context"
+
 	"github.com/spf13/cobra"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 
 	"github.com/cert-manager/cmctl/v2/pkg/build"
 )
 
-func newCmdCompletionZSH(ioStreams genericclioptions.IOStreams) *cobra.Command {
+func newCmdCompletionZSH(setupCtx context.Context, ioStreams genericclioptions.IOStreams) *cobra.Command {
 	return &cobra.Command{
 		Use:   "zsh",
 		Short: "Generation cert-manager CLI scripts for a ZSH shell",
-		Long: build.WithTemplate(`To load completions:
+		Long: build.WithTemplate(setupCtx, `To load completions:
   # If shell completion is not already enabled in your environment,
   # you will need to enable it.  You can execute the following once:
   $ echo "autoload -U compinit; compinit" >> ~/.zshrc

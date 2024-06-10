@@ -32,26 +32,10 @@ import (
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"k8s.io/client-go/kubernetes"
 	cmdutil "k8s.io/kubectl/pkg/cmd/util"
-	"k8s.io/kubectl/pkg/util/i18n"
 	"k8s.io/kubectl/pkg/util/templates"
 
 	"github.com/cert-manager/cmctl/v2/pkg/build"
 	"github.com/cert-manager/cmctl/v2/pkg/factory"
-)
-
-var (
-	long = templates.LongDesc(i18n.T(`
-Mark cert-manager Certificate resources for manual renewal.`))
-
-	example = templates.Examples(i18n.T(build.WithTemplate(`
-# Renew the Certificates named 'my-app' and 'vault' in the current context namespace.
-{{.BuildName}} renew my-app vault
-
-# Renew all Certificates in the 'kube-system' namespace.
-{{.BuildName}} renew --namespace kube-system --all
-
-# Renew all Certificates in all namespaces, provided those Certificates have the label 'app=my-service'
-{{.BuildName}} renew --all-namespaces -l app=my-service`)))
 )
 
 // Options is a struct to support renew command
@@ -75,10 +59,19 @@ func NewOptions(ioStreams genericclioptions.IOStreams) *Options {
 func NewCmdRenew(setupCtx context.Context, ioStreams genericclioptions.IOStreams) *cobra.Command {
 	o := NewOptions(ioStreams)
 	cmd := &cobra.Command{
-		Use:               "renew",
-		Short:             "Mark a Certificate for manual renewal",
-		Long:              long,
-		Example:           example,
+		Use:   "renew",
+		Short: "Mark a Certificate for manual renewal",
+		Long: templates.LongDesc(`
+Mark cert-manager Certificate resources for manual renewal.`),
+		Example: templates.Examples(build.WithTemplate(setupCtx, `
+# Renew the Certificates named 'my-app' and 'vault' in the current context namespace.
+{{.BuildName}} renew my-app vault
+
+# Renew all Certificates in the 'kube-system' namespace.
+{{.BuildName}} renew --namespace kube-system --all
+
+# Renew all Certificates in all namespaces, provided those Certificates have the label 'app=my-service'
+{{.BuildName}} renew --all-namespaces -l app=my-service`)),
 		ValidArgsFunction: factory.ValidArgsListCertificates(&o.Factory),
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			return o.Validate(cmd, args)

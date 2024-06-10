@@ -17,17 +17,19 @@ limitations under the License.
 package completion
 
 import (
+	"context"
+
 	"github.com/spf13/cobra"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 
 	"github.com/cert-manager/cmctl/v2/pkg/build"
 )
 
-func newCmdCompletionPowerShell(ioStreams genericclioptions.IOStreams) *cobra.Command {
+func newCmdCompletionPowerShell(setupCtx context.Context, ioStreams genericclioptions.IOStreams) *cobra.Command {
 	return &cobra.Command{
 		Use:   "powershell",
 		Short: "Generate cert-manager CLI scripts for a PowerShell shell",
-		Long: build.WithTemplate(`To load completions:
+		Long: build.WithTemplate(setupCtx, `To load completions:
   PS> {{.BuildName}} completion powershell | Out-String | Invoke-Expression
 
   # To load completions for every new session, run:

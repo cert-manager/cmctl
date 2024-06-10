@@ -27,24 +27,10 @@ import (
 	"github.com/spf13/cobra"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
-	"k8s.io/kubectl/pkg/util/i18n"
 	"k8s.io/kubectl/pkg/util/templates"
 
 	"github.com/cert-manager/cmctl/v2/pkg/build"
 	"github.com/cert-manager/cmctl/v2/pkg/factory"
-)
-
-var (
-	example = templates.Examples(i18n.T(build.WithTemplate(`
-# Approve a CertificateRequest with the name 'my-cr'
-{{.BuildName}} approve my-cr
-
-# Approve a CertificateRequest in namespace default
-{{.BuildName}} approve my-cr --namespace default
-
-# Approve a CertificateRequest giving a custom reason and message
-{{.BuildName}} approve my-cr --reason "ManualApproval" --reason "Approved by PKI department"
-`)))
 )
 
 // Options is a struct to support create certificaterequest command
@@ -71,10 +57,19 @@ func NewCmdApprove(setupCtx context.Context, ioStreams genericclioptions.IOStrea
 	o := newOptions(ioStreams)
 
 	cmd := &cobra.Command{
-		Use:               "approve",
-		Short:             "Approve a CertificateRequest",
-		Long:              `Mark a CertificateRequest as Approved, so it may be signed by a configured Issuer.`,
-		Example:           example,
+		Use:   "approve",
+		Short: "Approve a CertificateRequest",
+		Long:  `Mark a CertificateRequest as Approved, so it may be signed by a configured Issuer.`,
+		Example: templates.Examples(build.WithTemplate(setupCtx, `
+# Approve a CertificateRequest with the name 'my-cr'
+{{.BuildName}} approve my-cr
+
+# Approve a CertificateRequest in namespace default
+{{.BuildName}} approve my-cr --namespace default
+
+# Approve a CertificateRequest giving a custom reason and message
+{{.BuildName}} approve my-cr --reason "ManualApproval" --reason "Approved by PKI department"
+`)),
 		ValidArgsFunction: factory.ValidArgsListCertificateRequests(&o.Factory),
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			return o.Validate(args)
@@ -87,7 +82,7 @@ func NewCmdApprove(setupCtx context.Context, ioStreams genericclioptions.IOStrea
 
 	cmd.Flags().StringVar(&o.Reason, "reason", "KubectlCertManager",
 		"The reason to give as to what approved this CertificateRequest.")
-	cmd.Flags().StringVar(&o.Message, "message", fmt.Sprintf("manually approved by %q", build.Name()),
+	cmd.Flags().StringVar(&o.Message, "message", fmt.Sprintf("manually approved by %q", build.Name(setupCtx)),
 		"The message to give as to why this CertificateRequest was approved.")
 
 	o.Factory = factory.New(cmd)

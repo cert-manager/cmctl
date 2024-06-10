@@ -32,30 +32,9 @@ import (
 	"k8s.io/cli-runtime/pkg/printers"
 	"k8s.io/cli-runtime/pkg/resource"
 	cmdutil "k8s.io/kubectl/pkg/cmd/util"
-	"k8s.io/kubectl/pkg/util/i18n"
 	"k8s.io/kubectl/pkg/util/templates"
 
 	"github.com/cert-manager/cmctl/v2/pkg/build"
-)
-
-var (
-	example = templates.Examples(i18n.T(build.WithTemplate(`
-		# Convert 'cert.yaml' to latest version and print to stdout.
-		{{.BuildName}} convert -f cert.yaml
-
-		# Convert kustomize overlay under current directory to 'cert-manager.io/v1alpha3'
-		{{.BuildName}} convert -k . --output-version cert-manager.io/v1alpha3`)))
-
-	longDesc = templates.LongDesc(i18n.T(`
-Convert cert-manager config files between different API versions. Both YAML
-and JSON formats are accepted.
-
-The command takes filename, directory, or URL as input, and converts into the
-format of the version specified by --output-version flag. If target version is
-not specified or not supported, it will convert to the latest version
-
-The default output will be printed to stdout in YAML format. One can use -o option
-to change to output destination.`))
 )
 
 var (
@@ -88,10 +67,24 @@ func NewCmdConvert(setupCtx context.Context, ioStreams genericclioptions.IOStrea
 	o := NewOptions(ioStreams)
 
 	cmd := &cobra.Command{
-		Use:                   "convert",
-		Short:                 "Convert cert-manager config files between different API versions",
-		Long:                  longDesc,
-		Example:               example,
+		Use:   "convert",
+		Short: "Convert cert-manager config files between different API versions",
+		Long: templates.LongDesc(`
+Convert cert-manager config files between different API versions. Both YAML
+and JSON formats are accepted.
+
+The command takes filename, directory, or URL as input, and converts into the
+format of the version specified by --output-version flag. If target version is
+not specified or not supported, it will convert to the latest version
+
+The default output will be printed to stdout in YAML format. One can use -o option
+to change to output destination.`),
+		Example: templates.Examples(build.WithTemplate(setupCtx, `
+# Convert 'cert.yaml' to latest version and print to stdout.
+{{.BuildName}} convert -f cert.yaml
+
+# Convert kustomize overlay under current directory to 'cert-manager.io/v1alpha3'
+{{.BuildName}} convert -k . --output-version cert-manager.io/v1alpha3`)),
 		DisableFlagsInUseLine: true,
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			return o.Complete()

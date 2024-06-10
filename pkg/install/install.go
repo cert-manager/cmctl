@@ -54,8 +54,8 @@ const (
 	installCRDsFlagName = "installCRDs"
 )
 
-func installDesc() string {
-	return build.WithTemplate(`This command installs cert-manager. It uses the Helm libraries to do so.
+func installDesc(ctx context.Context) string {
+	return build.WithTemplate(ctx, `This command installs cert-manager. It uses the Helm libraries to do so.
 
 The latest published cert-manager chart in the "https://charts.jetstack.io" repo is used.
 Most of the features supported by 'helm install' are also supported by this command.
@@ -89,7 +89,7 @@ func NewCmdInstall(setupCtx context.Context, ioStreams genericclioptions.IOStrea
 	cmd := &cobra.Command{
 		Use:   "install",
 		Short: "Install cert-manager",
-		Long:  installDesc(),
+		Long:  installDesc(setupCtx),
 		// nolint:contextcheck // False positive
 		RunE: func(cmd *cobra.Command, args []string) error {
 			options.client.Namespace = settings.Namespace()

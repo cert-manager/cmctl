@@ -18,7 +18,6 @@ package cmd
 
 import (
 	"context"
-	"fmt"
 	"io"
 
 	logf "github.com/cert-manager/cert-manager/pkg/logs"
@@ -31,14 +30,18 @@ import (
 )
 
 func NewCertManagerCtlCommand(ctx context.Context, in io.Reader, out, err io.Writer) *cobra.Command {
-	ctx = logf.NewContext(ctx, logf.Log)
-
 	logOptions := logs.NewOptions()
 
 	cmds := &cobra.Command{
-		Use:   build.Name(),
+		Use: build.Name(ctx),
+		Annotations: map[string]string{
+			// For commands that have a space (eg. kubectl cert-manager), the name
+			// is not correctly determined based on just the Use field.
+			cobra.CommandDisplayNameAnnotation: build.Name(ctx),
+		},
+
 		Short: "cert-manager CLI tool to manage and configure cert-manager resources",
-		Long: build.WithTemplate(`
+		Long: build.WithTemplate(ctx, `
 {{.BuildName}} is a CLI tool manage and configure cert-manager resources for Kubernetes`),
 		CompletionOptions: cobra.CompletionOptions{
 			DisableDefaultCmd: true,
@@ -49,7 +52,6 @@ func NewCertManagerCtlCommand(ctx context.Context, in io.Reader, out, err io.Wri
 		SilenceErrors: true, // Errors are already logged when calling cmd.Execute()
 		SilenceUsage:  true, // Don't print usage when an error occurs
 	}
-	cmds.SetUsageTemplate(usageTemplate())
 
 	logf.AddFlagsNonDeprecated(logOptions, cmds.PersistentFlags())
 
@@ -59,29 +61,4 @@ func NewCertManagerCtlCommand(ctx context.Context, in io.Reader, out, err io.Wri
 	}
 
 	return cmds
-}
-
-func usageTemplate() string {
-	return fmt.Sprintf(`Usage:{{if .Runnable}} %s {{end}}{{if .HasAvailableSubCommands}} %s [command]{{end}}{{if gt (len .Aliases) 0}}
-
-Aliases:
-  {{.NameAndAliases}}{{end}}{{if .HasExample}}
-
-Examples:
-{{.Example}}{{end}}{{if .HasAvailableSubCommands}}
-
-Available Commands:{{range .Commands}}{{if (or .IsAvailableCommand (eq .Name "help"))}}
-  {{rpad .Name .NamePadding }} {{.Short}}{{end}}{{end}}{{end}}{{if .HasAvailableLocalFlags}}
-
-Flags:
-{{.LocalFlags.FlagUsages | trimTrailingWhitespaces}}{{end}}{{if .HasAvailableInheritedFlags}}
-
-Global Flags:
-{{.InheritedFlags.FlagUsages | trimTrailingWhitespaces}}{{end}}{{if .HasHelpSubCommands}}
-
-Additional help topics:{{range .Commands}}{{if .IsAdditionalHelpTopicCommand}}
-  {{rpad .CommandPath .CommandPathPadding}} {{.Short}}{{end}}{{end}}{{end}}{{if .HasAvailableSubCommands}}
-
-Use "%s [command] --help" for more information about a command.{{end}}
-`, build.Name(), build.Name(), build.Name())
 }

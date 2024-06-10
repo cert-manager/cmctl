@@ -36,33 +36,10 @@ import (
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"k8s.io/cli-runtime/pkg/resource"
-	"k8s.io/kubectl/pkg/util/i18n"
 	"k8s.io/kubectl/pkg/util/templates"
 
 	"github.com/cert-manager/cmctl/v2/pkg/build"
 	"github.com/cert-manager/cmctl/v2/pkg/factory"
-)
-
-var (
-	long = templates.LongDesc(i18n.T(`
-Create a new CertificateRequest resource based on a Certificate resource, by generating a private key locally and create a 'certificate signing request' to be submitted to a cert-manager Issuer.`))
-
-	example = templates.Examples(i18n.T(build.WithTemplate(`
-# Create a CertificateRequest with the name 'my-cr', saving the private key in a file named 'my-cr.key'.
-{{.BuildName}} create certificaterequest my-cr --from-certificate-file my-certificate.yaml
-
-# Create a CertificateRequest in namespace default, provided no conflict with namespace defined in file.
-{{.BuildName}} create certificaterequest my-cr --namespace default --from-certificate-file my-certificate.yaml
-
-# Create a CertificateRequest and store private key in file 'new.key'.
-{{.BuildName}} create certificaterequest my-cr --from-certificate-file my-certificate.yaml --output-key-file new.key
-
-# Create a CertificateRequest, wait for it to be signed for up to 5 minutes (default) and store the x509 certificate in file 'new.crt'.
-{{.BuildName}} create certificaterequest my-cr --from-certificate-file my-certificate.yaml --fetch-certificate --output-cert-file new.crt
-
-# Create a CertificateRequest, wait for it to be signed for up to 20 minutes and store the x509 certificate in file 'my-cr.crt'.
-{{.BuildName}} create certificaterequest my-cr --from-certificate-file my-certificate.yaml --fetch-certificate --timeout 20m
-`)))
 )
 
 var (
@@ -106,11 +83,27 @@ func NewCmdCreateCR(setupCtx context.Context, ioStreams genericclioptions.IOStre
 	o := NewOptions(ioStreams)
 
 	cmd := &cobra.Command{
-		Use:               "certificaterequest",
-		Aliases:           []string{"cr"},
-		Short:             "Create a cert-manager CertificateRequest resource, using a Certificate resource as a template",
-		Long:              long,
-		Example:           example,
+		Use:     "certificaterequest",
+		Aliases: []string{"cr"},
+		Short:   "Create a cert-manager CertificateRequest resource, using a Certificate resource as a template",
+		Long: templates.LongDesc(`
+Create a new CertificateRequest resource based on a Certificate resource, by generating a private key locally and create a 'certificate signing request' to be submitted to a cert-manager Issuer.`),
+		Example: templates.Examples(build.WithTemplate(setupCtx, `
+# Create a CertificateRequest with the name 'my-cr', saving the private key in a file named 'my-cr.key'.
+{{.BuildName}} create certificaterequest my-cr --from-certificate-file my-certificate.yaml
+
+# Create a CertificateRequest in namespace default, provided no conflict with namespace defined in file.
+{{.BuildName}} create certificaterequest my-cr --namespace default --from-certificate-file my-certificate.yaml
+
+# Create a CertificateRequest and store private key in file 'new.key'.
+{{.BuildName}} create certificaterequest my-cr --from-certificate-file my-certificate.yaml --output-key-file new.key
+
+# Create a CertificateRequest, wait for it to be signed for up to 5 minutes (default) and store the x509 certificate in file 'new.crt'.
+{{.BuildName}} create certificaterequest my-cr --from-certificate-file my-certificate.yaml --fetch-certificate --output-cert-file new.crt
+
+# Create a CertificateRequest, wait for it to be signed for up to 20 minutes and store the x509 certificate in file 'my-cr.crt'.
+{{.BuildName}} create certificaterequest my-cr --from-certificate-file my-certificate.yaml --fetch-certificate --timeout 20m
+`)),
 		ValidArgsFunction: factory.ValidArgsListCertificateRequests(&o.Factory),
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			return o.Validate(args)
