@@ -43,7 +43,8 @@ const downloadURL = "https://github.com/cert-manager/cert-manager/releases/downl
 const dummyVersion = "v99.99.99"
 
 var ignoredVersions = map[string]struct{}{
-	"v1.15.0-beta.0": {}, // This beta release was abandoned when we detected a bug in the release process.
+	"v1.15.0-beta.0":  {}, // This beta release was abandoned when we detected a bug in the release process.
+	"v1.15.2-alpha.0": {}, // This beta release was abandoned when we detected a bug in the release process.
 }
 
 func main() {
