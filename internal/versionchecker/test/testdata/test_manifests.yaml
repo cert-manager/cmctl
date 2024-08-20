@@ -1,4 +1,4 @@
-# [CHK_LATEST_VERSION]: v1.15.0
+# [CHK_LATEST_VERSION]: v1.15.3
 ---
 # [CHK_VERSIONS]: v1.0.0, v1.0.1, v1.0.2, v1.0.3, v1.0.4, v1.1.0-alpha.0, v1.1.0-alpha.1, v1.1.0, v1.1.1
 apiVersion: apiextensions.k8s.io/v1
@@ -6600,7 +6600,7 @@ spec:
           type: RuntimeDefault
       serviceAccountName: cert-manager-webhook
 ---
-# [CHK_VERSIONS]: v1.12.0-beta.1, v1.12.0-beta.2, v1.12.0, v1.12.1, v1.12.2, v1.12.3, v1.12.4, v1.12.5, v1.12.6, v1.12.7, v1.12.9, v1.12.10
+# [CHK_VERSIONS]: v1.12.0-beta.1, v1.12.0-beta.2, v1.12.0, v1.12.1, v1.12.2, v1.12.3, v1.12.4, v1.12.5, v1.12.6, v1.12.7, v1.12.9, v1.12.10, v1.12.11, v1.12.12, v1.12.13
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -9751,7 +9751,7 @@ spec:
           type: RuntimeDefault
       serviceAccountName: cert-manager-webhook
 ---
-# [CHK_VERSIONS]: v1.14.2, v1.14.3, v1.14.4, v1.14.5
+# [CHK_VERSIONS]: v1.14.2, v1.14.3, v1.14.4, v1.14.5, v1.14.6, v1.14.7
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -10160,7 +10160,7 @@ spec:
           type: RuntimeDefault
       serviceAccountName: cert-manager-webhook
 ---
-# [CHK_VERSIONS]: v1.15.0-alpha.0, v1.15.0-beta.1, v1.15.0-beta.2, v1.15.0
+# [CHK_VERSIONS]: v1.15.0-alpha.0, v1.15.0-beta.1, v1.15.0-beta.2, v1.15.0, v1.15.1, v1.15.2-alpha.1, v1.15.2, v1.15.3
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
