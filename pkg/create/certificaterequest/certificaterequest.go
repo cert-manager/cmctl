@@ -27,7 +27,6 @@ import (
 	apiutil "github.com/cert-manager/cert-manager/pkg/api/util"
 	cmapi "github.com/cert-manager/cert-manager/pkg/apis/certmanager/v1"
 	cmmeta "github.com/cert-manager/cert-manager/pkg/apis/meta/v1"
-	"github.com/cert-manager/cert-manager/pkg/ctl"
 	"github.com/cert-manager/cert-manager/pkg/util/pki"
 	"github.com/spf13/cobra"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -39,13 +38,14 @@ import (
 	"k8s.io/kubectl/pkg/util/templates"
 
 	"github.com/cert-manager/cmctl/v2/pkg/build"
+	"github.com/cert-manager/cmctl/v2/pkg/convert"
 	"github.com/cert-manager/cmctl/v2/pkg/factory"
 )
 
 var (
 	// Dedicated scheme used by the ctl tool that has the internal cert-manager types,
 	// and their conversion functions registered
-	scheme = ctl.Scheme
+	scheme = convert.Scheme
 )
 
 // Options is a struct to support create certificaterequest command

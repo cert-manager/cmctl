@@ -25,7 +25,6 @@ import (
 	cmacme "github.com/cert-manager/cert-manager/pkg/apis/acme/v1"
 	cmapi "github.com/cert-manager/cert-manager/pkg/apis/certmanager/v1"
 	cmclient "github.com/cert-manager/cert-manager/pkg/client/clientset/versioned"
-	"github.com/cert-manager/cert-manager/pkg/ctl"
 	"github.com/cert-manager/cert-manager/pkg/util/predicate"
 	"github.com/spf13/cobra"
 	corev1 "k8s.io/api/core/v1"
@@ -36,7 +35,14 @@ import (
 	"k8s.io/kubectl/pkg/util/templates"
 
 	"github.com/cert-manager/cmctl/v2/pkg/build"
+	"github.com/cert-manager/cmctl/v2/pkg/convert"
 	"github.com/cert-manager/cmctl/v2/pkg/factory"
+)
+
+var (
+	// Dedicated scheme used by the ctl tool that has the internal cert-manager types,
+	// and their conversion functions registered
+	scheme = convert.Scheme
 )
 
 // Options is a struct to support status certificate command
@@ -141,12 +147,12 @@ func (o *Options) GetResources(ctx context.Context, crtName string) (*Data, erro
 		return nil, fmt.Errorf("error when getting Certificate resource: %v", err)
 	}
 
-	crtRef, err := reference.GetReference(ctl.Scheme, crt)
+	crtRef, err := reference.GetReference(scheme, crt)
 	if err != nil {
 		return nil, err
 	}
 	// If no events found, crtEvents would be nil and handled down the line in DescribeEvents
-	crtEvents, err := clientSet.CoreV1().Events(crt.Namespace).Search(ctl.Scheme, crtRef)
+	crtEvents, err := clientSet.CoreV1().Events(crt.Namespace).Search(scheme, crtRef)
 	if err != nil {
 		return nil, err
 	}
@@ -154,12 +160,12 @@ func (o *Options) GetResources(ctx context.Context, crtName string) (*Data, erro
 	issuer, issuerKind, issuerError := getGenericIssuer(o.CMClient, ctx, crt)
 	var issuerEvents *corev1.EventList
 	if issuer != nil {
-		issuerRef, err := reference.GetReference(ctl.Scheme, issuer)
+		issuerRef, err := reference.GetReference(scheme, issuer)
 		if err != nil {
 			return nil, err
 		}
 		// If no events found, issuerEvents would be nil and handled down the line in DescribeEvents
-		issuerEvents, err = clientSet.CoreV1().Events(issuer.GetNamespace()).Search(ctl.Scheme, issuerRef)
+		issuerEvents, err = clientSet.CoreV1().Events(issuer.GetNamespace()).Search(scheme, issuerRef)
 		if err != nil {
 			return nil, err
 		}
@@ -171,12 +177,12 @@ func (o *Options) GetResources(ctx context.Context, crtName string) (*Data, erro
 	}
 	var secretEvents *corev1.EventList
 	if secret != nil {
-		secretRef, err := reference.GetReference(ctl.Scheme, secret)
+		secretRef, err := reference.GetReference(scheme, secret)
 		if err != nil {
 			return nil, err
 		}
 		// If no events found, secretEvents would be nil and handled down the line in DescribeEvents
-		secretEvents, err = clientSet.CoreV1().Events(secret.Namespace).Search(ctl.Scheme, secretRef)
+		secretEvents, err = clientSet.CoreV1().Events(secret.Namespace).Search(scheme, secretRef)
 		if err != nil {
 			return nil, err
 		}
@@ -193,12 +199,12 @@ func (o *Options) GetResources(ctx context.Context, crtName string) (*Data, erro
 
 	var reqEvents *corev1.EventList
 	if req != nil {
-		reqRef, err := reference.GetReference(ctl.Scheme, req)
+		reqRef, err := reference.GetReference(scheme, req)
 		if err != nil {
 			return nil, err
 		}
 		// If no events found,  reqEvents would be nil and handled down the line in DescribeEvents
-		reqEvents, err = clientSet.CoreV1().Events(req.Namespace).Search(ctl.Scheme, reqRef)
+		reqEvents, err = clientSet.CoreV1().Events(req.Namespace).Search(scheme, reqRef)
 		if err != nil {
 			return nil, err
 		}
