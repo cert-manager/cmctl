@@ -1,6 +1,6 @@
 module fetch
 
-go 1.21
+go 1.22.0
 
 require (
 	golang.org/x/mod v0.16.0

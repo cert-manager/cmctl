@@ -107,7 +107,6 @@ func main() {
 	results := make(chan versionManifest, len(newVersions))
 	group, gctx := errgroup.WithContext(ctx)
 	for _, version := range newVersions {
-		version := version
 		group.Go(func() error {
 			manifests, err := downloadManifests(gctx, version)
 			if err != nil {
