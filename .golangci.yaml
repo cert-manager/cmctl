@@ -12,6 +12,7 @@ linters:
     - bidichk
     - bodyclose
     - contextcheck
+    - copyloopvar
     - decorder
     - dogsled
     - dupword
@@ -20,7 +21,6 @@ linters:
     - errchkjson
     - errname
     - exhaustive
-    - exportloopref
     - forbidigo
     - gci
     - ginkgolinter
