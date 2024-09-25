@@ -181,8 +181,6 @@ func TestVersionChecker(t *testing.T) {
 				continue
 			}
 
-			version := version
-
 			manifest := item.manifest
 			manifest = bytes.ReplaceAll(manifest, []byte(dummyVersion), []byte(version))
 
