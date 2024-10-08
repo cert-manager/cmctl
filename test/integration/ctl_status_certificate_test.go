@@ -29,7 +29,6 @@ import (
 	cmapi "github.com/cert-manager/cert-manager/pkg/apis/certmanager/v1"
 	cmmeta "github.com/cert-manager/cert-manager/pkg/apis/meta/v1"
 	"github.com/cert-manager/cert-manager/pkg/client/clientset/versioned"
-	"github.com/cert-manager/cert-manager/pkg/ctl"
 	"github.com/cert-manager/cert-manager/pkg/util/pki"
 	"github.com/cert-manager/cert-manager/test/unit/gen"
 	"github.com/sergi/go-diff/diffmatchpatch"
@@ -70,7 +69,7 @@ func TestCtlStatusCert(t *testing.T) {
 	defer stopFn()
 
 	// Build clients
-	kubernetesCl, cmCl, _, _ := framework.NewClients(t, config)
+	kubernetesCl, cmCl, _, scheme := framework.NewClients(t, config)
 
 	var (
 		crt1Name  = "testcrt-1"
@@ -417,7 +416,7 @@ CertificateRequest:
 				t.Fatal(err)
 			}
 			if test.crtEvents != nil {
-				crtRef, err := reference.GetReference(ctl.Scheme, crt)
+				crtRef, err := reference.GetReference(scheme, crt)
 				if err != nil {
 					t.Fatalf("error when getting ObjectReference: %v", err)
 				}
@@ -434,7 +433,7 @@ CertificateRequest:
 					t.Fatal(err)
 				}
 				if test.reqEvents != nil {
-					reqRef, err := reference.GetReference(ctl.Scheme, req)
+					reqRef, err := reference.GetReference(scheme, req)
 					if err != nil {
 						t.Fatalf("error when getting ObjectReference: %v", err)
 					}
@@ -451,7 +450,7 @@ CertificateRequest:
 					t.Fatal(err)
 				}
 				if test.issuerEvents != nil {
-					issuerRef, err := reference.GetReference(ctl.Scheme, issuer)
+					issuerRef, err := reference.GetReference(scheme, issuer)
 					if err != nil {
 						t.Fatalf("error when getting ObjectReference: %v", err)
 					}
@@ -467,7 +466,7 @@ CertificateRequest:
 					t.Fatal(err)
 				}
 				if test.issuerEvents != nil {
-					issuerRef, err := reference.GetReference(ctl.Scheme, clusterIssuer)
+					issuerRef, err := reference.GetReference(scheme, clusterIssuer)
 					if err != nil {
 						t.Fatalf("error when getting ObjectReference: %v", err)
 					}
@@ -484,7 +483,7 @@ CertificateRequest:
 					t.Fatal(err)
 				}
 				if test.secretEvents != nil {
-					secretRef, err := reference.GetReference(ctl.Scheme, secret)
+					secretRef, err := reference.GetReference(scheme, secret)
 					if err != nil {
 						t.Fatalf("error when getting ObjectReference: %v", err)
 					}

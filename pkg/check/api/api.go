@@ -25,7 +25,6 @@ import (
 	logf "github.com/cert-manager/cert-manager/pkg/logs"
 	"github.com/cert-manager/cert-manager/pkg/util/cmapichecker"
 	"github.com/spf13/cobra"
-	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"k8s.io/kubectl/pkg/util/templates"
@@ -70,7 +69,6 @@ func (o *Options) Complete() error {
 
 	o.APIChecker, err = cmapichecker.New(
 		o.RESTConfig,
-		runtime.NewScheme(),
 		o.Namespace,
 	)
 	if err != nil {
