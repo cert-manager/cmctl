@@ -21,6 +21,32 @@ include make/test-integration.mk
 dryrun-release: export RELEASE_DRYRUN := true
 dryrun-release: release
 
+.PHONY: generate-conversion
+## Generate code for converting between versions of the cert-manager API
+## @category Generate/ Verify
+generate-conversion: | $(NEEDS_CONTROLLER-GEN) $(NEEDS_DEFAULTER-GEN) $(NEEDS_CONVERSION-GEN)
+	rm -rf ./pkg/convert/internal/apis/**/zz_generated.*
+	rm -rf ./pkg/convert/internal/apis/**/**/zz_generated.*
+
+	$(CONTROLLER-GEN) \
+		object:headerFile=$(go_header_file) \
+		paths=./pkg/convert/internal/apis/...
+
+	$(DEFAULTER-GEN) \
+		--go-header-file=$(go_header_file) \
+		--output-file=zz_generated.defaults.go \
+		./pkg/convert/internal/apis/{acme,certmanager}/v{1,1alpha2,1alpha3,1beta1}/... \
+		./pkg/convert/internal/apis/meta/v1/...
+
+	
+	$(CONVERSION-GEN) \
+		--go-header-file=$(go_header_file) \
+		--output-file=zz_generated.conversion.go \
+		./pkg/convert/internal/apis/{acme,certmanager}/v{1,1alpha2,1alpha3,1beta1}/... \
+		./pkg/convert/internal/apis/meta/v1/...
+
+shared_generate_targets += generate-conversion
+
 .PHONY: release
 ## Publish all release artifacts (image + helm chart)
 ## @category [shared] Release

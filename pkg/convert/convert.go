@@ -20,7 +20,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/cert-manager/cert-manager/pkg/ctl"
 	logf "github.com/cert-manager/cert-manager/pkg/logs"
 	"github.com/spf13/cobra"
 	metainternalversion "k8s.io/apimachinery/pkg/apis/meta/internalversion"
@@ -38,9 +37,9 @@ import (
 )
 
 var (
-	// Use this scheme as it has the internal cert-manager types
-	// and their conversion functions registered.
-	scheme = ctl.Scheme
+	// Dedicated scheme used by the ctl tool that has the internal cert-manager types,
+	// and their conversion functions registered
+	scheme = Scheme
 )
 
 // Options is a struct to support convert command
