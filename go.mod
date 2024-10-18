@@ -3,7 +3,7 @@ module github.com/cert-manager/cmctl/v2
 go 1.22.0
 
 require (
-	github.com/cert-manager/cert-manager v1.16.0
+	github.com/cert-manager/cert-manager v1.16.1
 	github.com/go-logr/logr v1.4.2
 	github.com/google/gofuzz v1.2.0
 	github.com/sergi/go-diff v1.3.1
