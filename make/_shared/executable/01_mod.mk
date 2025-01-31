@@ -12,64 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-exe_targets ?= darwin_amd64_v1,darwin_arm64,linux_amd64_v1,linux_arm_7,linux_arm64,linux_ppc64le,linux_s390x,windows_amd64_v1,windows_arm64
-
-ifndef bin_dir
-$(error bin_dir is not set)
-endif
-
-ifndef build_names
-ifndef exe_build_names
-$(error build_names and exe_build_names are not set)
-endif
-build_names := # empty
-endif
-
-all_exe_build_names := $(sort $(build_names) $(exe_build_names))
-
-fatal_if_undefined = $(if $(findstring undefined,$(origin $1)),$(error $1 is not set))
-
-define check_variables
-$(call fatal_if_undefined,go_$1_ldflags)
-$(call fatal_if_undefined,go_$1_main_dir)
-$(call fatal_if_undefined,go_$1_mod_dir)
-
-ifneq ($(go_$1_main_dir:.%=.),.)
-$$(error go_$1_main_dir "$(go_$1_main_dir)" should be a directory path that DOES start with ".")
-endif
-ifeq ($(go_$1_main_dir:%/=/),/)
-$$(error go_$1_main_dir "$(go_$1_main_dir)" should be a directory path that DOES NOT end with "/")
-endif
-ifeq ($(go_$1_main_dir:%.go=.go),.go)
-$$(error go_$1_main_dir "$(go_$1_main_dir)" should be a directory path that DOES NOT end with ".go")
-endif
-ifneq ($(go_$1_mod_dir:\.%=\.),.)
-$$(error go_$1_mod_dir "$(go_$1_mod_dir)" should be a directory path that DOES start with ".")
-endif
-ifeq ($(go_$1_mod_dir:%/=/),/)
-$$(error go_$1_mod_dir "$(go_$1_mod_dir)" should be a directory path that DOES NOT end with "/")
-endif
-ifeq ($(go_$1_mod_dir:%.go=.go),.go)
-$$(error go_$1_mod_dir "$(go_$1_mod_dir)" should be a directory path that DOES NOT end with ".go")
-endif
-
-endef
-
-$(foreach build_name,$(all_exe_build_names),$(eval $(call check_variables,$(build_name))))
-
-ifdef exe_build_names
-$(call fatal_if_undefined,gorelease_file)
-endif
-
-##########################################
-
-RELEASE_DRYRUN ?= false
-
-CGO_ENABLED ?= 0
-GOEXPERIMENT ?=  # empty by default
-
-run_targets := $(all_exe_build_names:%=run-%)
-build_targets := $(all_exe_build_names:%=$(bin_dir)/bin/%)
+run_targets := $(exe_build_names:%=run-%)
+build_targets := $(exe_build_names:%=$(bin_dir)/bin/%)
 
 $(bin_dir)/bin:
 	mkdir -p $@
@@ -82,9 +26,9 @@ ARGS ?= # default empty
 $(run_targets): run-%: | $(NEEDS_GO)
 	cd $(go_$*_mod_dir) && \
 	GOWORK=off \
-	CGO_ENABLED=$(CGO_ENABLED) \
-	GOEXPERIMENT=$(GOEXPERIMENT) \
-	$(GO) run \
+	CGO_ENABLED=$(go_$*_cgo_enabled) \
+	GOEXPERIMENT=$(go_$*_goexperiment) \
+	$(GO) run $(go_$*_flags) \
 		-ldflags '$(go_$*_ldflags)' \
 		$(go_$*_main_dir) $(ARGS)
 
@@ -94,24 +38,25 @@ $(run_targets): run-%: | $(NEEDS_GO)
 $(build_targets): $(bin_dir)/bin/%: FORCE | $(NEEDS_GO)
 	cd $(go_$*_mod_dir) && \
 	GOWORK=off \
-	CGO_ENABLED=$(CGO_ENABLED) \
-	GOEXPERIMENT=$(GOEXPERIMENT) \
-	$(GO) build \
+	CGO_ENABLED=$(go_$*_cgo_enabled) \
+	GOEXPERIMENT=$(go_$*_goexperiment) \
+	$(GO) build $(go_$*_flags) \
 		-ldflags '$(go_$*_ldflags)' \
 		-o $@ \
 		$(go_$*_main_dir)
 
 define template_for_target
 	$(YQ) 'with(.builds[]; select(.id == "$(1)") | .binary = "$(1)")' | \
-	$(YQ) 'with(.builds[]; select(.id == "$(1)") | .main = "$(go_$(1)_main_dir)")' | \
-	$(YQ) 'with(.builds[]; select(.id == "$(1)") | .dir = "$(go_$(1)_mod_dir)")' | \
-	$(YQ) 'with(.builds[]; select(.id == "$(1)") | .env[0] = "CGO_ENABLED={{.Env.CGO_ENABLED}}")' | \
-	$(YQ) 'with(.builds[]; select(.id == "$(1)") | .env[1] = "GOEXPERIMENT={{.Env.GOEXPERIMENT}}")' | \
+	$(YQ) 'with(.builds[]; select(.id == "$(1)") | .main = "$(go_$1_main_dir)")' | \
+	$(YQ) 'with(.builds[]; select(.id == "$(1)") | .dir = "$(go_$1_mod_dir)")' | \
+	$(YQ) 'with(.builds[]; select(.id == "$(1)") | .env[0] = "CGO_ENABLED=$(go_$1_cgo_enabled)")' | \
+	$(YQ) 'with(.builds[]; select(.id == "$(1)") | .env[1] = "GOEXPERIMENT=$(go_$1_goexperiment)")' | \
 	$(YQ) 'with(.builds[]; select(.id == "$(1)") | .mod_timestamp = "{{.Env.SOURCE_DATE_EPOCH}}")' | \
 	$(YQ) 'with(.builds[]; select(.id == "$(1)") | .flags[0] = "-trimpath")' | \
+	$(YQ) 'with(.builds[]; select(.id == "$(1)") | .flags[1] = "$(go_$1_flags)")' | \
 	$(YQ) 'with(.builds[]; select(.id == "$(1)") | .ldflags[0] = "-s")' | \
 	$(YQ) 'with(.builds[]; select(.id == "$(1)") | .ldflags[1] = "-w")' | \
-	$(YQ) 'with(.builds[]; select(.id == "$(1)") | .ldflags[2] = "$(go_$(1)_ldflags)")' | \
+	$(YQ) 'with(.builds[]; select(.id == "$(1)") | .ldflags[2] = "$(go_$1_ldflags)")' | \
 	$(YQ) 'with(.builds[]; select(.id == "$(1)") | .gobinary = "$(GO)")' | \
 	targets=$(exe_targets) $(YQ) 'with(.builds[]; select(.id == "$(1)") | .targets = (env(targets) | split(",")))' |
 endef
@@ -138,8 +83,6 @@ endif
 
 	GOWORK=off \
 	SOURCE_DATE_EPOCH=$(GITEPOCH) \
-	CGO_ENABLED=$(CGO_ENABLED) \
-	GOEXPERIMENT=$(GOEXPERIMENT) \
 	$(GORELEASER) release \
 		$(extra_args) \
 		--fail-fast \
