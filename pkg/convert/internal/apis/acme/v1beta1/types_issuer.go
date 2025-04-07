@@ -661,6 +661,10 @@ type AzureManagedIdentity struct {
 	// resource ID of the managed identity, can not be used at the same time as clientID
 	// +optional
 	ResourceID string `json:"resourceID,omitempty"`
+
+	// tenant ID of the managed identity, can not be used at the same time as resourceID
+	// +optional
+	TenantID string `json:"tenantID,omitempty"`
 }
 
 // +kubebuilder:validation:Enum=AzurePublicCloud;AzureChinaCloud;AzureGermanCloud;AzureUSGovernmentCloud

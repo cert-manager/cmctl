@@ -88,8 +88,9 @@ to change to output destination.`),
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			return o.Complete()
 		},
+		// nolint:contextcheck // False positive
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return o.Run()
+			return o.Run(cmd.Context())
 		},
 	}
 
@@ -117,7 +118,7 @@ func (o *Options) Complete() error {
 }
 
 // Run executes convert command
-func (o *Options) Run() error {
+func (o *Options) Run(ctx context.Context) error {
 	builder := new(resource.Builder)
 
 	r := builder.
@@ -149,7 +150,7 @@ func (o *Options) Run() error {
 	factory := serializer.NewCodecFactory(scheme)
 	serializer := apijson.NewSerializerWithOptions(apijson.DefaultMetaFactory, scheme, scheme, apijson.SerializerOptions{})
 	encoder := factory.WithoutConversion().EncoderForVersion(serializer, nil)
-	objects, err := asVersionedObject(infos, !singleItemImplied, specifiedOutputVersion, encoder)
+	objects, err := asVersionedObject(ctx, infos, !singleItemImplied, specifiedOutputVersion, encoder)
 	if err != nil {
 		return err
 	}
@@ -161,7 +162,9 @@ func (o *Options) Run() error {
 // the objects as children, or if only a single Object is present, as that object. The provided
 // version will be preferred as the conversion target, but the Object's mapping version will be
 // used if that version is not present.
-func asVersionedObject(infos []*resource.Info, forceList bool, specifiedOutputVersion schema.GroupVersion, encoder runtime.Encoder) (runtime.Object, error) {
+func asVersionedObject(ctx context.Context, infos []*resource.Info, forceList bool, specifiedOutputVersion schema.GroupVersion, encoder runtime.Encoder) (runtime.Object, error) {
+	log := logf.FromContext(ctx, "convert")
+
 	objects, err := asVersionedObjects(infos, specifiedOutputVersion, encoder)
 	if err != nil {
 		return nil, err
@@ -192,11 +195,9 @@ func asVersionedObject(infos []*resource.Info, forceList bool, specifiedOutputVe
 	actualVersion := object.GetObjectKind().GroupVersionKind()
 
 	if actualVersion.Version != specifiedOutputVersion.Version {
-		defaultVersionInfo := ""
-		if len(actualVersion.Version) > 0 {
-			defaultVersionInfo = fmt.Sprintf("Defaulting to %q", actualVersion.Version)
-		}
-		logf.V(logf.WarnLevel).Infof("info: the output version specified is invalid. %s\n", defaultVersionInfo)
+		log.V(logf.WarnLevel).Info("output version specified is invalid",
+			"outputVersion", specifiedOutputVersion.Version,
+			"actualVersion", actualVersion.Version)
 	}
 
 	return object, nil
