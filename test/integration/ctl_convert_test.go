@@ -18,6 +18,7 @@ package ctl
 
 import (
 	"bytes"
+	"context"
 	"os"
 	"testing"
 
@@ -144,6 +145,8 @@ func TestCtlConvert(t *testing.T) {
 
 	for name, test := range tests {
 		t.Run(name, func(t *testing.T) {
+			ctx := context.Background()
+
 			expOutput, err := os.ReadFile(test.expOutputFile)
 			if err != nil {
 				t.Fatalf("%s: %s", test.expOutputFile, err)
@@ -160,7 +163,7 @@ func TestCtlConvert(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			err = opts.Run()
+			err = opts.Run(ctx)
 			if test.expErr != (err != nil) {
 				t.Errorf("got unexpected error, exp=%t got=%v",
 					test.expErr, err)

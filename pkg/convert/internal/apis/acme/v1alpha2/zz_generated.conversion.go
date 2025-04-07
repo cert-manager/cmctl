@@ -1390,6 +1390,7 @@ func Convert_acme_ACMEIssuerStatus_To_v1alpha2_ACMEIssuerStatus(in *acme.ACMEIss
 func autoConvert_v1alpha2_AzureManagedIdentity_To_acme_AzureManagedIdentity(in *AzureManagedIdentity, out *acme.AzureManagedIdentity, s conversion.Scope) error {
 	out.ClientID = in.ClientID
 	out.ResourceID = in.ResourceID
+	out.TenantID = in.TenantID
 	return nil
 }
 
@@ -1401,6 +1402,7 @@ func Convert_v1alpha2_AzureManagedIdentity_To_acme_AzureManagedIdentity(in *Azur
 func autoConvert_acme_AzureManagedIdentity_To_v1alpha2_AzureManagedIdentity(in *acme.AzureManagedIdentity, out *AzureManagedIdentity, s conversion.Scope) error {
 	out.ClientID = in.ClientID
 	out.ResourceID = in.ResourceID
+	out.TenantID = in.TenantID
 	return nil
 }
 

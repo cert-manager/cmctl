@@ -356,6 +356,12 @@ type JKSKeystore struct {
 	// containing the password used to encrypt the JKS keystore.
 	PasswordSecretRef cmmeta.SecretKeySelector `json:"passwordSecretRef"`
 
+	// Password provides a literal password used to encrypt the JKS keystore.
+	// Mutually exclusive with passwordSecretRef.
+	// One of password or passwordSecretRef must provide a password with a non-zero length.
+	// +optional
+	Password *string `json:"password,omitempty"`
+
 	// Alias specifies the alias of the key in the keystore, required by the JKS format.
 	// If not provided, the default alias `certificate` will be used.
 	// +optional
@@ -379,6 +385,12 @@ type PKCS12Keystore struct {
 	// containing the password used to encrypt the PKCS12 keystore.
 
 	PasswordSecretRef cmmeta.SecretKeySelector `json:"passwordSecretRef"`
+
+	// Password provides a literal password used to encrypt the PKCS#12 keystore.
+	// Mutually exclusive with passwordSecretRef.
+	// One of password or passwordSecretRef must provide a password with a non-zero length.
+	// +optional
+	Password *string
 
 	// Profile specifies the key and certificate encryption algorithms and the HMAC algorithm
 	// used to create the PKCS12 keystore. Default value is `LegacyRC2` for backward compatibility.
