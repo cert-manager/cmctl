@@ -13,7 +13,7 @@ require (
 	golang.org/x/crypto v0.37.0
 	golang.org/x/exp v0.0.0-20241217172543-b2144cdd0a67
 	golang.org/x/sync v0.13.0
-	helm.sh/helm/v3 v3.17.2
+	helm.sh/helm/v3 v3.17.3
 	k8s.io/api v0.32.3
 	k8s.io/apiextensions-apiserver v0.32.3
 	k8s.io/apimachinery v0.32.3
