@@ -80,7 +80,7 @@ func NewTestInstallApiServer(t *testing.T) (*TestInstallApiServer, CleanupFuncti
 }
 
 func createKubeConfigFile(t *testing.T, user *envtest.AuthenticatedUser) (string, CleanupFunction) {
-	tmpfile, err := os.CreateTemp("", "config")
+	tmpfile, err := os.CreateTemp(t.TempDir(), "config")
 	if err != nil {
 		t.Fatal(err)
 	}

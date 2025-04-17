@@ -409,10 +409,7 @@ func setupPathForTest(t *testing.T) func() {
 	}
 
 	// Create tmp directory and cd into it to store private key files
-	tmpDir, err := os.MkdirTemp("", "tmp-ctl-test-*")
-	if err != nil {
-		t.Fatal(err)
-	}
+	tmpDir := t.TempDir()
 
 	if err := os.Chdir(tmpDir); err != nil {
 		t.Fatal(err)
