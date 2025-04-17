@@ -20,11 +20,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"maps"
+	"slices"
 	"sort"
 	"strings"
 
 	"github.com/spf13/cobra"
-	"golang.org/x/exp/maps"
 	"helm.sh/helm/v3/pkg/action"
 	"helm.sh/helm/v3/pkg/chartutil"
 	"helm.sh/helm/v3/pkg/release"
@@ -219,7 +220,7 @@ func addCRDAnnotations(_ context.Context, o options) error {
 	}
 
 	if foundNonAnnotatedCRD {
-		manifestNames := releaseutil.BySplitManifestsOrder(maps.Keys(manifests))
+		manifestNames := releaseutil.BySplitManifestsOrder(slices.Collect(maps.Keys(manifests)))
 		sort.Sort(manifestNames)
 		var fullManifest strings.Builder
 		for _, manifest := range manifestNames {

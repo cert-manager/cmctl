@@ -405,7 +405,7 @@ func keyUsageToString(usage x509.KeyUsage) string {
 		}
 	}
 	// Reversing because that's usually the order the usages are printed
-	for i := 0; i < len(usageStrings)/2; i++ {
+	for i := range len(usageStrings) / 2 {
 		opp := len(usageStrings) - 1 - i
 		usageStrings[i], usageStrings[opp] = usageStrings[opp], usageStrings[i]
 	}
