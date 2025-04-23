@@ -45,6 +45,12 @@ sudo mv cmctl /usr/local/bin
 # or `sudo mv cmctl /usr/local/bin/kubectl-cert_manager` to use `kubectl cert-manager` instead.
 ```
 
+### Distributed releases
+
+Third-party packages providing the cmctl binary:
+
+[![Packaging status](https://repology.org/badge/vertical-allrepos/cmctl.svg)](https://repology.org/project/cmctl/versions)
+
 ### Shell Completion
 
 `cmctl` supports shell completion for most popular shells. To get help on how to enable shell completion, run the following commands:
