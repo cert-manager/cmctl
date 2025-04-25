@@ -18,7 +18,6 @@ package ctl
 
 import (
 	"bytes"
-	"context"
 	"os"
 	"testing"
 
@@ -145,7 +144,7 @@ func TestCtlConvert(t *testing.T) {
 
 	for name, test := range tests {
 		t.Run(name, func(t *testing.T) {
-			ctx := context.Background()
+			ctx := t.Context()
 
 			expOutput, err := os.ReadFile(test.expOutputFile)
 			if err != nil {

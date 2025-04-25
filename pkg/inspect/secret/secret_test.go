@@ -17,7 +17,6 @@ limitations under the License.
 package secret
 
 import (
-	"context"
 	"crypto/x509"
 	"strings"
 	"testing"
@@ -139,7 +138,7 @@ func Test_describeCRL(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := describeCRL(context.TODO(), tt.cert); got != tt.want {
+			if got := describeCRL(t.Context(), tt.cert); got != tt.want {
 				t.Errorf("describeCRL() = %v, want %v", makeInvisibleVisible(got), makeInvisibleVisible(tt.want))
 			}
 		})
@@ -205,7 +204,7 @@ func Test_describeDebugging(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := describeDebugging(context.TODO(), tt.args.cert, tt.args.intermediates, tt.args.ca)
+			got, err := describeDebugging(t.Context(), tt.args.cert, tt.args.intermediates, tt.args.ca)
 			if got != tt.want {
 				t.Errorf("describeDebugging() = %v, want %v", makeInvisibleVisible(got), makeInvisibleVisible(tt.want))
 			}
@@ -295,7 +294,7 @@ func Test_describeOCSP(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := describeOCSP(context.TODO(), tt.args.cert, tt.args.intermediates, tt.args.ca); got != tt.want {
+			if got := describeOCSP(t.Context(), tt.args.cert, tt.args.intermediates, tt.args.ca); got != tt.want {
 				t.Errorf("describeOCSP() = %v, want %v", makeInvisibleVisible(got), makeInvisibleVisible(tt.want))
 			}
 		})

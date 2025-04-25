@@ -17,7 +17,6 @@ limitations under the License.
 package certificaterequest
 
 import (
-	"context"
 	"os"
 	"testing"
 
@@ -229,7 +228,7 @@ spec:
 			}
 
 			// Create CR
-			err = opts.Run(context.TODO(), test.inputArgs)
+			err = opts.Run(t.Context(), test.inputArgs)
 			if err != nil {
 				if !test.expErr {
 					t.Fatalf("got unexpected error when trying to create CR: %v", err)

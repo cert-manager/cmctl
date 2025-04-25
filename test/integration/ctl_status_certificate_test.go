@@ -62,7 +62,7 @@ func generateCSR(t *testing.T) []byte {
 func TestCtlStatusCert(t *testing.T) {
 	testCSR := generateCSR(t)
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*40)
+	ctx, cancel := context.WithTimeout(t.Context(), time.Second*40)
 	defer cancel()
 
 	config, stopFn := framework.RunControlPlane(t, ctx)

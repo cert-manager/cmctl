@@ -18,7 +18,6 @@ package versionchecker
 
 import (
 	"bytes"
-	"context"
 	"errors"
 	"fmt"
 	"io"
@@ -190,7 +189,7 @@ func TestVersionChecker(t *testing.T) {
 					t.Fatal(err)
 				}
 
-				versionGuess, err := checker.Version(context.TODO())
+				versionGuess, err := checker.Version(t.Context())
 				if err != nil {
 					t.Fatalf("failed to detect expected version %s: %s", version, err)
 				}

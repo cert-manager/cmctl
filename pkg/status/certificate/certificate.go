@@ -152,7 +152,7 @@ func (o *Options) GetResources(ctx context.Context, crtName string) (*Data, erro
 		return nil, err
 	}
 	// If no events found, crtEvents would be nil and handled down the line in DescribeEvents
-	crtEvents, err := clientSet.CoreV1().Events(crt.Namespace).Search(scheme, crtRef)
+	crtEvents, err := clientSet.CoreV1().Events(crt.Namespace).SearchWithContext(ctx, scheme, crtRef)
 	if err != nil {
 		return nil, err
 	}
@@ -165,7 +165,7 @@ func (o *Options) GetResources(ctx context.Context, crtName string) (*Data, erro
 			return nil, err
 		}
 		// If no events found, issuerEvents would be nil and handled down the line in DescribeEvents
-		issuerEvents, err = clientSet.CoreV1().Events(issuer.GetNamespace()).Search(scheme, issuerRef)
+		issuerEvents, err = clientSet.CoreV1().Events(issuer.GetNamespace()).SearchWithContext(ctx, scheme, issuerRef)
 		if err != nil {
 			return nil, err
 		}
@@ -182,7 +182,7 @@ func (o *Options) GetResources(ctx context.Context, crtName string) (*Data, erro
 			return nil, err
 		}
 		// If no events found, secretEvents would be nil and handled down the line in DescribeEvents
-		secretEvents, err = clientSet.CoreV1().Events(secret.Namespace).Search(scheme, secretRef)
+		secretEvents, err = clientSet.CoreV1().Events(secret.Namespace).SearchWithContext(ctx, scheme, secretRef)
 		if err != nil {
 			return nil, err
 		}
@@ -204,7 +204,7 @@ func (o *Options) GetResources(ctx context.Context, crtName string) (*Data, erro
 			return nil, err
 		}
 		// If no events found,  reqEvents would be nil and handled down the line in DescribeEvents
-		reqEvents, err = clientSet.CoreV1().Events(req.Namespace).Search(scheme, reqRef)
+		reqEvents, err = clientSet.CoreV1().Events(req.Namespace).SearchWithContext(ctx, scheme, reqRef)
 		if err != nil {
 			return nil, err
 		}
