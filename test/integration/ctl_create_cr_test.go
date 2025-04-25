@@ -61,7 +61,7 @@ type CreateCRTest struct {
 // after the private key has been written to file and before the CR is successfully created.
 // Achieved by trying to create two CRs with the same name, storing the private key to two different files.
 func TestCtlCreateCRBeforeCRIsCreated(t *testing.T) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*40)
+	ctx, cancel := context.WithTimeout(t.Context(), time.Second*40)
 	defer cancel()
 
 	config, stopFn := framework.RunControlPlane(t, ctx)
@@ -99,9 +99,7 @@ func TestCtlCreateCRBeforeCRIsCreated(t *testing.T) {
 	for name, test := range tests {
 		t.Run(name, func(t *testing.T) {
 			streams, _, _, _ := genericclioptions.NewTestIOStreams()
-
-			cleanUpFunc := setupPathForTest(t)
-			defer cleanUpFunc()
+			t.Chdir(t.TempDir())
 
 			// Options to run create CR command
 			opts := &certificaterequest.Options{
@@ -163,7 +161,7 @@ func TestCtlCreateCRBeforeCRIsCreated(t *testing.T) {
 // TestCtlCreateCRSuccessful tests the behaviour in the case where the command successfully
 // creates the CR, including the --fetch-certificate logic.
 func TestCtlCreateCRSuccessful(t *testing.T) {
-	rootCtx, cancelRoot := context.WithTimeout(context.Background(), time.Second*200)
+	rootCtx, cancelRoot := context.WithTimeout(t.Context(), time.Second*200)
 	defer cancelRoot()
 
 	config, stopFn := framework.RunControlPlane(t, rootCtx)
@@ -269,9 +267,7 @@ func TestCtlCreateCRSuccessful(t *testing.T) {
 			defer cancel()
 
 			streams, _, _, _ := genericclioptions.NewTestIOStreams()
-
-			cleanUpFunc := setupPathForTest(t)
-			defer cleanUpFunc()
+			t.Chdir(t.TempDir())
 
 			// Options to run create CR command
 			opts := &certificaterequest.Options{
@@ -397,29 +393,4 @@ func getTestDataDir(t *testing.T) string {
 		t.Fatal(err)
 	}
 	return path.Join(testWorkingDirectory, "testdata")
-}
-
-// setupPathForTest sets up a tmp directory and cd into it for tests as the command being tested creates files
-// in the local directory.
-// Returns a cleanup function which will change cd back to original working directory and remove the tmp directory.
-func setupPathForTest(t *testing.T) func() {
-	workingDirectoryBeforeTest, err := os.Getwd()
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	// Create tmp directory and cd into it to store private key files
-	tmpDir := t.TempDir()
-
-	if err := os.Chdir(tmpDir); err != nil {
-		t.Fatal(err)
-	}
-	return func() {
-		if err := os.Chdir(workingDirectoryBeforeTest); err != nil {
-			t.Fatal(err)
-		}
-		if err := os.RemoveAll(tmpDir); err != nil {
-			t.Fatal(err)
-		}
-	}
 }

@@ -85,17 +85,17 @@ func StartInformersAndController(t *testing.T, cmFactory cminformers.SharedInfor
 }
 
 func StartInformersAndControllers(t *testing.T, cmFactory cminformers.SharedInformerFactory, cs ...controllerpkg.Interface) StopFunc {
-	rootCtx, cancel := context.WithCancel(context.Background())
+	rootCtx, cancel := context.WithCancel(t.Context())
 	errCh := make(chan error)
 
 	cmFactory.Start(rootCtx.Done())
-	group, _ := errgroup.WithContext(context.Background())
+	group, gCTX := errgroup.WithContext(rootCtx)
 	go func() {
 		defer close(errCh)
 		for _, c := range cs {
 			func(c controllerpkg.Interface) {
 				group.Go(func() error {
-					return c.Run(1, rootCtx)
+					return c.Run(1, gCTX)
 				})
 			}(c)
 		}

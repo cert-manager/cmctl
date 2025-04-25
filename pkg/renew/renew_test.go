@@ -17,7 +17,6 @@ limitations under the License.
 package renew
 
 import (
-	"context"
 	"testing"
 
 	"k8s.io/cli-runtime/pkg/genericclioptions"
@@ -128,7 +127,7 @@ func TestValidate(t *testing.T) {
 
 	for name, test := range tests {
 		t.Run(name, func(t *testing.T) {
-			cmd := NewCmdRenew(context.TODO(), genericclioptions.IOStreams{})
+			cmd := NewCmdRenew(t.Context(), genericclioptions.IOStreams{})
 
 			// This is normally registered in the main func. We add here to test
 			// against flags normally inherited.

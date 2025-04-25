@@ -81,14 +81,14 @@ func newScheme() *runtime.Scheme {
 
 func TestCtlUpgradeMigrate(t *testing.T) {
 	// This test takes about 25 seconds to run. Let's give it enough time.
-	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	ctx, cancel := context.WithTimeout(t.Context(), 60*time.Second)
 	defer cancel()
 
 	// Create the control plane with the TestType conversion handlers registered
 	scheme := newScheme()
 	// name of the testtype CRD resource
 	crdName := "testtypes.testgroup.testing.cert-manager.io"
-	restCfg, stop := framework.RunControlPlane(t, context.Background(),
+	restCfg, stop := framework.RunControlPlane(t, ctx,
 		framework.WithCRDDirectory(crdFolder(t)))
 	defer stop()
 
@@ -180,14 +180,14 @@ func TestCtlUpgradeMigrate(t *testing.T) {
 }
 
 func TestCtlUpgradeMigrate_FailsIfStorageVersionDoesNotEqualTargetVersion(t *testing.T) {
-	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	ctx, cancel := context.WithTimeout(t.Context(), 60*time.Second)
 	defer cancel()
 
 	// Create the control plane with the TestType conversion handlers registered
 	scheme := newScheme()
 	// name of the testtype CRD resource
 	crdName := "testtypes.testgroup.testing.cert-manager.io"
-	restCfg, stop := framework.RunControlPlane(t, context.Background(),
+	restCfg, stop := framework.RunControlPlane(t, ctx,
 		framework.WithCRDDirectory(crdFolder(t)))
 	defer stop()
 
@@ -231,14 +231,14 @@ func TestCtlUpgradeMigrate_FailsIfStorageVersionDoesNotEqualTargetVersion(t *tes
 }
 
 func TestCtlUpgradeMigrate_SkipsMigrationIfNothingToDo(t *testing.T) {
-	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	ctx, cancel := context.WithTimeout(t.Context(), 60*time.Second)
 	defer cancel()
 
 	// Create the control plane with the TestType conversion handlers registered
 	scheme := newScheme()
 	// name of the testtype CRD resource
 	crdName := "testtypes.testgroup.testing.cert-manager.io"
-	restCfg, stop := framework.RunControlPlane(t, context.Background(),
+	restCfg, stop := framework.RunControlPlane(t, ctx,
 		framework.WithCRDDirectory(crdFolder(t)))
 	defer stop()
 
@@ -290,14 +290,14 @@ func TestCtlUpgradeMigrate_SkipsMigrationIfNothingToDo(t *testing.T) {
 }
 
 func TestCtlUpgradeMigrate_ForcesMigrationIfSkipStoredVersionCheckIsEnabled(t *testing.T) {
-	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	ctx, cancel := context.WithTimeout(t.Context(), 60*time.Second)
 	defer cancel()
 
 	// Create the control plane with the TestType conversion handlers registered
 	scheme := newScheme()
 	// name of the testtype CRD resource
 	crdName := "testtypes.testgroup.testing.cert-manager.io"
-	restCfg, stop := framework.RunControlPlane(t, context.Background(),
+	restCfg, stop := framework.RunControlPlane(t, ctx,
 		framework.WithCRDDirectory(crdFolder(t)))
 	defer stop()
 
