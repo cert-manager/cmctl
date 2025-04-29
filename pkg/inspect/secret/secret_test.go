@@ -18,6 +18,8 @@ package secret
 
 import (
 	"crypto/x509"
+	"fmt"
+	"slices"
 	"strings"
 	"testing"
 	"time"
@@ -186,7 +188,7 @@ func Test_describeDebugging(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want string
+		want []string
 	}{
 		{
 			name: "Debug test cert without trusting CA",
@@ -195,18 +197,19 @@ func Test_describeDebugging(t *testing.T) {
 				intermediates: nil,
 				ca:            nil,
 			},
-			want: `Debugging:
-	Trusted by this computer:	no: x509: certificate signed by unknown authority
-	CRL Status:	No CRL endpoints set
-	OCSP Status:	Cannot check OCSP, does not have a CA or intermediate certificate provided`,
+			want: []string{
+				"Debugging:\n\tTrusted by this computer:\tno: x509: certificate signed by unknown authority\n\tCRL Status:\tNo CRL endpoints set\n\tOCSP Status:\tCannot check OCSP, does not have a CA or intermediate certificate provided",
+				"Debugging:\n\tTrusted by this computer:\tno: x509: “cert-manager” certificate is not trusted\n\tCRL Status:\tNo CRL endpoints set\n\tOCSP Status:\tCannot check OCSP, does not have a CA or intermediate certificate provided",
+			},
 		},
 		// TODO: add fake clock and test with trusting CA
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := describeDebugging(t.Context(), tt.args.cert, tt.args.intermediates, tt.args.ca)
-			if got != tt.want {
-				t.Errorf("describeDebugging() = %v, want %v", makeInvisibleVisible(got), makeInvisibleVisible(tt.want))
+
+			if len(tt.want) > 0 && !slices.Contains(tt.want, got) {
+				t.Errorf("describeDebugging() = %q, want one of %s", got, quotedSlice(tt.want))
 			}
 			if err != nil {
 				t.Errorf("describeCertificate() error = %v", err)
@@ -309,7 +312,7 @@ func Test_describeTrusted(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want string
+		want []string
 	}{
 		{
 			name: "Describe test certificate",
@@ -317,7 +320,10 @@ func Test_describeTrusted(t *testing.T) {
 				cert:          MustParseCertificate(t, testCert),
 				intermediates: nil,
 			},
-			want: "no: x509: certificate signed by unknown authority",
+			want: []string{
+				"no: x509: certificate signed by unknown authority",
+				"no: x509: “cert-manager” certificate is not trusted",
+			},
 		},
 		{
 			name: "Describe test certificate with adding it to the trust store",
@@ -325,13 +331,13 @@ func Test_describeTrusted(t *testing.T) {
 				cert:          MustParseCertificate(t, testCert),
 				intermediates: [][]byte{[]byte(testCert)},
 			},
-			want: "yes",
+			want: []string{"yes"},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := describeTrusted(tt.args.cert, tt.args.intermediates); got != tt.want {
-				t.Errorf("describeTrusted() = %v, want %v", makeInvisibleVisible(got), makeInvisibleVisible(tt.want))
+			if got := describeTrusted(tt.args.cert, tt.args.intermediates); len(tt.want) > 0 && !slices.Contains(tt.want, got) {
+				t.Errorf("describeTrusted() = %q, want one of %s", got, quotedSlice(tt.want))
 			}
 		})
 	}
@@ -407,4 +413,12 @@ func makeInvisibleVisible(in string) string {
 	in = strings.ReplaceAll(in, "\t", "\\t")
 
 	return in
+}
+
+func quotedSlice(in []string) string {
+	quoted := make([]string, len(in))
+	for i, v := range in {
+		quoted[i] = fmt.Sprintf("%q", v)
+	}
+	return strings.Join(quoted, ", ")
 }
