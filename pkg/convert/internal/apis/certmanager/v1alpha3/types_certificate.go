@@ -77,6 +77,19 @@ const (
 	PKCS8 KeyEncoding = "pkcs8"
 )
 
+// +kubebuilder:validation:Enum=SHA256WithRSA;SHA384WithRSA;SHA512WithRSA;ECDSAWithSHA256;ECDSAWithSHA384;ECDSAWithSHA512;PureEd25519
+type SignatureAlgorithm string
+
+const (
+	SHA256WithRSA   SignatureAlgorithm = "SHA256WithRSA"
+	SHA384WithRSA   SignatureAlgorithm = "SHA384WithRSA"
+	SHA512WithRSA   SignatureAlgorithm = "SHA512WithRSA"
+	ECDSAWithSHA256 SignatureAlgorithm = "ECDSAWithSHA256"
+	ECDSAWithSHA384 SignatureAlgorithm = "ECDSAWithSHA384"
+	ECDSAWithSHA512 SignatureAlgorithm = "ECDSAWithSHA512"
+	PureEd25519     SignatureAlgorithm = "PureEd25519"
+)
+
 // CertificateSpec defines the desired state of Certificate.
 // A valid Certificate requires at least one of a CommonName, DNSName, or
 // URISAN to be valid.
@@ -253,6 +266,13 @@ type CertificateSpec struct {
 	// the controller and webhook components.
 	// +optional
 	NameConstraints *NameConstraints `json:"nameConstraints,omitempty"`
+
+	// Signature algorithm to use.
+	// Allowed values for RSA keys: SHA256WithRSA, SHA384WithRSA, SHA512WithRSA.
+	// Allowed values for ECDSA keys: ECDSAWithSHA256, ECDSAWithSHA384, ECDSAWithSHA512.
+	// Allowed values for Ed25519 keys: PureEd25519.
+	// +optional
+	SignatureAlgorithm SignatureAlgorithm `json:"signatureAlgorithm,omitempty"`
 }
 
 type OtherName struct {
