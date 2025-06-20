@@ -887,6 +887,7 @@ func autoConvert_v1beta1_CertificateSpec_To_certmanager_CertificateSpec(in *Cert
 	out.RevisionHistoryLimit = (*int32)(unsafe.Pointer(in.RevisionHistoryLimit))
 	out.AdditionalOutputFormats = *(*[]certmanager.CertificateAdditionalOutputFormat)(unsafe.Pointer(&in.AdditionalOutputFormats))
 	out.NameConstraints = (*certmanager.NameConstraints)(unsafe.Pointer(in.NameConstraints))
+	out.SignatureAlgorithm = certmanager.SignatureAlgorithm(in.SignatureAlgorithm)
 	return nil
 }
 
@@ -919,6 +920,7 @@ func autoConvert_certmanager_CertificateSpec_To_v1beta1_CertificateSpec(in *cert
 	out.IsCA = in.IsCA
 	out.Usages = *(*[]KeyUsage)(unsafe.Pointer(&in.Usages))
 	out.PrivateKey = (*CertificatePrivateKey)(unsafe.Pointer(in.PrivateKey))
+	out.SignatureAlgorithm = SignatureAlgorithm(in.SignatureAlgorithm)
 	out.EncodeUsagesInRequest = (*bool)(unsafe.Pointer(in.EncodeUsagesInRequest))
 	out.RevisionHistoryLimit = (*int32)(unsafe.Pointer(in.RevisionHistoryLimit))
 	out.AdditionalOutputFormats = *(*[]CertificateAdditionalOutputFormat)(unsafe.Pointer(&in.AdditionalOutputFormats))
@@ -1565,6 +1567,7 @@ func autoConvert_v1beta1_VaultIssuer_To_certmanager_VaultIssuer(in *VaultIssuer,
 		return err
 	}
 	out.Server = in.Server
+	out.ServerName = in.ServerName
 	out.Path = in.Path
 	out.Namespace = in.Namespace
 	out.CABundle = *(*[]byte)(unsafe.Pointer(&in.CABundle))
@@ -1608,6 +1611,7 @@ func autoConvert_certmanager_VaultIssuer_To_v1beta1_VaultIssuer(in *certmanager.
 		return err
 	}
 	out.Server = in.Server
+	out.ServerName = in.ServerName
 	out.Path = in.Path
 	out.Namespace = in.Namespace
 	out.CABundle = *(*[]byte)(unsafe.Pointer(&in.CABundle))
