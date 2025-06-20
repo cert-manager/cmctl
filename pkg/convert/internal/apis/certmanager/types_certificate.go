@@ -89,6 +89,19 @@ const (
 	PKCS8 PrivateKeyEncoding = "PKCS8"
 )
 
+// +kubebuilder:validation:Enum=SHA256WithRSA;SHA384WithRSA;SHA512WithRSA;ECDSAWithSHA256;ECDSAWithSHA384;ECDSAWithSHA512;PureEd25519
+type SignatureAlgorithm string
+
+const (
+	SHA256WithRSA   SignatureAlgorithm = "SHA256WithRSA"
+	SHA384WithRSA   SignatureAlgorithm = "SHA384WithRSA"
+	SHA512WithRSA   SignatureAlgorithm = "SHA512WithRSA"
+	ECDSAWithSHA256 SignatureAlgorithm = "ECDSAWithSHA256"
+	ECDSAWithSHA384 SignatureAlgorithm = "ECDSAWithSHA384"
+	ECDSAWithSHA512 SignatureAlgorithm = "ECDSAWithSHA512"
+	PureEd25519     SignatureAlgorithm = "PureEd25519"
+)
+
 // CertificateSpec defines the desired state of Certificate.
 //
 // NOTE: The specification contains a lot of "requested" certificate attributes, it is
@@ -235,6 +248,13 @@ type CertificateSpec struct {
 	// Private key options. These include the key algorithm and size, the used
 	// encoding and the rotation policy.
 	PrivateKey *CertificatePrivateKey
+
+	// Signature algorithm to use.
+	// Allowed values for RSA keys: SHA256WithRSA, SHA384WithRSA, SHA512WithRSA.
+	// Allowed values for ECDSA keys: ECDSAWithSHA256, ECDSAWithSHA384, ECDSAWithSHA512.
+	// Allowed values for Ed25519 keys: PureEd25519.
+	// +optional
+	SignatureAlgorithm SignatureAlgorithm `json:"signatureAlgorithm,omitempty"`
 
 	// Whether the KeyUsage and ExtKeyUsage extensions should be set in the encoded CSR.
 	//
