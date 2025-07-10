@@ -6,7 +6,7 @@ require (
 	github.com/cert-manager/cert-manager v1.17.2
 	github.com/go-logr/logr v1.4.3
 	github.com/google/gofuzz v1.2.0
-	github.com/sergi/go-diff v1.3.1
+	github.com/sergi/go-diff v1.4.0
 	github.com/spf13/cobra v1.9.1
 	github.com/spf13/pflag v1.0.6
 	github.com/stretchr/testify v1.10.0
