@@ -121,8 +121,8 @@ detected_ginkgo_version := $(shell [[ -f go.mod ]] && awk '/ginkgo\/v2/ {print $
 tools += ginkgo=$(detected_ginkgo_version)
 # https://pkg.go.dev/github.com/cert-manager/klone?tab=versions
 tools += klone=v0.2.0
-# https://pkg.go.dev/github.com/goreleaser/goreleaser?tab=versions
-tools += goreleaser=v1.26.2
+# https://pkg.go.dev/github.com/goreleaser/goreleaser/v2?tab=versions
+tools += goreleaser=v2.11.0
 # https://pkg.go.dev/github.com/anchore/syft/cmd/syft?tab=versions
 tools += syft=v1.28.0
 # https://github.com/cert-manager/helm-tool/releases
@@ -338,7 +338,7 @@ go_dependencies += boilersuite=github.com/cert-manager/boilersuite
 go_dependencies += gomarkdoc=github.com/princjef/gomarkdoc/cmd/gomarkdoc
 go_dependencies += oras=oras.land/oras/cmd/oras
 go_dependencies += klone=github.com/cert-manager/klone
-go_dependencies += goreleaser=github.com/goreleaser/goreleaser
+go_dependencies += goreleaser=github.com/goreleaser/goreleaser/v2
 go_dependencies += syft=github.com/anchore/syft/cmd/syft
 go_dependencies += client-gen=k8s.io/code-generator/cmd/client-gen
 go_dependencies += deepcopy-gen=k8s.io/code-generator/cmd/deepcopy-gen
