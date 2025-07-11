@@ -986,6 +986,7 @@ func autoConvert_v1beta1_ACMEIssuer_To_acme_ACMEIssuer(in *ACMEIssuer, out *acme
 	}
 	out.DisableAccountKeyGeneration = in.DisableAccountKeyGeneration
 	out.EnableDurationFeature = in.EnableDurationFeature
+	out.Profile = in.Profile
 	return nil
 }
 
@@ -1020,6 +1021,7 @@ func autoConvert_acme_ACMEIssuer_To_v1beta1_ACMEIssuer(in *acme.ACMEIssuer, out 
 	}
 	out.DisableAccountKeyGeneration = in.DisableAccountKeyGeneration
 	out.EnableDurationFeature = in.EnableDurationFeature
+	out.Profile = in.Profile
 	return nil
 }
 
@@ -1662,6 +1664,7 @@ func autoConvert_v1beta1_OrderSpec_To_acme_OrderSpec(in *OrderSpec, out *acme.Or
 	out.DNSNames = *(*[]string)(unsafe.Pointer(&in.DNSNames))
 	out.IPAddresses = *(*[]string)(unsafe.Pointer(&in.IPAddresses))
 	out.Duration = (*pkgapismetav1.Duration)(unsafe.Pointer(in.Duration))
+	out.Profile = in.Profile
 	return nil
 }
 
@@ -1679,6 +1682,7 @@ func autoConvert_acme_OrderSpec_To_v1beta1_OrderSpec(in *acme.OrderSpec, out *Or
 	out.DNSNames = *(*[]string)(unsafe.Pointer(&in.DNSNames))
 	out.IPAddresses = *(*[]string)(unsafe.Pointer(&in.IPAddresses))
 	out.Duration = (*pkgapismetav1.Duration)(unsafe.Pointer(in.Duration))
+	out.Profile = in.Profile
 	return nil
 }
 
