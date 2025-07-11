@@ -1,3 +1,5 @@
+version: 2
+
 # Our Makefile will automatically add additional settings
 # to this builds array (environment variables, flags, ...)
 builds:
@@ -33,11 +35,11 @@ signs:
 
 archives:
   - name_template: "{{ .Binary }}_{{ .Os }}_{{ .Arch }}"
-    format: binary
-    
+    formats: ["binary"]
+
   - id: tar-gz-archives
     name_template: "{{ .Binary }}_{{ .Os }}_{{ .Arch }}"
-    format: tar.gz
+    formats: ["tar.gz"]
 
 release:
   draft: true

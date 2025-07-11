@@ -57,7 +57,7 @@ define template_for_target
 	$(YQ) 'with(.builds[]; select(.id == "$(1)") | .ldflags[0] = "-s")' | \
 	$(YQ) 'with(.builds[]; select(.id == "$(1)") | .ldflags[1] = "-w")' | \
 	$(YQ) 'with(.builds[]; select(.id == "$(1)") | .ldflags[2] = "$(go_$1_ldflags)")' | \
-	$(YQ) 'with(.builds[]; select(.id == "$(1)") | .gobinary = "$(GO)")' | \
+	$(YQ) 'with(.builds[]; select(.id == "$(1)") | .tool = "$(GO)")' | \
 	targets=$(exe_targets) $(YQ) 'with(.builds[]; select(.id == "$(1)") | .targets = (env(targets) | split(",")))' |
 endef
 
