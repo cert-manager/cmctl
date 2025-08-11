@@ -1,4 +1,4 @@
-# [CHK_LATEST_VERSION]: v1.17.0
+# [CHK_LATEST_VERSION]: v1.18.2
 ---
 # [CHK_VERSIONS]: v1.0.0, v1.0.1, v1.0.2, v1.0.3, v1.0.4, v1.1.0-alpha.0, v1.1.0-alpha.1, v1.1.0, v1.1.1
 apiVersion: apiextensions.k8s.io/v1
@@ -6600,7 +6600,7 @@ spec:
           type: RuntimeDefault
       serviceAccountName: cert-manager-webhook
 ---
-# [CHK_VERSIONS]: v1.12.0-beta.1, v1.12.0-beta.2, v1.12.0, v1.12.1, v1.12.2, v1.12.3, v1.12.4, v1.12.5, v1.12.6, v1.12.7, v1.12.9, v1.12.10, v1.12.11, v1.12.12, v1.12.13, v1.12.14, v1.12.15
+# [CHK_VERSIONS]: v1.12.0-beta.1, v1.12.0-beta.2, v1.12.0, v1.12.1, v1.12.2, v1.12.3, v1.12.4, v1.12.5, v1.12.6, v1.12.7, v1.12.9, v1.12.10, v1.12.11, v1.12.12, v1.12.13, v1.12.14, v1.12.15, v1.12.16, v1.12.17
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -10583,7 +10583,7 @@ spec:
           type: RuntimeDefault
       serviceAccountName: cert-manager-webhook
 ---
-# [CHK_VERSIONS]: v1.16.0-alpha.0, v1.16.0-alpha.1, v1.16.0-beta.0, v1.16.0, v1.16.1, v1.16.2, v1.16.3, v1.17.0-alpha.0, v1.17.0-beta.0, v1.17.0
+# [CHK_VERSIONS]: v1.16.0-alpha.0, v1.16.0-alpha.1, v1.16.0-beta.0, v1.16.0, v1.16.1, v1.16.2, v1.16.3, v1.16.4, v1.16.5, v1.17.0-alpha.0, v1.17.0-beta.0, v1.17.0, v1.17.1, v1.17.2, v1.17.3, v1.17.4
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -11028,6 +11028,944 @@ spec:
           httpGet:
             path: /healthz
             port: 6080
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 1
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+      enableServiceLinks: false
+      nodeSelector:
+        kubernetes.io/os: linux
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      serviceAccountName: cert-manager-webhook
+---
+# [CHK_VERSIONS]: v1.18.0-alpha.0
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    helm.sh/resource-policy: keep
+  labels:
+    app: cert-manager
+    app.kubernetes.io/instance: cert-manager
+    app.kubernetes.io/name: cert-manager
+    app.kubernetes.io/version: v99.99.99
+  name: certificaterequests.cert-manager.io
+spec:
+  group: cert-manager.io
+  names:
+    categories:
+    - cert-manager
+    kind: CertificateRequest
+    listKind: CertificateRequestList
+    plural: certificaterequests
+    shortNames:
+    - cr
+    - crs
+    singular: certificaterequest
+  scope: Namespaced
+  versions: []
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    helm.sh/resource-policy: keep
+  labels:
+    app: cert-manager
+    app.kubernetes.io/instance: cert-manager
+    app.kubernetes.io/name: cert-manager
+    app.kubernetes.io/version: v99.99.99
+  name: certificates.cert-manager.io
+spec:
+  group: cert-manager.io
+  names:
+    categories:
+    - cert-manager
+    kind: Certificate
+    listKind: CertificateList
+    plural: certificates
+    shortNames:
+    - cert
+    - certs
+    singular: certificate
+  scope: Namespaced
+  versions: []
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    helm.sh/resource-policy: keep
+  labels:
+    app: cert-manager
+    app.kubernetes.io/instance: cert-manager
+    app.kubernetes.io/name: cert-manager
+    app.kubernetes.io/version: v99.99.99
+  name: challenges.acme.cert-manager.io
+spec:
+  group: acme.cert-manager.io
+  names:
+    categories:
+    - cert-manager
+    - cert-manager-acme
+    kind: Challenge
+    listKind: ChallengeList
+    plural: challenges
+    singular: challenge
+  scope: Namespaced
+  versions: []
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    helm.sh/resource-policy: keep
+  labels:
+    app: cert-manager
+    app.kubernetes.io/instance: cert-manager
+    app.kubernetes.io/name: cert-manager
+    app.kubernetes.io/version: v99.99.99
+  name: clusterissuers.cert-manager.io
+spec:
+  group: cert-manager.io
+  names:
+    categories:
+    - cert-manager
+    kind: ClusterIssuer
+    listKind: ClusterIssuerList
+    plural: clusterissuers
+    shortNames:
+    - ciss
+    singular: clusterissuer
+  scope: Cluster
+  versions: []
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    helm.sh/resource-policy: keep
+  labels:
+    app: cert-manager
+    app.kubernetes.io/component: crds
+    app.kubernetes.io/instance: cert-manager
+    app.kubernetes.io/name: cert-manager
+    app.kubernetes.io/version: v99.99.99
+  name: issuers.cert-manager.io
+spec:
+  group: cert-manager.io
+  names:
+    categories:
+    - cert-manager
+    kind: Issuer
+    listKind: IssuerList
+    plural: issuers
+    shortNames:
+    - iss
+    singular: issuer
+  scope: Namespaced
+  versions: []
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    helm.sh/resource-policy: keep
+  labels:
+    app: cert-manager
+    app.kubernetes.io/component: crds
+    app.kubernetes.io/instance: cert-manager
+    app.kubernetes.io/name: cert-manager
+    app.kubernetes.io/version: v99.99.99
+  name: orders.acme.cert-manager.io
+spec:
+  group: acme.cert-manager.io
+  names:
+    categories:
+    - cert-manager
+    - cert-manager-acme
+    kind: Order
+    listKind: OrderList
+    plural: orders
+    singular: order
+  scope: Namespaced
+  versions: []
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: cainjector
+    app.kubernetes.io/component: cainjector
+    app.kubernetes.io/instance: cert-manager
+    app.kubernetes.io/name: cainjector
+    app.kubernetes.io/version: v99.99.99
+  name: cert-manager-cainjector
+  namespace: cert-manager
+spec:
+  ports:
+  - name: http-metrics
+    port: 9402
+    protocol: TCP
+  selector:
+    app.kubernetes.io/component: cainjector
+    app.kubernetes.io/instance: cert-manager
+    app.kubernetes.io/name: cainjector
+  type: ClusterIP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: cert-manager
+    app.kubernetes.io/component: controller
+    app.kubernetes.io/instance: cert-manager
+    app.kubernetes.io/name: cert-manager
+    app.kubernetes.io/version: v99.99.99
+  name: cert-manager
+  namespace: cert-manager
+spec:
+  ports:
+  - name: tcp-prometheus-servicemonitor
+    port: 9402
+    protocol: TCP
+    targetPort: 9402
+  selector:
+    app.kubernetes.io/component: controller
+    app.kubernetes.io/instance: cert-manager
+    app.kubernetes.io/name: cert-manager
+  type: ClusterIP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: webhook
+    app.kubernetes.io/component: webhook
+    app.kubernetes.io/instance: cert-manager
+    app.kubernetes.io/name: webhook
+    app.kubernetes.io/version: v99.99.99
+  name: cert-manager-webhook
+  namespace: cert-manager
+spec:
+  ports:
+  - name: https
+    port: 443
+    protocol: TCP
+    targetPort: https
+  - name: metrics
+    port: 9402
+    protocol: TCP
+    targetPort: http-metrics
+  selector:
+    app.kubernetes.io/component: webhook
+    app.kubernetes.io/instance: cert-manager
+    app.kubernetes.io/name: webhook
+  type: ClusterIP
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: cainjector
+    app.kubernetes.io/component: cainjector
+    app.kubernetes.io/instance: cert-manager
+    app.kubernetes.io/name: cainjector
+    app.kubernetes.io/version: v99.99.99
+  name: cert-manager-cainjector
+  namespace: cert-manager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: cainjector
+      app.kubernetes.io/instance: cert-manager
+      app.kubernetes.io/name: cainjector
+  template:
+    metadata:
+      annotations:
+        prometheus.io/path: /metrics
+        prometheus.io/port: "9402"
+        prometheus.io/scrape: "true"
+      labels:
+        app: cainjector
+        app.kubernetes.io/component: cainjector
+        app.kubernetes.io/instance: cert-manager
+        app.kubernetes.io/name: cainjector
+        app.kubernetes.io/version: v99.99.99
+    spec:
+      containers:
+      - args:
+        - --v=2
+        - --leader-election-namespace=kube-system
+        env:
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        image: quay.io/jetstack/cert-manager-cainjector:v99.99.99
+        imagePullPolicy: IfNotPresent
+        name: cert-manager-cainjector
+        ports:
+        - containerPort: 9402
+          name: http-metrics
+          protocol: TCP
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+      enableServiceLinks: false
+      nodeSelector:
+        kubernetes.io/os: linux
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      serviceAccountName: cert-manager-cainjector
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: cert-manager
+    app.kubernetes.io/component: controller
+    app.kubernetes.io/instance: cert-manager
+    app.kubernetes.io/name: cert-manager
+    app.kubernetes.io/version: v99.99.99
+  name: cert-manager
+  namespace: cert-manager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: controller
+      app.kubernetes.io/instance: cert-manager
+      app.kubernetes.io/name: cert-manager
+  template:
+    metadata:
+      annotations:
+        prometheus.io/path: /metrics
+        prometheus.io/port: "9402"
+        prometheus.io/scrape: "true"
+      labels:
+        app: cert-manager
+        app.kubernetes.io/component: controller
+        app.kubernetes.io/instance: cert-manager
+        app.kubernetes.io/name: cert-manager
+        app.kubernetes.io/version: v99.99.99
+    spec:
+      containers:
+      - args:
+        - --v=2
+        - --cluster-resource-namespace=$(POD_NAMESPACE)
+        - --leader-election-namespace=kube-system
+        - --acme-http01-solver-image=quay.io/jetstack/cert-manager-acmesolver:v99.99.99
+        - --max-concurrent-challenges=60
+        env:
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        image: quay.io/jetstack/cert-manager-controller:v99.99.99
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 8
+          httpGet:
+            path: /livez
+            port: http-healthz
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 15
+        name: cert-manager-controller
+        ports:
+        - containerPort: 9402
+          name: http-metrics
+          protocol: TCP
+        - containerPort: 9403
+          name: http-healthz
+          protocol: TCP
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+      enableServiceLinks: false
+      nodeSelector:
+        kubernetes.io/os: linux
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      serviceAccountName: cert-manager
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: webhook
+    app.kubernetes.io/component: webhook
+    app.kubernetes.io/instance: cert-manager
+    app.kubernetes.io/name: webhook
+    app.kubernetes.io/version: v99.99.99
+  name: cert-manager-webhook
+  namespace: cert-manager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: webhook
+      app.kubernetes.io/instance: cert-manager
+      app.kubernetes.io/name: webhook
+  template:
+    metadata:
+      annotations:
+        prometheus.io/path: /metrics
+        prometheus.io/port: "9402"
+        prometheus.io/scrape: "true"
+      labels:
+        app: webhook
+        app.kubernetes.io/component: webhook
+        app.kubernetes.io/instance: cert-manager
+        app.kubernetes.io/name: webhook
+        app.kubernetes.io/version: v99.99.99
+    spec:
+      containers:
+      - args:
+        - --v=2
+        - --secure-port=10250
+        - --dynamic-serving-ca-secret-namespace=$(POD_NAMESPACE)
+        - --dynamic-serving-ca-secret-name=cert-manager-webhook-ca
+        - --dynamic-serving-dns-names=cert-manager-webhook
+        - --dynamic-serving-dns-names=cert-manager-webhook.$(POD_NAMESPACE)
+        - --dynamic-serving-dns-names=cert-manager-webhook.$(POD_NAMESPACE).svc
+        env:
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        image: quay.io/jetstack/cert-manager-webhook:v99.99.99
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /livez
+            port: 6080
+            scheme: HTTP
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        name: cert-manager-webhook
+        ports:
+        - containerPort: 10250
+          name: https
+          protocol: TCP
+        - containerPort: 6080
+          name: healthcheck
+          protocol: TCP
+        - containerPort: 9402
+          name: http-metrics
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /healthz
+            port: 6080
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 1
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+      enableServiceLinks: false
+      nodeSelector:
+        kubernetes.io/os: linux
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      serviceAccountName: cert-manager-webhook
+---
+# [CHK_VERSIONS]: v1.18.0-beta.0, v1.18.0, v1.18.1, v1.18.2
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    helm.sh/resource-policy: keep
+  labels:
+    app: cert-manager
+    app.kubernetes.io/instance: cert-manager
+    app.kubernetes.io/name: cert-manager
+    app.kubernetes.io/version: v99.99.99
+  name: certificaterequests.cert-manager.io
+spec:
+  group: cert-manager.io
+  names:
+    categories:
+    - cert-manager
+    kind: CertificateRequest
+    listKind: CertificateRequestList
+    plural: certificaterequests
+    shortNames:
+    - cr
+    - crs
+    singular: certificaterequest
+  scope: Namespaced
+  versions: []
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    helm.sh/resource-policy: keep
+  labels:
+    app: cert-manager
+    app.kubernetes.io/instance: cert-manager
+    app.kubernetes.io/name: cert-manager
+    app.kubernetes.io/version: v99.99.99
+  name: certificates.cert-manager.io
+spec:
+  group: cert-manager.io
+  names:
+    categories:
+    - cert-manager
+    kind: Certificate
+    listKind: CertificateList
+    plural: certificates
+    shortNames:
+    - cert
+    - certs
+    singular: certificate
+  scope: Namespaced
+  versions: []
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    helm.sh/resource-policy: keep
+  labels:
+    app: cert-manager
+    app.kubernetes.io/instance: cert-manager
+    app.kubernetes.io/name: cert-manager
+    app.kubernetes.io/version: v99.99.99
+  name: challenges.acme.cert-manager.io
+spec:
+  group: acme.cert-manager.io
+  names:
+    categories:
+    - cert-manager
+    - cert-manager-acme
+    kind: Challenge
+    listKind: ChallengeList
+    plural: challenges
+    singular: challenge
+  scope: Namespaced
+  versions: []
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    helm.sh/resource-policy: keep
+  labels:
+    app: cert-manager
+    app.kubernetes.io/instance: cert-manager
+    app.kubernetes.io/name: cert-manager
+    app.kubernetes.io/version: v99.99.99
+  name: clusterissuers.cert-manager.io
+spec:
+  group: cert-manager.io
+  names:
+    categories:
+    - cert-manager
+    kind: ClusterIssuer
+    listKind: ClusterIssuerList
+    plural: clusterissuers
+    shortNames:
+    - ciss
+    singular: clusterissuer
+  scope: Cluster
+  versions: []
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    helm.sh/resource-policy: keep
+  labels:
+    app: cert-manager
+    app.kubernetes.io/component: crds
+    app.kubernetes.io/instance: cert-manager
+    app.kubernetes.io/name: cert-manager
+    app.kubernetes.io/version: v99.99.99
+  name: issuers.cert-manager.io
+spec:
+  group: cert-manager.io
+  names:
+    categories:
+    - cert-manager
+    kind: Issuer
+    listKind: IssuerList
+    plural: issuers
+    shortNames:
+    - iss
+    singular: issuer
+  scope: Namespaced
+  versions: []
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    helm.sh/resource-policy: keep
+  labels:
+    app: cert-manager
+    app.kubernetes.io/component: crds
+    app.kubernetes.io/instance: cert-manager
+    app.kubernetes.io/name: cert-manager
+    app.kubernetes.io/version: v99.99.99
+  name: orders.acme.cert-manager.io
+spec:
+  group: acme.cert-manager.io
+  names:
+    categories:
+    - cert-manager
+    - cert-manager-acme
+    kind: Order
+    listKind: OrderList
+    plural: orders
+    singular: order
+  scope: Namespaced
+  versions: []
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: cainjector
+    app.kubernetes.io/component: cainjector
+    app.kubernetes.io/instance: cert-manager
+    app.kubernetes.io/name: cainjector
+    app.kubernetes.io/version: v99.99.99
+  name: cert-manager-cainjector
+  namespace: cert-manager
+spec:
+  ports:
+  - name: http-metrics
+    port: 9402
+    protocol: TCP
+  selector:
+    app.kubernetes.io/component: cainjector
+    app.kubernetes.io/instance: cert-manager
+    app.kubernetes.io/name: cainjector
+  type: ClusterIP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: cert-manager
+    app.kubernetes.io/component: controller
+    app.kubernetes.io/instance: cert-manager
+    app.kubernetes.io/name: cert-manager
+    app.kubernetes.io/version: v99.99.99
+  name: cert-manager
+  namespace: cert-manager
+spec:
+  ports:
+  - name: tcp-prometheus-servicemonitor
+    port: 9402
+    protocol: TCP
+    targetPort: http-metrics
+  selector:
+    app.kubernetes.io/component: controller
+    app.kubernetes.io/instance: cert-manager
+    app.kubernetes.io/name: cert-manager
+  type: ClusterIP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: webhook
+    app.kubernetes.io/component: webhook
+    app.kubernetes.io/instance: cert-manager
+    app.kubernetes.io/name: webhook
+    app.kubernetes.io/version: v99.99.99
+  name: cert-manager-webhook
+  namespace: cert-manager
+spec:
+  ports:
+  - name: https
+    port: 443
+    protocol: TCP
+    targetPort: https
+  - name: metrics
+    port: 9402
+    protocol: TCP
+    targetPort: http-metrics
+  selector:
+    app.kubernetes.io/component: webhook
+    app.kubernetes.io/instance: cert-manager
+    app.kubernetes.io/name: webhook
+  type: ClusterIP
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: cainjector
+    app.kubernetes.io/component: cainjector
+    app.kubernetes.io/instance: cert-manager
+    app.kubernetes.io/name: cainjector
+    app.kubernetes.io/version: v99.99.99
+  name: cert-manager-cainjector
+  namespace: cert-manager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: cainjector
+      app.kubernetes.io/instance: cert-manager
+      app.kubernetes.io/name: cainjector
+  template:
+    metadata:
+      annotations:
+        prometheus.io/path: /metrics
+        prometheus.io/port: "9402"
+        prometheus.io/scrape: "true"
+      labels:
+        app: cainjector
+        app.kubernetes.io/component: cainjector
+        app.kubernetes.io/instance: cert-manager
+        app.kubernetes.io/name: cainjector
+        app.kubernetes.io/version: v99.99.99
+    spec:
+      containers:
+      - args:
+        - --v=2
+        - --leader-election-namespace=kube-system
+        env:
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        image: quay.io/jetstack/cert-manager-cainjector:v99.99.99
+        imagePullPolicy: IfNotPresent
+        name: cert-manager-cainjector
+        ports:
+        - containerPort: 9402
+          name: http-metrics
+          protocol: TCP
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+      enableServiceLinks: false
+      nodeSelector:
+        kubernetes.io/os: linux
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      serviceAccountName: cert-manager-cainjector
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: cert-manager
+    app.kubernetes.io/component: controller
+    app.kubernetes.io/instance: cert-manager
+    app.kubernetes.io/name: cert-manager
+    app.kubernetes.io/version: v99.99.99
+  name: cert-manager
+  namespace: cert-manager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: controller
+      app.kubernetes.io/instance: cert-manager
+      app.kubernetes.io/name: cert-manager
+  template:
+    metadata:
+      annotations:
+        prometheus.io/path: /metrics
+        prometheus.io/port: "9402"
+        prometheus.io/scrape: "true"
+      labels:
+        app: cert-manager
+        app.kubernetes.io/component: controller
+        app.kubernetes.io/instance: cert-manager
+        app.kubernetes.io/name: cert-manager
+        app.kubernetes.io/version: v99.99.99
+    spec:
+      containers:
+      - args:
+        - --v=2
+        - --cluster-resource-namespace=$(POD_NAMESPACE)
+        - --leader-election-namespace=kube-system
+        - --acme-http01-solver-image=quay.io/jetstack/cert-manager-acmesolver:v99.99.99
+        - --max-concurrent-challenges=60
+        env:
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        image: quay.io/jetstack/cert-manager-controller:v99.99.99
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 8
+          httpGet:
+            path: /livez
+            port: http-healthz
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 15
+        name: cert-manager-controller
+        ports:
+        - containerPort: 9402
+          name: http-metrics
+          protocol: TCP
+        - containerPort: 9403
+          name: http-healthz
+          protocol: TCP
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+      enableServiceLinks: false
+      nodeSelector:
+        kubernetes.io/os: linux
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      serviceAccountName: cert-manager
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: webhook
+    app.kubernetes.io/component: webhook
+    app.kubernetes.io/instance: cert-manager
+    app.kubernetes.io/name: webhook
+    app.kubernetes.io/version: v99.99.99
+  name: cert-manager-webhook
+  namespace: cert-manager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: webhook
+      app.kubernetes.io/instance: cert-manager
+      app.kubernetes.io/name: webhook
+  template:
+    metadata:
+      annotations:
+        prometheus.io/path: /metrics
+        prometheus.io/port: "9402"
+        prometheus.io/scrape: "true"
+      labels:
+        app: webhook
+        app.kubernetes.io/component: webhook
+        app.kubernetes.io/instance: cert-manager
+        app.kubernetes.io/name: webhook
+        app.kubernetes.io/version: v99.99.99
+    spec:
+      containers:
+      - args:
+        - --v=2
+        - --secure-port=10250
+        - --dynamic-serving-ca-secret-namespace=$(POD_NAMESPACE)
+        - --dynamic-serving-ca-secret-name=cert-manager-webhook-ca
+        - --dynamic-serving-dns-names=cert-manager-webhook
+        - --dynamic-serving-dns-names=cert-manager-webhook.$(POD_NAMESPACE)
+        - --dynamic-serving-dns-names=cert-manager-webhook.$(POD_NAMESPACE).svc
+        env:
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        image: quay.io/jetstack/cert-manager-webhook:v99.99.99
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /livez
+            port: healthcheck
+            scheme: HTTP
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        name: cert-manager-webhook
+        ports:
+        - containerPort: 10250
+          name: https
+          protocol: TCP
+        - containerPort: 6080
+          name: healthcheck
+          protocol: TCP
+        - containerPort: 9402
+          name: http-metrics
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /healthz
+            port: healthcheck
             scheme: HTTP
           initialDelaySeconds: 5
           periodSeconds: 5
