@@ -10,45 +10,45 @@ targets:
     - folder_name: boilerplate
       repo_url: https://github.com/cert-manager/makefile-modules.git
       repo_ref: main
-      repo_hash: 563ddf86f3e68085fbf926eb2cc7a4ec0c6d58cd
+      repo_hash: 46c5dc86a9a144e7e71c00a304ebd2844e1545fa
       repo_path: modules/boilerplate
     - folder_name: cert-manager
       repo_url: https://github.com/cert-manager/makefile-modules.git
       repo_ref: main
-      repo_hash: 563ddf86f3e68085fbf926eb2cc7a4ec0c6d58cd
+      repo_hash: 46c5dc86a9a144e7e71c00a304ebd2844e1545fa
       repo_path: modules/cert-manager
     - folder_name: executable
       repo_url: https://github.com/cert-manager/makefile-modules.git
       repo_ref: main
-      repo_hash: 563ddf86f3e68085fbf926eb2cc7a4ec0c6d58cd
+      repo_hash: 46c5dc86a9a144e7e71c00a304ebd2844e1545fa
       repo_path: modules/executable
     - folder_name: generate-verify
       repo_url: https://github.com/cert-manager/makefile-modules.git
       repo_ref: main
-      repo_hash: 563ddf86f3e68085fbf926eb2cc7a4ec0c6d58cd
+      repo_hash: 46c5dc86a9a144e7e71c00a304ebd2844e1545fa
       repo_path: modules/generate-verify
     - folder_name: go
       repo_url: https://github.com/cert-manager/makefile-modules.git
       repo_ref: main
-      repo_hash: 563ddf86f3e68085fbf926eb2cc7a4ec0c6d58cd
+      repo_hash: 46c5dc86a9a144e7e71c00a304ebd2844e1545fa
       repo_path: modules/go
     - folder_name: help
       repo_url: https://github.com/cert-manager/makefile-modules.git
       repo_ref: main
-      repo_hash: 563ddf86f3e68085fbf926eb2cc7a4ec0c6d58cd
+      repo_hash: 46c5dc86a9a144e7e71c00a304ebd2844e1545fa
       repo_path: modules/help
     - folder_name: klone
       repo_url: https://github.com/cert-manager/makefile-modules.git
       repo_ref: main
-      repo_hash: 563ddf86f3e68085fbf926eb2cc7a4ec0c6d58cd
+      repo_hash: 46c5dc86a9a144e7e71c00a304ebd2844e1545fa
       repo_path: modules/klone
     - folder_name: repository-base
       repo_url: https://github.com/cert-manager/makefile-modules.git
       repo_ref: main
-      repo_hash: 563ddf86f3e68085fbf926eb2cc7a4ec0c6d58cd
+      repo_hash: 46c5dc86a9a144e7e71c00a304ebd2844e1545fa
       repo_path: modules/repository-base
     - folder_name: tools
       repo_url: https://github.com/cert-manager/makefile-modules.git
       repo_ref: main
-      repo_hash: 563ddf86f3e68085fbf926eb2cc7a4ec0c6d58cd
+      repo_hash: 46c5dc86a9a144e7e71c00a304ebd2844e1545fa
       repo_path: modules/tools
