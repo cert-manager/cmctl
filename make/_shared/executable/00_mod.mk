@@ -33,6 +33,7 @@ define default_per_build_variables
 go_$1_cgo_enabled ?= $(CGO_ENABLED)
 go_$1_goexperiment ?= $(GOEXPERIMENT)
 go_$1_flags ?= -tags=
+exe_$1_targets ?= $(exe_targets)
 endef
 
 $(foreach build_name,$(exe_build_names),$(eval $(call default_per_build_variables,$(build_name))))
