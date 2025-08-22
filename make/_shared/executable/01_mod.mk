@@ -58,7 +58,7 @@ define template_for_target
 	$(YQ) 'with(.builds[]; select(.id == "$(1)") | .ldflags[1] = "-w")' | \
 	$(YQ) 'with(.builds[]; select(.id == "$(1)") | .ldflags[2] = "$(go_$1_ldflags)")' | \
 	$(YQ) 'with(.builds[]; select(.id == "$(1)") | .tool = "$(GO)")' | \
-	targets=$(exe_targets) $(YQ) 'with(.builds[]; select(.id == "$(1)") | .targets = (env(targets) | split(",")))' |
+	targets=$(exe_$1_targets) $(YQ) 'with(.builds[]; select(.id == "$(1)") | .targets = (env(targets) | split(",")))' |
 endef
 
 ## Build the go source for release. This will build the source
