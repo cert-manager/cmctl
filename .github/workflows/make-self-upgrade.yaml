@@ -15,7 +15,7 @@ jobs:
   self_upgrade:
     runs-on: ubuntu-latest
 
-    if: github.repository == 'cert-manager/cmctl/v2'
+    if: github.repository == 'cert-manager/cmctl'
 
     permissions:
       contents: write
