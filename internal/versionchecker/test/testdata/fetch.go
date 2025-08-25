@@ -30,9 +30,9 @@ import (
 	"slices"
 	"strings"
 
+	"go.yaml.in/yaml/v3"
 	"golang.org/x/mod/semver"
 	"golang.org/x/sync/errgroup"
-	"gopkg.in/yaml.v2"
 )
 
 const minVersion = "v1.0.0"
