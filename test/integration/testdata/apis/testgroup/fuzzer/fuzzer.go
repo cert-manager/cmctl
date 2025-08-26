@@ -17,9 +17,9 @@ limitations under the License.
 package fuzzer
 
 import (
-	fuzz "github.com/google/gofuzz"
 	runtimeserializer "k8s.io/apimachinery/pkg/runtime/serializer"
 	"k8s.io/utils/ptr"
+	"sigs.k8s.io/randfill"
 
 	"github.com/cert-manager/cmctl/v2/test/integration/testdata/apis/testgroup"
 )
@@ -27,8 +27,8 @@ import (
 // Funcs returns the fuzzer functions for the apps api group.
 var Funcs = func(codecs runtimeserializer.CodecFactory) []interface{} {
 	return []interface{}{
-		func(s *testgroup.TestType, c fuzz.Continue) {
-			c.FuzzNoCustom(s) // fuzz self without calling this function again
+		func(s *testgroup.TestType, c randfill.Continue) {
+			c.FillNoCustom(s) // fuzz self without calling this function again
 
 			if s.TestFieldPtr == nil {
 				s.TestFieldPtr = ptr.To("teststr")
