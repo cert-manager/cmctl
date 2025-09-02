@@ -195,7 +195,7 @@ type CertificateSpec struct {
 	// If the `kind` field is set to `ClusterIssuer`, a ClusterIssuer with the
 	// provided name will be used.
 	// The `name` field in this stanza is required at all times.
-	IssuerRef cmmeta.ObjectReference `json:"issuerRef"`
+	IssuerRef cmmeta.IssuerReference `json:"issuerRef"`
 
 	// IsCA will mark this Certificate as valid for certificate signing.
 	// This will automatically add the `cert sign` usage to the list of `usages`.

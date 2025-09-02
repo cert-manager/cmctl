@@ -3,7 +3,6 @@ items:
 - apiVersion: cert-manager.io/v1
   kind: Certificate
   metadata:
-    creationTimestamp: null
     name: ca-issuer
     namespace: sandbox
   spec:
@@ -18,7 +17,6 @@ items:
 - apiVersion: cert-manager.io/v1
   kind: Issuer
   metadata:
-    creationTimestamp: null
     name: ca-issuer
     namespace: sandbox
   spec:
@@ -28,7 +26,6 @@ items:
 - apiVersion: cert-manager.io/v1
   kind: Certificate
   metadata:
-    creationTimestamp: null
     name: ca-issuer-2
     namespace: sandbox
   spec:

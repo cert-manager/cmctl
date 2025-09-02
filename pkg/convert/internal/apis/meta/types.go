@@ -47,14 +47,18 @@ type LocalObjectReference struct {
 	Name string
 }
 
-// ObjectReference is a reference to an object with a given name, kind and group.
-type ObjectReference struct {
-	// Name of the resource being referred to.
-	Name string
-	// Kind of the resource being referred to.
-	Kind string
-	// Group of the resource being referred to.
-	Group string
+// IssuerReference is a reference to a certificate issuer object with a given name, kind and group.
+type IssuerReference struct {
+	// Name of the issuer being referred to.
+	Name string `json:"name"`
+	// Kind of the issuer being referred to.
+	// +optional
+	// +default="Issuer"
+	Kind string `json:"kind,omitempty"`
+	// Group of the issuer being referred to.
+	// +optional
+	// +default="cert-manager.io"
+	Group string `json:"group,omitempty"`
 }
 
 // A reference to a specific 'key' within a Secret resource.
