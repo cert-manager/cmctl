@@ -1267,6 +1267,7 @@ func autoConvert_v1_ACMEIssuerDNS01ProviderRFC2136_To_acme_ACMEIssuerDNS01Provid
 	}
 	out.TSIGKeyName = in.TSIGKeyName
 	out.TSIGAlgorithm = in.TSIGAlgorithm
+	out.Protocol = acme.RFC2136UpdateProtocol(in.Protocol)
 	return nil
 }
 
@@ -1282,6 +1283,7 @@ func autoConvert_acme_ACMEIssuerDNS01ProviderRFC2136_To_v1_ACMEIssuerDNS01Provid
 	}
 	out.TSIGKeyName = in.TSIGKeyName
 	out.TSIGAlgorithm = in.TSIGAlgorithm
+	out.Protocol = acmev1.RFC2136UpdateProtocol(in.Protocol)
 	return nil
 }
 
@@ -1523,7 +1525,7 @@ func autoConvert_v1_ChallengeSpec_To_acme_ChallengeSpec(in *acmev1.ChallengeSpec
 	if err := Convert_v1_ACMEChallengeSolver_To_acme_ACMEChallengeSolver(&in.Solver, &out.Solver, s); err != nil {
 		return err
 	}
-	if err := metav1.Convert_v1_ObjectReference_To_meta_ObjectReference(&in.IssuerRef, &out.IssuerRef, s); err != nil {
+	if err := metav1.Convert_v1_IssuerReference_To_meta_IssuerReference(&in.IssuerRef, &out.IssuerRef, s); err != nil {
 		return err
 	}
 	return nil
@@ -1545,7 +1547,7 @@ func autoConvert_acme_ChallengeSpec_To_v1_ChallengeSpec(in *acme.ChallengeSpec, 
 	if err := Convert_acme_ACMEChallengeSolver_To_v1_ACMEChallengeSolver(&in.Solver, &out.Solver, s); err != nil {
 		return err
 	}
-	if err := metav1.Convert_meta_ObjectReference_To_v1_ObjectReference(&in.IssuerRef, &out.IssuerRef, s); err != nil {
+	if err := metav1.Convert_meta_IssuerReference_To_v1_IssuerReference(&in.IssuerRef, &out.IssuerRef, s); err != nil {
 		return err
 	}
 	return nil
@@ -1658,7 +1660,7 @@ func Convert_acme_OrderList_To_v1_OrderList(in *acme.OrderList, out *acmev1.Orde
 
 func autoConvert_v1_OrderSpec_To_acme_OrderSpec(in *acmev1.OrderSpec, out *acme.OrderSpec, s conversion.Scope) error {
 	out.Request = *(*[]byte)(unsafe.Pointer(&in.Request))
-	if err := metav1.Convert_v1_ObjectReference_To_meta_ObjectReference(&in.IssuerRef, &out.IssuerRef, s); err != nil {
+	if err := metav1.Convert_v1_IssuerReference_To_meta_IssuerReference(&in.IssuerRef, &out.IssuerRef, s); err != nil {
 		return err
 	}
 	out.CommonName = in.CommonName
@@ -1676,7 +1678,7 @@ func Convert_v1_OrderSpec_To_acme_OrderSpec(in *acmev1.OrderSpec, out *acme.Orde
 
 func autoConvert_acme_OrderSpec_To_v1_OrderSpec(in *acme.OrderSpec, out *acmev1.OrderSpec, s conversion.Scope) error {
 	out.Request = *(*[]byte)(unsafe.Pointer(&in.Request))
-	if err := metav1.Convert_meta_ObjectReference_To_v1_ObjectReference(&in.IssuerRef, &out.IssuerRef, s); err != nil {
+	if err := metav1.Convert_meta_IssuerReference_To_v1_IssuerReference(&in.IssuerRef, &out.IssuerRef, s); err != nil {
 		return err
 	}
 	out.CommonName = in.CommonName

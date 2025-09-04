@@ -3,7 +3,6 @@ items:
 - apiVersion: cert-manager.io/v1
   kind: Certificate
   metadata:
-    creationTimestamp: null
     name: list-test-1
     namespace: default
   spec:
@@ -11,13 +10,14 @@ items:
     - example.cert-manager.1
     duration: 24h0m0s
     issuerRef:
+      group: cert-manager.io
+      kind: Issuer
       name: cert-manager-test-1
     secretName: cert-manager-test-1
   status: {}
 - apiVersion: cert-manager.io/v1
   kind: Certificate
   metadata:
-    creationTimestamp: null
     name: list-test-1
     namespace: default
   spec:
@@ -25,13 +25,14 @@ items:
     - example.cert-manager.2
     duration: 24h0m0s
     issuerRef:
+      group: cert-manager.io
+      kind: Issuer
       name: cert-manager-test-2
     secretName: cert-manager-test-2
   status: {}
 - apiVersion: cert-manager.io/v1
   kind: Issuer
   metadata:
-    creationTimestamp: null
     name: ca-issuer
     namespace: sandbox
   spec:

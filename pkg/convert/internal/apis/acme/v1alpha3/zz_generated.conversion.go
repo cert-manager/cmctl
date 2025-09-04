@@ -1266,6 +1266,7 @@ func autoConvert_v1alpha3_ACMEIssuerDNS01ProviderRFC2136_To_acme_ACMEIssuerDNS01
 	}
 	out.TSIGKeyName = in.TSIGKeyName
 	out.TSIGAlgorithm = in.TSIGAlgorithm
+	out.Protocol = acme.RFC2136UpdateProtocol(in.Protocol)
 	return nil
 }
 
@@ -1281,6 +1282,7 @@ func autoConvert_acme_ACMEIssuerDNS01ProviderRFC2136_To_v1alpha3_ACMEIssuerDNS01
 	}
 	out.TSIGKeyName = in.TSIGKeyName
 	out.TSIGAlgorithm = in.TSIGAlgorithm
+	out.Protocol = RFC2136UpdateProtocol(in.Protocol)
 	return nil
 }
 
@@ -1522,7 +1524,7 @@ func autoConvert_v1alpha3_ChallengeSpec_To_acme_ChallengeSpec(in *ChallengeSpec,
 	if err := Convert_v1alpha3_ACMEChallengeSolver_To_acme_ACMEChallengeSolver(&in.Solver, &out.Solver, s); err != nil {
 		return err
 	}
-	if err := metav1.Convert_v1_ObjectReference_To_meta_ObjectReference(&in.IssuerRef, &out.IssuerRef, s); err != nil {
+	if err := metav1.Convert_v1_IssuerReference_To_meta_IssuerReference(&in.IssuerRef, &out.IssuerRef, s); err != nil {
 		return err
 	}
 	return nil
@@ -1539,7 +1541,7 @@ func autoConvert_acme_ChallengeSpec_To_v1alpha3_ChallengeSpec(in *acme.Challenge
 	if err := Convert_acme_ACMEChallengeSolver_To_v1alpha3_ACMEChallengeSolver(&in.Solver, &out.Solver, s); err != nil {
 		return err
 	}
-	if err := metav1.Convert_meta_ObjectReference_To_v1_ObjectReference(&in.IssuerRef, &out.IssuerRef, s); err != nil {
+	if err := metav1.Convert_meta_IssuerReference_To_v1_IssuerReference(&in.IssuerRef, &out.IssuerRef, s); err != nil {
 		return err
 	}
 	return nil
@@ -1647,7 +1649,7 @@ func Convert_acme_OrderList_To_v1alpha3_OrderList(in *acme.OrderList, out *Order
 
 func autoConvert_v1alpha3_OrderSpec_To_acme_OrderSpec(in *OrderSpec, out *acme.OrderSpec, s conversion.Scope) error {
 	// WARNING: in.CSR requires manual conversion: does not exist in peer-type
-	if err := metav1.Convert_v1_ObjectReference_To_meta_ObjectReference(&in.IssuerRef, &out.IssuerRef, s); err != nil {
+	if err := metav1.Convert_v1_IssuerReference_To_meta_IssuerReference(&in.IssuerRef, &out.IssuerRef, s); err != nil {
 		return err
 	}
 	out.CommonName = in.CommonName
@@ -1660,7 +1662,7 @@ func autoConvert_v1alpha3_OrderSpec_To_acme_OrderSpec(in *OrderSpec, out *acme.O
 
 func autoConvert_acme_OrderSpec_To_v1alpha3_OrderSpec(in *acme.OrderSpec, out *OrderSpec, s conversion.Scope) error {
 	// WARNING: in.Request requires manual conversion: does not exist in peer-type
-	if err := metav1.Convert_meta_ObjectReference_To_v1_ObjectReference(&in.IssuerRef, &out.IssuerRef, s); err != nil {
+	if err := metav1.Convert_meta_IssuerReference_To_v1_IssuerReference(&in.IssuerRef, &out.IssuerRef, s); err != nil {
 		return err
 	}
 	out.CommonName = in.CommonName

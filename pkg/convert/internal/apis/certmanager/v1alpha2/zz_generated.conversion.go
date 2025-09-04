@@ -760,7 +760,7 @@ func Convert_certmanager_CertificateRequestList_To_v1alpha2_CertificateRequestLi
 
 func autoConvert_v1alpha2_CertificateRequestSpec_To_certmanager_CertificateRequestSpec(in *CertificateRequestSpec, out *certmanager.CertificateRequestSpec, s conversion.Scope) error {
 	out.Duration = (*v1.Duration)(unsafe.Pointer(in.Duration))
-	if err := apismetav1.Convert_v1_ObjectReference_To_meta_ObjectReference(&in.IssuerRef, &out.IssuerRef, s); err != nil {
+	if err := apismetav1.Convert_v1_IssuerReference_To_meta_IssuerReference(&in.IssuerRef, &out.IssuerRef, s); err != nil {
 		return err
 	}
 	// WARNING: in.CSRPEM requires manual conversion: does not exist in peer-type
@@ -775,7 +775,7 @@ func autoConvert_v1alpha2_CertificateRequestSpec_To_certmanager_CertificateReque
 
 func autoConvert_certmanager_CertificateRequestSpec_To_v1alpha2_CertificateRequestSpec(in *certmanager.CertificateRequestSpec, out *CertificateRequestSpec, s conversion.Scope) error {
 	out.Duration = (*v1.Duration)(unsafe.Pointer(in.Duration))
-	if err := apismetav1.Convert_meta_ObjectReference_To_v1_ObjectReference(&in.IssuerRef, &out.IssuerRef, s); err != nil {
+	if err := apismetav1.Convert_meta_IssuerReference_To_v1_IssuerReference(&in.IssuerRef, &out.IssuerRef, s); err != nil {
 		return err
 	}
 	// WARNING: in.Request requires manual conversion: does not exist in peer-type
@@ -868,7 +868,7 @@ func autoConvert_v1alpha2_CertificateSpec_To_certmanager_CertificateSpec(in *Cer
 	} else {
 		out.Keystores = nil
 	}
-	if err := apismetav1.Convert_v1_ObjectReference_To_meta_ObjectReference(&in.IssuerRef, &out.IssuerRef, s); err != nil {
+	if err := apismetav1.Convert_v1_IssuerReference_To_meta_IssuerReference(&in.IssuerRef, &out.IssuerRef, s); err != nil {
 		return err
 	}
 	out.IsCA = in.IsCA
@@ -924,7 +924,7 @@ func autoConvert_certmanager_CertificateSpec_To_v1alpha2_CertificateSpec(in *cer
 	} else {
 		out.Keystores = nil
 	}
-	if err := apismetav1.Convert_meta_ObjectReference_To_v1_ObjectReference(&in.IssuerRef, &out.IssuerRef, s); err != nil {
+	if err := apismetav1.Convert_meta_IssuerReference_To_v1_IssuerReference(&in.IssuerRef, &out.IssuerRef, s); err != nil {
 		return err
 	}
 	out.IsCA = in.IsCA

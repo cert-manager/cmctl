@@ -65,13 +65,13 @@ func TestCtlRenew(t *testing.T) {
 
 	crt1 := gen.Certificate(crt1Name,
 		gen.SetCertificateNamespace(ns1),
-		gen.SetCertificateIssuer(cmmeta.ObjectReference{Kind: "Issuer", Name: "test-issuer"}),
+		gen.SetCertificateIssuer(cmmeta.IssuerReference{Kind: "Issuer", Name: "test-issuer"}),
 		gen.SetCertificateSecretName("crt1"),
 		gen.SetCertificateCommonName("crt1"),
 	)
 	crt2 := gen.Certificate(crt2Name,
 		gen.SetCertificateNamespace(ns1),
-		gen.SetCertificateIssuer(cmmeta.ObjectReference{Kind: "Issuer", Name: "test-issuer"}),
+		gen.SetCertificateIssuer(cmmeta.IssuerReference{Kind: "Issuer", Name: "test-issuer"}),
 		gen.SetCertificateSecretName("crt2"),
 		gen.SetCertificateCommonName("crt2"),
 		gen.AddCertificateLabels(map[string]string{
@@ -80,7 +80,7 @@ func TestCtlRenew(t *testing.T) {
 	)
 	crt3 := gen.Certificate(crt3Name,
 		gen.SetCertificateNamespace(ns2),
-		gen.SetCertificateIssuer(cmmeta.ObjectReference{Kind: "Issuer", Name: "test-issuer"}),
+		gen.SetCertificateIssuer(cmmeta.IssuerReference{Kind: "Issuer", Name: "test-issuer"}),
 		gen.SetCertificateSecretName("crt3"),
 		gen.SetCertificateCommonName("crt3"),
 		gen.AddCertificateLabels(map[string]string{
@@ -88,7 +88,7 @@ func TestCtlRenew(t *testing.T) {
 		}),
 	)
 	crt4 := gen.Certificate(crt4Name,
-		gen.SetCertificateIssuer(cmmeta.ObjectReference{Kind: "Issuer", Name: "test-issuer"}),
+		gen.SetCertificateIssuer(cmmeta.IssuerReference{Kind: "Issuer", Name: "test-issuer"}),
 		gen.SetCertificateSecretName("crt4"),
 		gen.SetCertificateCommonName("crt5"),
 		gen.SetCertificateNamespace(ns2),

@@ -714,7 +714,12 @@ type ACMEIssuerDNS01ProviderRFC2136 struct {
 	// ``HMACSHA1``, ``HMACSHA256`` or ``HMACSHA512``.
 	// +optional
 	TSIGAlgorithm string `json:"tsigAlgorithm,omitempty"`
+
+	// Protocol to use for dynamic DNS update queries. Valid values are (case-sensitive) ``TCP`` and ``UDP``; ``UDP`` (default).
+	Protocol RFC2136UpdateProtocol `json:"protocol,omitempty"`
 }
+
+type RFC2136UpdateProtocol string
 
 // ACMEIssuerDNS01ProviderWebhook specifies configuration for a webhook DNS01
 // provider, including where to POST ChallengePayload resources.
