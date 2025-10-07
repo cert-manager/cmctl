@@ -21,8 +21,8 @@ require (
 	k8s.io/kube-aggregator v0.34.1
 	k8s.io/kubectl v0.34.1
 	k8s.io/utils v0.0.0-20250820121507-0af2bda4dd1d
-	sigs.k8s.io/controller-runtime v0.22.1
-	sigs.k8s.io/gateway-api v1.4.0-rc.2
+	sigs.k8s.io/controller-runtime v0.22.2
+	sigs.k8s.io/gateway-api v1.4.0
 	sigs.k8s.io/randfill v1.0.0
 	sigs.k8s.io/yaml v1.6.0
 )
