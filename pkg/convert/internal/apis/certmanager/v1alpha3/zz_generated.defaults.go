@@ -28,41 +28,5 @@ import (
 // Public to allow building arbitrary schemes.
 // All generated defaulters are covering - they call all nested defaulters.
 func RegisterDefaults(scheme *runtime.Scheme) error {
-	scheme.AddTypeDefaultingFunc(&Certificate{}, func(obj interface{}) { SetObjectDefaults_Certificate(obj.(*Certificate)) })
-	scheme.AddTypeDefaultingFunc(&CertificateList{}, func(obj interface{}) { SetObjectDefaults_CertificateList(obj.(*CertificateList)) })
-	scheme.AddTypeDefaultingFunc(&CertificateRequest{}, func(obj interface{}) { SetObjectDefaults_CertificateRequest(obj.(*CertificateRequest)) })
-	scheme.AddTypeDefaultingFunc(&CertificateRequestList{}, func(obj interface{}) { SetObjectDefaults_CertificateRequestList(obj.(*CertificateRequestList)) })
 	return nil
-}
-
-func SetObjectDefaults_Certificate(in *Certificate) {
-	if in.Spec.IssuerRef.Kind == "" {
-		in.Spec.IssuerRef.Kind = "Issuer"
-	}
-	if in.Spec.IssuerRef.Group == "" {
-		in.Spec.IssuerRef.Group = "cert-manager.io"
-	}
-}
-
-func SetObjectDefaults_CertificateList(in *CertificateList) {
-	for i := range in.Items {
-		a := &in.Items[i]
-		SetObjectDefaults_Certificate(a)
-	}
-}
-
-func SetObjectDefaults_CertificateRequest(in *CertificateRequest) {
-	if in.Spec.IssuerRef.Kind == "" {
-		in.Spec.IssuerRef.Kind = "Issuer"
-	}
-	if in.Spec.IssuerRef.Group == "" {
-		in.Spec.IssuerRef.Group = "cert-manager.io"
-	}
-}
-
-func SetObjectDefaults_CertificateRequestList(in *CertificateRequestList) {
-	for i := range in.Items {
-		a := &in.Items[i]
-		SetObjectDefaults_CertificateRequest(a)
-	}
 }
