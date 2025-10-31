@@ -70,7 +70,7 @@ ifeq ($(wildcard $(go_$1_mod_dir)/go.mod),)
 $$(error go_$1_mod_dir "$(go_$1_mod_dir)" does not contain a go.mod file)
 endif
 ifeq ($(wildcard $(go_$1_mod_dir)/$(go_$1_main_dir)/main.go),)
-$$(error go_$1_main_dir "$(go_$1_mod_dir)" does not contain a main.go file)
+$$(error go_$1_main_dir "$(go_$1_mod_dir)/$(go_$1_main_dir)" does not contain a main.go file)
 endif
 endef
 
