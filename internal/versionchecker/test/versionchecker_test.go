@@ -70,7 +70,7 @@ func loadManifests(t *testing.T) []testManifest {
 	testManifestBytes = split[1]
 
 	var manifests []testManifest
-	for _, manifest := range bytes.Split(testManifestBytes, []byte("---\n# [CHK_VERSIONS]: ")) {
+	for manifest := range bytes.SplitSeq(testManifestBytes, []byte("---\n# [CHK_VERSIONS]: ")) {
 		if len(manifest) == 0 {
 			continue
 		}

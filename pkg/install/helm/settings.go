@@ -116,7 +116,7 @@ func (n *NormalisedEnvSettings) InitActionConfiguration() error {
 		n.Factory.RESTClientGetter,
 		n.Factory.Namespace,
 		os.Getenv("HELM_DRIVER"),
-		func(format string, v ...interface{}) {
+		func(format string, v ...any) {
 			n.logger.Info(fmt.Sprintf(format, v...))
 		},
 	)

@@ -20,6 +20,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	cmacme "github.com/cert-manager/cert-manager/pkg/apis/acme/v1"
@@ -271,12 +272,12 @@ func StatusFromResources(data *Data) *CertificateStatus {
 
 // formatStringSlice takes in a string slice and formats the contents of the slice
 // into a single string where each element of the slice is prefixed with "- " and on a new line
-func formatStringSlice(strings []string) string {
-	result := ""
-	for _, str := range strings {
-		result += "- " + str + "\n"
+func formatStringSlice(strs []string) string {
+	var result strings.Builder
+	for _, str := range strs {
+		result.WriteString("- " + str + "\n")
 	}
-	return result
+	return result.String()
 }
 
 // formatTimeString returns the time as a string

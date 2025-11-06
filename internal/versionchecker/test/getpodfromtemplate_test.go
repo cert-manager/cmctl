@@ -18,6 +18,7 @@ package versionchecker
 
 import (
 	"fmt"
+	"maps"
 
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/meta"
@@ -63,9 +64,7 @@ func getPodFromTemplate(template *v1.PodTemplateSpec, parentObject runtime.Objec
 
 func getPodsLabelSet(template *v1.PodTemplateSpec) labels.Set {
 	desiredLabels := make(labels.Set)
-	for k, v := range template.Labels {
-		desiredLabels[k] = v
-	}
+	maps.Copy(desiredLabels, template.Labels)
 	return desiredLabels
 }
 
@@ -77,9 +76,7 @@ func getPodsFinalizers(template *v1.PodTemplateSpec) []string {
 
 func getPodsAnnotationSet(template *v1.PodTemplateSpec) labels.Set {
 	desiredAnnotations := make(labels.Set)
-	for k, v := range template.Annotations {
-		desiredAnnotations[k] = v
-	}
+	maps.Copy(desiredAnnotations, template.Annotations)
 	return desiredAnnotations
 }
 

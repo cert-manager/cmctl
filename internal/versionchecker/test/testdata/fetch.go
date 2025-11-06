@@ -203,9 +203,9 @@ func (inv *Inventory) read(manifestsPath string) error {
 	// Split the rest of the file into the manifests
 	manfestsBytes = fileSplit[1]
 
-	manifests := bytes.Split(manfestsBytes, []byte("---\n# [CHK_VERSIONS]: "))
+	manifests := bytes.SplitSeq(manfestsBytes, []byte("---\n# [CHK_VERSIONS]: "))
 
-	for _, manifest := range manifests {
+	for manifest := range manifests {
 		if len(manifest) == 0 {
 			continue
 		}
@@ -232,8 +232,8 @@ func (inv *Inventory) read(manifestsPath string) error {
 		manifestHash := hex.EncodeToString(manifestHasher.Sum([]byte{}))
 
 		// Split the versions
-		versionsSplit := strings.Split(versions, ",")
-		for _, version := range versionsSplit {
+		versionsSplit := strings.SplitSeq(versions, ",")
+		for version := range versionsSplit {
 			version = strings.TrimSpace(version)
 			version = semver.Canonical(version)
 
@@ -385,7 +385,7 @@ func cleanupManifests(manifests []byte, version string) ([]byte, error) {
 
 	decoder := yaml.NewDecoder(bytes.NewBuffer(manifests))
 	for {
-		var manifest map[string]interface{}
+		var manifest map[string]any
 
 		err := decoder.Decode(&manifest)
 		if errors.Is(err, io.EOF) {
@@ -407,10 +407,10 @@ func cleanupManifests(manifests []byte, version string) ([]byte, error) {
 		case "CustomResourceDefinition":
 			// remove all CRD schemas from yaml file
 			switch spec := manifest["spec"].(type) {
-			case map[string]interface{}:
-				spec["versions"] = []interface{}{}
-			case map[interface{}]interface{}:
-				spec["versions"] = []interface{}{}
+			case map[string]any:
+				spec["versions"] = []any{}
+			case map[any]any:
+				spec["versions"] = []any{}
 			}
 
 			// remove status from CRD
