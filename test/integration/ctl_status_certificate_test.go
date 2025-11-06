@@ -648,7 +648,7 @@ func createEventsOwnedByRef(kubernetesCl kubernetes.Interface, ctx context.Conte
 }
 
 func validateOutputTimes(output string, expectedNotAfter time.Time) error {
-	for _, line := range strings.Split(output, "\n") {
+	for line := range strings.SplitSeq(output, "\n") {
 		rawParts := strings.Split(strings.TrimSpace(line), ":")
 
 		if len(rawParts) == 1 {
