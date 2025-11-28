@@ -52,5 +52,6 @@ shared_generate_targets += generate-conversion
 ## @category [shared] Release
 release: | $(NEEDS_CRANE) $(bin_dir)/scratch
 	$(MAKE) exe-publish
+	$(MAKE) oci-push-cmctl
 
 	@echo "Release complete!"

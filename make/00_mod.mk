@@ -14,6 +14,7 @@
 
 repo_name := github.com/cert-manager/cmctl
 
+build_names := cmctl
 exe_build_names := cmctl
 gorelease_file := .goreleaser.yml
 
@@ -24,3 +25,8 @@ go_cmctl_ldflags := \
 	-X github.com/cert-manager/cert-manager/pkg/util.AppGitCommit=$(GITCOMMIT)
 
 golangci_lint_config := .golangci.yaml
+
+oci_cmctl_base_image_flavor := static
+oci_cmctl_image_name := quay.io/jetstack/cmctl
+oci_cmctl_image_tag := $(VERSION)
+oci_cmctl_image_name_development := cert-manager.local/cmctl
