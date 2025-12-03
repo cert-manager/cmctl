@@ -9,7 +9,7 @@ env:
 
 jobs:
   build_images:
-    runs-on: ubuntu-latest
+    runs-on: oracle-4cpu-16gb-x86-64
 
     permissions:
       contents: write # needed to write releases
