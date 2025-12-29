@@ -74,7 +74,7 @@ func TestCtlUninstall(t *testing.T) {
 
 			inputArgs: []string{"x", "uninstall", "--wait=false"},
 			expErr:    false,
-			expOutput: `These resources were kept due to the resource policy:`,
+			expOutput: `release "cert-manager" uninstalled`,
 
 			didInstallCRDs: true,
 		},

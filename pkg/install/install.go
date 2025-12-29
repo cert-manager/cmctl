@@ -18,6 +18,7 @@ package install
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"strings"
@@ -25,13 +26,14 @@ import (
 
 	logf "github.com/cert-manager/cert-manager/pkg/logs"
 	"github.com/spf13/cobra"
-	"helm.sh/helm/v3/pkg/action"
-	"helm.sh/helm/v3/pkg/chart"
-	"helm.sh/helm/v3/pkg/chart/loader"
-	"helm.sh/helm/v3/pkg/chartutil"
-	"helm.sh/helm/v3/pkg/cli/values"
-	"helm.sh/helm/v3/pkg/getter"
-	"helm.sh/helm/v3/pkg/release"
+	"helm.sh/helm/v4/pkg/action"
+	"helm.sh/helm/v4/pkg/chart"
+	"helm.sh/helm/v4/pkg/chart/common"
+	"helm.sh/helm/v4/pkg/chart/loader"
+	"helm.sh/helm/v4/pkg/cli/values"
+	"helm.sh/helm/v4/pkg/getter"
+	"helm.sh/helm/v4/pkg/kube"
+	"helm.sh/helm/v4/pkg/release"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 
 	"github.com/cert-manager/cmctl/v2/pkg/build"
@@ -98,13 +100,17 @@ func NewCmdInstall(setupCtx context.Context, ioStreams genericclioptions.IOStrea
 			if err != nil {
 				return err
 			}
+			rac, err := release.NewAccessor(rel)
+			if err != nil {
+				return err
+			}
 
 			if options.DryRun {
-				fmt.Fprintf(ioStreams.Out, "%s", rel.Manifest)
+				fmt.Fprintf(ioStreams.Out, "%s", rac.Manifest())
 				return nil
 			}
 
-			printReleaseSummary(ioStreams.Out, rel)
+			printReleaseSummary(ioStreams.Out, rac)
 			return nil
 		},
 	}
@@ -145,7 +151,7 @@ func NewCmdInstall(setupCtx context.Context, ioStreams genericclioptions.IOStrea
 // wait for those to be "Ready".
 // This creates a Helm "release" artifact in a Secret in the target namespace, which contains
 // a record of all the resources installed by Helm (except the CRDs).
-func (o *InstallOptions) runInstall(ctx context.Context) (*release.Release, error) {
+func (o *InstallOptions) runInstall(ctx context.Context) (release.Releaser, error) {
 	log := logf.FromContext(ctx, "install")
 
 	// Find chart
@@ -154,18 +160,22 @@ func (o *InstallOptions) runInstall(ctx context.Context) (*release.Release, erro
 		return nil, err
 	}
 
-	chart, err := loader.Load(cp)
+	chrt, err := loader.Load(cp)
+	if err != nil {
+		return nil, err
+	}
+	cac, err := chart.NewAccessor(chrt)
 	if err != nil {
 		return nil, err
 	}
 
 	// Check if chart is installable
-	if err := checkIfInstallable(chart); err != nil {
+	if err := checkIfInstallable(cac); err != nil {
 		return nil, err
 	}
 
 	// Console print if chart is deprecated
-	if chart.Metadata.Deprecated {
+	if cac.Deprecated() {
 		log.Error(fmt.Errorf("chart.Metadata.Deprecated is true"), "This chart is deprecated")
 	}
 
@@ -177,22 +187,20 @@ func (o *InstallOptions) runInstall(ctx context.Context) (*release.Release, erro
 	}
 
 	// Dryrun template generation (used for rendering the CRDs in /templates)
-	o.client.DryRun = true     // Do not apply install
-	o.client.ClientOnly = true // Do not validate against cluster (otherwise double CRDs can cause error)
+	o.client.DryRunStrategy = action.DryRunClient // Do not validate against cluster (otherwise double CRDs can cause error)
 	// Kube version to be used in dry run template generation which does not
 	// talk to kube apiserver. This is to ensure that template generation
 	// does not fail because our Kubernetes minimum version requirement is
 	// higher than that hardcoded in Helm codebase for client-only runs
-	o.client.KubeVersion = &chartutil.KubeVersion{
+	o.client.KubeVersion = &common.KubeVersion{
 		Version: "v999.999.999",
 		Major:   "999",
 		Minor:   "999",
 	}
 	chartValues[installCRDsFlagName] = true // Make sure to render CRDs
-	dryRunResult, err := o.client.Run(chart, chartValues)
+	dryRunResult, err := o.client.Run(chrt, chartValues)
 	if err != nil {
 		return nil, err
-
 	}
 
 	if o.DryRun {
@@ -204,9 +212,13 @@ func (o *InstallOptions) runInstall(ctx context.Context) (*release.Release, erro
 	if err := o.settings.InitActionConfiguration(); err != nil {
 		return nil, err
 	}
+	rac, err := release.NewAccessor(dryRunResult)
+	if err != nil {
+		return nil, err
+	}
 
 	// Extract the resource.Info objects from the manifest
-	resources, err := helm.ParseMultiDocumentYAML(dryRunResult.Manifest, o.settings.ActionConfiguration.KubeClient)
+	resources, err := helm.ParseMultiDocumentYAML(rac.Manifest(), o.settings.ActionConfiguration.KubeClient)
 	if err != nil {
 		return nil, err
 	}
@@ -235,46 +247,49 @@ func (o *InstallOptions) runInstall(ctx context.Context) (*release.Release, erro
 	}
 
 	// Install chart
-	o.client.DryRun = false     // Apply DryRun cli flags
-	o.client.ClientOnly = false // Perform install against cluster
+	o.client.DryRunStrategy = action.DryRunNone // Perform install against cluster
 	o.client.KubeVersion = nil
 
-	o.client.Wait = o.Wait // Wait for resources to be ready
-	// If part of the install fails and the Atomic option is set to True,
-	// all resource installs are reverted. Atomic cannot be enabled without
-	// waiting (if Atomic=True is set, the value for Wait is overwritten with True),
-	// so only enable Atomic if we are waiting.
-	o.client.Atomic = o.Wait
-	// The cert-manager chart currently has only a startupapicheck hook,
-	// if waiting is disabled, this hook should be disabled too; otherwise
-	// the hook will still wait for the installation to succeed.
-	o.client.DisableHooks = !o.Wait
+	if o.Wait {
+		o.client.WaitStrategy = kube.StatusWatcherStrategy // Wait for resources to be ready
+		// If part of the installation fails and the RollbackOnFailure option is set to True,
+		// all resource installs are reverted. RollbackOnFailure cannot be enabled without
+		// waiting, so only enable RollbackOnFailure if we are waiting.
+		o.client.RollbackOnFailure = true
+	} else {
+		o.client.WaitStrategy = kube.HookOnlyStrategy
+		// The cert-manager chart currently has only a startupapicheck hook,
+		// if waiting is disabled, this hook should be disabled too; otherwise
+		// the hook will still wait for the installation to succeed.
+		o.client.DisableHooks = true
+	}
 
 	chartValues[installCRDsFlagName] = false // Do not render CRDs, as this might cause problems when uninstalling using helm
 
-	return o.client.Run(chart, chartValues)
+	return o.client.Run(chrt, chartValues)
 }
 
-func printReleaseSummary(out io.Writer, rel *release.Release) {
-	fmt.Fprintf(out, "NAME: %s\n", rel.Name)
-	if !rel.Info.LastDeployed.IsZero() {
-		fmt.Fprintf(out, "LAST DEPLOYED: %s\n", rel.Info.LastDeployed.Format(time.ANSIC))
+func printReleaseSummary(out io.Writer, rac release.Accessor) {
+	fmt.Fprintf(out, "NAME: %s\n", rac.Name())
+	if !rac.DeployedAt().IsZero() {
+		fmt.Fprintf(out, "LAST DEPLOYED: %s\n", rac.DeployedAt().Format(time.ANSIC))
 	}
-	fmt.Fprintf(out, "NAMESPACE: %s\n", rel.Namespace)
-	fmt.Fprintf(out, "STATUS: %s\n", rel.Info.Status.String())
-	fmt.Fprintf(out, "REVISION: %d\n", rel.Version)
-	fmt.Fprintf(out, "DESCRIPTION: %s\n", rel.Info.Description)
+	fmt.Fprintf(out, "NAMESPACE: %s\n", rac.Namespace())
+	fmt.Fprintf(out, "STATUS: %s\n", rac.Status())
+	fmt.Fprintf(out, "REVISION: %d\n", rac.Version())
+	// Helm v4's release.Accessor does not expose a description field,
+	// so we intentionally omit the DESCRIPTION line that was present in
+	// earlier Helm versions to avoid printing an empty value.
 
-	if len(rel.Info.Notes) > 0 {
-		fmt.Fprintf(out, "NOTES:\n%s\n", strings.TrimSpace(rel.Info.Notes))
+	if len(rac.Notes()) > 0 {
+		fmt.Fprintf(out, "NOTES:\n%s\n", strings.TrimSpace(rac.Notes()))
 	}
 }
 
-// Only Application chart type are installable.
-func checkIfInstallable(ch *chart.Chart) error {
-	switch ch.Metadata.Type {
-	case "", "application":
-		return nil
+// Only Application chart types are installable.
+func checkIfInstallable(cac chart.Accessor) error {
+	if cac.IsLibraryChart() {
+		return errors.New("library charts are not installable")
 	}
-	return fmt.Errorf("%s charts are not installable", ch.Metadata.Type)
+	return nil
 }
