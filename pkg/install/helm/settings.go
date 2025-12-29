@@ -18,15 +18,14 @@ package helm
 
 import (
 	"context"
-	"fmt"
 	"os"
 
 	logf "github.com/cert-manager/cert-manager/pkg/logs"
 	"github.com/go-logr/logr"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	"helm.sh/helm/v3/pkg/action"
-	"helm.sh/helm/v3/pkg/cli"
+	"helm.sh/helm/v4/pkg/action"
+	"helm.sh/helm/v4/pkg/cli"
 
 	"github.com/cert-manager/cmctl/v2/pkg/factory"
 )
@@ -116,8 +115,5 @@ func (n *NormalisedEnvSettings) InitActionConfiguration() error {
 		n.Factory.RESTClientGetter,
 		n.Factory.Namespace,
 		os.Getenv("HELM_DRIVER"),
-		func(format string, v ...any) {
-			n.logger.Info(fmt.Sprintf(format, v...))
-		},
 	)
 }

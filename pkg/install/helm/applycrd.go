@@ -20,7 +20,8 @@ import (
 	"time"
 
 	logf "github.com/cert-manager/cert-manager/pkg/logs"
-	"helm.sh/helm/v3/pkg/action"
+	"helm.sh/helm/v4/pkg/action"
+	"helm.sh/helm/v4/pkg/kube"
 	"k8s.io/cli-runtime/pkg/resource"
 )
 
@@ -47,7 +48,11 @@ func CreateCRDs(allCRDs []*resource.Info, cfg *action.Configuration) error {
 	discoveryClient.Invalidate()
 
 	// Give time for the CRD to be recognized.
-	if err := cfg.KubeClient.Wait(createdCRDs, 60*time.Second); err != nil {
+	waiter, err := cfg.KubeClient.GetWaiter(kube.StatusWatcherStrategy)
+	if err != nil {
+		return err
+	}
+	if err := waiter.Wait(createdCRDs, 60*time.Second); err != nil {
 		return err
 	}
 

@@ -21,8 +21,8 @@ import (
 	"path/filepath"
 
 	"github.com/spf13/pflag"
-	"helm.sh/helm/v3/pkg/action"
-	"helm.sh/helm/v3/pkg/cli/values"
+	"helm.sh/helm/v4/pkg/action"
+	"helm.sh/helm/v4/pkg/cli/values"
 	"k8s.io/client-go/util/homedir"
 )
 
