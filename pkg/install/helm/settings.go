@@ -55,6 +55,7 @@ func (n *NormalisedEnvSettings) Setup(ctx context.Context, cmd *cobra.Command) {
 	)
 
 	n.Factory = factory.New(cmd)
+	// nolint:contextcheck // False positive
 	n.setupEnvSettings(cmd)
 
 	{
