@@ -26,11 +26,14 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
-	"helm.sh/helm/v3/pkg/action"
-	"helm.sh/helm/v3/pkg/chartutil"
-	"helm.sh/helm/v3/pkg/release"
-	"helm.sh/helm/v3/pkg/releaseutil"
-	"helm.sh/helm/v3/pkg/storage/driver"
+	"helm.sh/helm/v4/pkg/action"
+	chartutil "helm.sh/helm/v4/pkg/chart/v2/util"
+	"helm.sh/helm/v4/pkg/kube"
+	"helm.sh/helm/v4/pkg/release"
+	"helm.sh/helm/v4/pkg/release/common"
+	v1release "helm.sh/helm/v4/pkg/release/v1"
+	releaseutil "helm.sh/helm/v4/pkg/release/v1/util"
+	"helm.sh/helm/v4/pkg/storage/driver"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"sigs.k8s.io/yaml"
@@ -96,7 +99,15 @@ func NewCmd(setupCtx context.Context, ioStreams genericclioptions.IOStreams) *co
 			}
 
 			if options.dryRun {
-				fmt.Fprintf(ioStreams.Out, "%s", res.Release.Manifest)
+				if res.Release == nil {
+					return errors.New("res.Release must not be nil")
+				}
+
+				rac, err := release.NewAccessor(res.Release)
+				if err != nil {
+					return err
+				}
+				fmt.Fprintf(ioStreams.Out, "%s", rac.Manifest())
 				return nil
 			}
 
@@ -125,10 +136,11 @@ func run(ctx context.Context, o options) (*release.UninstallReleaseResponse, err
 	// The cert-manager Helm chart currently does not have any uninstall hooks.
 	o.client.DisableHooks = false
 	o.client.DryRun = o.dryRun
-	o.client.Wait = o.wait
-	if o.client.Wait {
+	if o.wait {
+		o.client.WaitStrategy = kube.StatusWatcherStrategy
 		o.client.DeletionPropagation = "foreground"
 	} else {
+		o.client.WaitStrategy = kube.HookOnlyStrategy // we don't have any uninstall hooks
 		o.client.DeletionPropagation = "background"
 	}
 	o.client.KeepHistory = false
@@ -163,8 +175,13 @@ func addCRDAnnotations(_ context.Context, o options) error {
 		return fmt.Errorf("uninstall: %v", err)
 	}
 
-	if lastRelease.Info.Status != release.StatusDeployed {
-		return fmt.Errorf("release %v is in a non-deployed state: %v", o.releaseName, lastRelease.Info.Status)
+	rac, err := release.NewAccessor(lastRelease)
+	if err != nil {
+		return err
+	}
+
+	if rac.Status() != common.StatusDeployed.String() {
+		return fmt.Errorf("release %v is in a non-deployed state: %v", o.releaseName, rac.Status())
 	}
 
 	const (
@@ -175,7 +192,7 @@ func addCRDAnnotations(_ context.Context, o options) error {
 
 	// Check if the release manifest contains CRDs. If it does, we need to modify the
 	// release manifest to add the "helm.sh/resource-policy: keep" annotation to the CRDs.
-	manifests := releaseutil.SplitManifests(lastRelease.Manifest)
+	manifests := releaseutil.SplitManifests(rac.Manifest())
 	foundNonAnnotatedCRD := false
 	for key, manifest := range manifests {
 		var entry releaseutil.SimpleHead
@@ -228,12 +245,33 @@ func addCRDAnnotations(_ context.Context, o options) error {
 			fullManifest.WriteString("\n---\n")
 		}
 
-		lastRelease.Manifest = fullManifest.String()
+		lastRelease, err = setManifest(lastRelease, fullManifest.String())
+		if err != nil {
+			return err
+		}
 
 		if err := o.settings.ActionConfiguration.Releases.Update(lastRelease); err != nil {
-			o.settings.ActionConfiguration.Log("uninstall: Failed to store updated release: %s", err)
+			o.settings.ActionConfiguration.Logger().Error(
+				"uninstall: Failed to store updated release",
+				"err", err,
+			)
 		}
 	}
 
 	return nil
+}
+
+// similar to the code in Helm (https://github.com/helm/helm/blob/c3a0d3b86025d2a06e370b9f12bf1e593418b45a/pkg/action/uninstall.go#L102-L126)
+// we first convert the releaser to a v1 release to be able to set the manifest
+func setManifest(release release.Releaser, manifest string) (release.Releaser, error) {
+	switch r := release.(type) {
+	case v1release.Release:
+		r.Manifest = manifest
+		return r, nil
+	case *v1release.Release:
+		r.Manifest = manifest
+		return r, nil
+	default:
+		return nil, fmt.Errorf("unsupported release type: %T", release)
+	}
 }

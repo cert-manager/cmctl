@@ -18,15 +18,14 @@ package helm
 
 import (
 	"context"
-	"fmt"
 	"os"
 
 	logf "github.com/cert-manager/cert-manager/pkg/logs"
 	"github.com/go-logr/logr"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	"helm.sh/helm/v3/pkg/action"
-	"helm.sh/helm/v3/pkg/cli"
+	"helm.sh/helm/v4/pkg/action"
+	"helm.sh/helm/v4/pkg/cli"
 
 	"github.com/cert-manager/cmctl/v2/pkg/factory"
 )
@@ -35,7 +34,6 @@ const defaultCertManagerNamespace = "cert-manager"
 const debugLogLevel = 3
 
 type NormalisedEnvSettings struct {
-	logger              logr.Logger
 	EnvSettings         *cli.EnvSettings
 	ActionConfiguration *action.Configuration
 	Factory             *factory.Factory
@@ -52,10 +50,12 @@ func (n *NormalisedEnvSettings) Namespace() string {
 }
 
 func (n *NormalisedEnvSettings) Setup(ctx context.Context, cmd *cobra.Command) {
-	log := logf.FromContext(ctx)
-	n.logger = log
+	n.ActionConfiguration.SetLogger(
+		logr.ToSlogHandler(logf.FromContext(ctx)),
+	)
 
 	n.Factory = factory.New(cmd)
+	// nolint:contextcheck // False positive
 	n.setupEnvSettings(cmd)
 
 	{
@@ -99,7 +99,7 @@ func (n *NormalisedEnvSettings) setupEnvSettings(cmd *cobra.Command) {
 		// >= 3.
 		existingPreRunE := cmd.PreRunE
 		cmd.PreRunE = func(cmd *cobra.Command, args []string) error {
-			if n.logger.V(debugLogLevel).Enabled() {
+			if n.ActionConfiguration.Logger().Enabled(cmd.Context(), debugLogLevel) {
 				n.EnvSettings.Debug = true
 			}
 
@@ -116,8 +116,5 @@ func (n *NormalisedEnvSettings) InitActionConfiguration() error {
 		n.Factory.RESTClientGetter,
 		n.Factory.Namespace,
 		os.Getenv("HELM_DRIVER"),
-		func(format string, v ...any) {
-			n.logger.Info(fmt.Sprintf(format, v...))
-		},
 	)
 }
