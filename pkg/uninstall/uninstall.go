@@ -20,6 +20,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"maps"
+	"slices"
+	"sort"
+	"strings"
 
 	"github.com/spf13/cobra"
 	"helm.sh/helm/v4/pkg/action"
@@ -27,10 +31,10 @@ import (
 	"helm.sh/helm/v4/pkg/kube"
 	"helm.sh/helm/v4/pkg/release"
 	"helm.sh/helm/v4/pkg/release/common"
+	v1release "helm.sh/helm/v4/pkg/release/v1"
 	releaseutil "helm.sh/helm/v4/pkg/release/v1/util"
 	"helm.sh/helm/v4/pkg/storage/driver"
-	"k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"sigs.k8s.io/yaml"
 
@@ -136,7 +140,7 @@ func run(ctx context.Context, o options) (*release.UninstallReleaseResponse, err
 		o.client.WaitStrategy = kube.StatusWatcherStrategy
 		o.client.DeletionPropagation = "foreground"
 	} else {
-		o.client.WaitStrategy = kube.HookOnlyStrategy
+		o.client.WaitStrategy = kube.HookOnlyStrategy // we don't have any uninstall hooks
 		o.client.DeletionPropagation = "background"
 	}
 	o.client.KeepHistory = false
@@ -157,7 +161,7 @@ func run(ctx context.Context, o options) (*release.UninstallReleaseResponse, err
 	return res, nil
 }
 
-func addCRDAnnotations(ctx context.Context, o options) error {
+func addCRDAnnotations(_ context.Context, o options) error {
 	if err := o.settings.ActionConfiguration.KubeClient.IsReachable(); err != nil {
 		return err
 	}
@@ -170,6 +174,7 @@ func addCRDAnnotations(ctx context.Context, o options) error {
 	if err != nil {
 		return fmt.Errorf("uninstall: %v", err)
 	}
+
 	rac, err := release.NewAccessor(lastRelease)
 	if err != nil {
 		return err
@@ -188,8 +193,8 @@ func addCRDAnnotations(ctx context.Context, o options) error {
 	// Check if the release manifest contains CRDs. If it does, we need to modify the
 	// release manifest to add the "helm.sh/resource-policy: keep" annotation to the CRDs.
 	manifests := releaseutil.SplitManifests(rac.Manifest())
-	var nonAnnotatedCRD []string
-	for _, manifest := range manifests {
+	foundNonAnnotatedCRD := false
+	for key, manifest := range manifests {
 		var entry releaseutil.SimpleHead
 		if err := yaml.Unmarshal([]byte(manifest), &entry); err != nil {
 			return fmt.Errorf("failed to unmarshal manifest: %v", err)
@@ -204,41 +209,69 @@ func addCRDAnnotations(ctx context.Context, o options) error {
 			continue
 		}
 
-		if entry.Metadata == nil || entry.Metadata.Name == "" {
-			continue
+		foundNonAnnotatedCRD = true
+
+		var object unstructured.Unstructured
+		if err := yaml.Unmarshal([]byte(manifest), &object); err != nil {
+			return fmt.Errorf("failed to unmarshal manifest: %v", err)
 		}
 
-		nonAnnotatedCRD = append(nonAnnotatedCRD, entry.Metadata.Name)
+		annotations := object.GetAnnotations()
+		if annotations == nil {
+			annotations = make(map[string]string)
+		}
+		annotations["helm.sh/resource-policy"] = "keep"
+		object.SetAnnotations(annotations)
+
+		updatedManifestJSON, err := object.MarshalJSON()
+		if err != nil {
+			return fmt.Errorf("failed to marshal manifest: %v", err)
+		}
+
+		updatedManifest, err := yaml.JSONToYAML(updatedManifestJSON)
+		if err != nil {
+			return fmt.Errorf("failed to convert manifest to YAML: %v", err)
+		}
+
+		manifests[key] = string(updatedManifest)
 	}
 
-	if len(nonAnnotatedCRD) > 0 {
-		restCfg, err := o.settings.ActionConfiguration.RESTClientGetter.ToRESTConfig()
-		if err != nil {
-			return err
+	if foundNonAnnotatedCRD {
+		manifestNames := releaseutil.BySplitManifestsOrder(slices.Collect(maps.Keys(manifests)))
+		sort.Sort(manifestNames)
+		var fullManifest strings.Builder
+		for _, manifest := range manifestNames {
+			fullManifest.WriteString(manifests[manifest])
+			fullManifest.WriteString("\n---\n")
 		}
-		cs, err := clientset.NewForConfig(restCfg)
-		if err != nil {
-			return err
-		}
-		crdClient := cs.ApiextensionsV1().CustomResourceDefinitions()
 
-		for _, name := range nonAnnotatedCRD {
-			crd, err := crdClient.Get(ctx, name, metav1.GetOptions{})
-			if err != nil {
-				return err
-			}
-			annotations := crd.GetAnnotations()
-			if annotations == nil {
-				annotations = map[string]string{}
-			}
-			annotations["helm.sh/resource-policy"] = "keep"
-			crd.SetAnnotations(annotations)
-			_, err = crdClient.Update(ctx, crd, metav1.UpdateOptions{})
-			if err != nil {
-				return err
-			}
+		lastRelease, err = setManifest(lastRelease, fullManifest.String())
+		if err != nil {
+			return err
+		}
+
+		if err := o.settings.ActionConfiguration.Releases.Update(lastRelease); err != nil {
+			o.settings.ActionConfiguration.Logger().Error(
+				"uninstall: Failed to store updated release",
+				"err", err,
+			)
 		}
 	}
 
 	return nil
+}
+
+// similar to the code in Helm (https://github.com/helm/helm/blob/c3a0d3b86025d2a06e370b9f12bf1e593418b45a/pkg/action/uninstall.go#L102-L126)
+// we first convert the releaser to a v1 release to be able to set the manifest
+func setManifest(release release.Releaser, manifest string) (release.Releaser, error) {
+	switch r := release.(type) {
+	case v1release.Release:
+		r.Manifest = manifest
+		return r, nil
+	case *v1release.Release:
+		r.Manifest = manifest
+		return r, nil
+	default:
+		return nil, fmt.Errorf("unsupported release type: %T", release)
+	}
 }
