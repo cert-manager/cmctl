@@ -34,7 +34,6 @@ const defaultCertManagerNamespace = "cert-manager"
 const debugLogLevel = 3
 
 type NormalisedEnvSettings struct {
-	logger              logr.Logger
 	EnvSettings         *cli.EnvSettings
 	ActionConfiguration *action.Configuration
 	Factory             *factory.Factory
@@ -51,8 +50,9 @@ func (n *NormalisedEnvSettings) Namespace() string {
 }
 
 func (n *NormalisedEnvSettings) Setup(ctx context.Context, cmd *cobra.Command) {
-	log := logf.FromContext(ctx)
-	n.logger = log
+	n.ActionConfiguration.SetLogger(
+		logr.ToSlogHandler(logf.FromContext(ctx)),
+	)
 
 	n.Factory = factory.New(cmd)
 	n.setupEnvSettings(cmd)
@@ -98,7 +98,7 @@ func (n *NormalisedEnvSettings) setupEnvSettings(cmd *cobra.Command) {
 		// >= 3.
 		existingPreRunE := cmd.PreRunE
 		cmd.PreRunE = func(cmd *cobra.Command, args []string) error {
-			if n.logger.V(debugLogLevel).Enabled() {
+			if n.ActionConfiguration.Logger().Enabled(cmd.Context(), debugLogLevel) {
 				n.EnvSettings.Debug = true
 			}
 
