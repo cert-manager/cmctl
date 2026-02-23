@@ -381,7 +381,7 @@ type JKSKeystore struct {
 	// Mutually exclusive with passwordSecretRef.
 	// One of password or passwordSecretRef must provide a password with a non-zero length.
 	// +optional
-	Password *string `json:"password,omitempty"`
+	Password *string `json:"password,omitempty"` // #nosec G117 -- field is exported for JSON serialization, not a hardcoded secret
 
 	// Alias specifies the alias of the key in the keystore, required by the JKS format.
 	// If not provided, the default alias `certificate` will be used.
@@ -407,7 +407,7 @@ type PKCS12Keystore struct {
 	// Mutually exclusive with passwordSecretRef.
 	// One of password or passwordSecretRef must provide a password with a non-zero length.
 	// +optional
-	Password *string
+	Password *string // #nosec G117 -- internal API type, and not a hardcoded secret
 
 	// Profile specifies the key and certificate encryption algorithms and the HMAC algorithm
 	// used to create the PKCS12 keystore. Default value is `LegacyRC2` for backward compatibility.

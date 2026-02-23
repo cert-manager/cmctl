@@ -37,8 +37,11 @@ func testExitCode(
 		os.Exit(0)
 	}
 
-	// #nosec G204
-	cmd := exec.CommandContext(t.Context(), os.Args[0], "-test.run="+t.Name())
+	cmd := exec.CommandContext(
+		t.Context(),
+		os.Args[0],
+		"-test.run="+t.Name(),
+	) // #nosec G204,G702 -- re-exec'ing current test binary with fixed args
 	cmd.Env = append(os.Environ(), "BE_CRASHER=1")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr

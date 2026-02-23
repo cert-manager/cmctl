@@ -18,6 +18,7 @@ package install_framework
 
 import (
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/cert-manager/cert-manager/test/apiserver"
@@ -80,24 +81,16 @@ func NewTestInstallApiServer(t *testing.T) (*TestInstallApiServer, CleanupFuncti
 }
 
 func createKubeConfigFile(t *testing.T, user *envtest.AuthenticatedUser) (string, CleanupFunction) {
-	tmpfile, err := os.CreateTemp(t.TempDir(), "config")
-	if err != nil {
-		t.Fatal(err)
-	}
-	path := tmpfile.Name()
+	t.Helper()
+
+	path := filepath.Join(t.TempDir(), "config")
 
 	contents, err := user.KubeConfig()
 	if err != nil {
-		os.Remove(path)
 		t.Fatal(err)
 	}
-	if _, err := tmpfile.Write(contents); err != nil {
-		tmpfile.Close()
-		os.Remove(path)
-		t.Fatal(err)
-	}
-	if err := tmpfile.Close(); err != nil {
-		os.Remove(path)
+
+	if err := os.WriteFile(path, contents, 0o600); err != nil {
 		t.Fatal(err)
 	}
 
