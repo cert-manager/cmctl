@@ -73,7 +73,7 @@ func checkOCSPValidCert(ctx context.Context, leafCert, issuerCert *x509.Certific
 		httpRequest.Header.Add("Accept", "application/ocsp-response")
 		httpRequest.Header.Add("Host", ocspUrl.Host)
 		httpClient := &http.Client{}
-		httpResponse, err := httpClient.Do(httpRequest)
+		httpResponse, err := httpClient.Do(httpRequest) // #nosec G704 -- internal request, safe SSRF
 		if err != nil {
 			return false, fmt.Errorf("error making HTTP request: %w", err)
 		}
@@ -102,7 +102,7 @@ func checkCRLValidCert(ctx context.Context, cert *x509.Certificate, url string) 
 		return false, fmt.Errorf("error creating HTTP request: %w", err)
 	}
 
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := http.DefaultClient.Do(req) // #nosec G704 -- CRL URL scheme validated by caller (ldap/https only)
 	if err != nil {
 		return false, fmt.Errorf("error getting HTTP response: %w", err)
 	}

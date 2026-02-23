@@ -52,7 +52,7 @@ func main() {
 	stdOut := os.Stdout
 
 	if len(os.Args) != 3 && len(os.Args) != 4 {
-		fmt.Fprintf(stdOut, "Usage: %s <test_manifests.yaml> <max_version> [<force:bool>]\n", os.Args[0])
+		fmt.Fprintf(stdOut, "Usage: %s <test_manifests.yaml> <max_version> [<force:bool>]\n", os.Args[0]) // #nosec G705 -- test code, terminal output
 		os.Exit(1)
 	}
 
@@ -75,7 +75,7 @@ func main() {
 
 	// If the passed version is identical to the latest version, we don't need to do anything
 	if inv.LatestVersion == maxVersion && !force {
-		fmt.Fprintf(stdOut, "Version %s is already the latest version\n", maxVersion)
+		fmt.Fprintf(stdOut, "Version %s is already the latest version\n", maxVersion) // #nosec G705 -- test code, terminal output
 		os.Exit(0)
 	}
 
@@ -155,7 +155,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Fprintf(stdOut, "Updated inventory to version %s\n", maxVersion)
+	fmt.Fprintf(stdOut, "Updated inventory to version %s\n", maxVersion) // #nosec G705 -- test code, terminal output
 }
 
 type Inventory struct {
@@ -362,7 +362,7 @@ func downloadManifests(ctx context.Context, version string) ([]byte, error) {
 		return nil, err
 	}
 
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := http.DefaultClient.Do(req) // #nosec G704 -- test request, safe SSRF
 	if err != nil {
 		return nil, err
 	}
