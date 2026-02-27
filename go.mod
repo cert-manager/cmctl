@@ -13,7 +13,7 @@ require (
 	golang.org/x/sync v0.19.0
 	helm.sh/helm/v4 v4.1.1
 	k8s.io/api v0.35.2
-	k8s.io/apiextensions-apiserver v0.35.1
+	k8s.io/apiextensions-apiserver v0.35.2
 	k8s.io/apimachinery v0.35.2
 	k8s.io/cli-runtime v0.35.2
 	k8s.io/client-go v0.35.2
