@@ -22,7 +22,9 @@ go_cmctl_main_dir := .
 go_cmctl_mod_dir := .
 go_cmctl_ldflags := \
 	-X github.com/cert-manager/cert-manager/pkg/util.AppVersion=$(VERSION) \
-	-X github.com/cert-manager/cert-manager/pkg/util.AppGitCommit=$(GITCOMMIT)
+	-X github.com/cert-manager/cert-manager/pkg/util.AppGitCommit=$(GITCOMMIT) \
+	-X k8s.io/client-go/pkg/version.gitVersion=$(VERSION) \
+	-X k8s.io/client-go/pkg/version.gitCommit=$(GITCOMMIT)
 
 golangci_lint_config := .golangci.yaml
 
