@@ -178,7 +178,7 @@ func (inv *Inventory) read(manifestsPath string) error {
 	inv.reset()
 
 	// Read the inventory file
-	manfestsBytes, err := os.ReadFile(manifestsPath)
+	manfestsBytes, err := os.ReadFile(manifestsPath) // #nosec G703 -- manifestsPath is provided by the developer running the tool
 	if err != nil {
 		return fmt.Errorf("failed to read inventory file: %v", err)
 	}
@@ -299,7 +299,7 @@ func (inv *Inventory) write(manifestsPath string) error {
 		invBytes.WriteString("\n---\n")
 	}
 
-	if err := os.WriteFile(manifestsPath, invBytes.Bytes(), 0600); err != nil {
+	if err := os.WriteFile(manifestsPath, invBytes.Bytes(), 0600); err != nil { // #nosec G703 -- manifestsPath is provided by the developer running the tool
 		return fmt.Errorf("failed to write inventory file: %v", err)
 	}
 
