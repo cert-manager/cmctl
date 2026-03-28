@@ -648,6 +648,9 @@ type ServiceAccountRef struct {
 	TokenAudiences []string `json:"audiences,omitempty"`
 }
 
+// +kubebuilder:validation:Enum=AzurePublicZone;AzurePrivateZone
+type AzureZoneType string
+
 // ACMEIssuerDNS01ProviderAzureDNS is a structure containing the
 // configuration for Azure DNS
 type ACMEIssuerDNS01ProviderAzureDNS struct {
@@ -680,6 +683,19 @@ type ACMEIssuerDNS01ProviderAzureDNS struct {
 	// managed identity configuration, can not be used at the same time as clientID, clientSecretSecretRef or tenantID
 	// +optional
 	ManagedIdentity *AzureManagedIdentity `json:"managedIdentity,omitempty"`
+
+	// ZoneType determines which type of Azure DNS zone to use.
+	//
+	// Valid values are:
+	//   - AzurePublicZone  (default): Use a public Azure DNS zone.
+	//   - AzurePrivateZone: Use an Azure Private DNS zone.
+	//
+	// If not specified, AzurePublicZone is used.
+	//
+	// Support for Azure Private DNS zones is currently
+	// experimental and may change in future releases.
+	// +optional
+	ZoneType AzureZoneType `json:"zoneType,omitempty"`
 }
 
 type AzureManagedIdentity struct {

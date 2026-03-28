@@ -596,6 +596,8 @@ type ServiceAccountRef struct {
 	TokenAudiences []string
 }
 
+type AzureZoneType string
+
 // ACMEIssuerDNS01ProviderAzureDNS is a structure containing the
 // configuration for Azure DNS
 type ACMEIssuerDNS01ProviderAzureDNS struct {
@@ -617,6 +619,8 @@ type ACMEIssuerDNS01ProviderAzureDNS struct {
 	Environment AzureDNSEnvironment
 
 	ManagedIdentity *AzureManagedIdentity
+
+	ZoneType AzureZoneType
 }
 
 type AzureManagedIdentity struct {

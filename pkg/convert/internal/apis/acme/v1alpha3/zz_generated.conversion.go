@@ -1140,6 +1140,7 @@ func autoConvert_v1alpha3_ACMEIssuerDNS01ProviderAzureDNS_To_acme_ACMEIssuerDNS0
 	out.HostedZoneName = in.HostedZoneName
 	out.Environment = acme.AzureDNSEnvironment(in.Environment)
 	out.ManagedIdentity = (*acme.AzureManagedIdentity)(unsafe.Pointer(in.ManagedIdentity))
+	out.ZoneType = acme.AzureZoneType(in.ZoneType)
 	return nil
 }
 
@@ -1165,6 +1166,7 @@ func autoConvert_acme_ACMEIssuerDNS01ProviderAzureDNS_To_v1alpha3_ACMEIssuerDNS0
 	out.HostedZoneName = in.HostedZoneName
 	out.Environment = AzureDNSEnvironment(in.Environment)
 	out.ManagedIdentity = (*AzureManagedIdentity)(unsafe.Pointer(in.ManagedIdentity))
+	out.ZoneType = AzureZoneType(in.ZoneType)
 	return nil
 }
 
