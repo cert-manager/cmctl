@@ -457,19 +457,19 @@ func (orderStatus *OrderStatus) String() string {
 	output := "Order:\n"
 	output += fmt.Sprintf("  Name: %s\n", orderStatus.Name)
 	output += fmt.Sprintf("  State: %s, Reason: %s\n", orderStatus.State, orderStatus.Reason)
-	authString := ""
+	var authString strings.Builder
 	for _, auth := range orderStatus.Authorizations {
 		wildcardString := "nil (bool pointer not set)"
 		if auth.Wildcard != nil {
 			wildcardString = fmt.Sprintf("%t", *auth.Wildcard)
 		}
-		authString += fmt.Sprintf("    URL: %s, Identifier: %s, Initial State: %s, Wildcard: %s\n", auth.URL, auth.Identifier, auth.InitialState, wildcardString)
+		fmt.Fprintf(&authString, "    URL: %s, Identifier: %s, Initial State: %s, Wildcard: %s\n", auth.URL, auth.Identifier, auth.InitialState, wildcardString)
 	}
-	if authString == "" {
+	if authString.String() == "" {
 		output += "  No Authorizations for this Order\n"
 	} else {
 		output += "  Authorizations:\n"
-		output += authString
+		output += authString.String()
 	}
 	if orderStatus.FailureTime != nil {
 		output += fmt.Sprintf("  FailureTime: %s\n", formatTimeString(orderStatus.FailureTime))
