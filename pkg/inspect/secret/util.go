@@ -106,12 +106,12 @@ func checkCRLValidCert(ctx context.Context, cert *x509.Certificate, url string) 
 	if err != nil {
 		return false, fmt.Errorf("error getting HTTP response: %w", err)
 	}
+	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return false, fmt.Errorf("error reading HTTP body: %w", err)
 	}
-	resp.Body.Close()
 
 	crl, err := x509.ParseRevocationList(body)
 	if err != nil {
