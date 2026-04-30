@@ -37,7 +37,6 @@ import (
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	kscheme "k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/rest"
-	"k8s.io/utils/ptr"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/envtest"
 )
@@ -56,7 +55,7 @@ type RunControlPlaneOption func(*controlPlaneOptions)
 // server in tests.
 func WithCRDDirectory(directory string) RunControlPlaneOption {
 	return func(o *controlPlaneOptions) {
-		o.crdsDir = ptr.To(directory)
+		o.crdsDir = new(directory)
 	}
 }
 
@@ -72,7 +71,7 @@ func RunControlPlane(t *testing.T, ctx context.Context, optionFunctions ...RunCo
 		if !ok {
 			t.Fatal("CERT_MANAGER_CRDS environment variable must be set to the path of the CRDs to load")
 		}
-		options.crdsDir = ptr.To(path)
+		options.crdsDir = new(path)
 	}
 
 	env, stopControlPlane := apiserver.RunBareControlPlane(t)
