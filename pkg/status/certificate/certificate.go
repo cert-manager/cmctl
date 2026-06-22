@@ -96,7 +96,7 @@ Get details about the current status of a cert-manager Certificate resource, inc
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			return o.Validate(args)
 		},
-		// nolint:contextcheck // False positive
+		//nolint:contextcheck // False positive
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return o.Run(cmd.Context(), args)
 		},

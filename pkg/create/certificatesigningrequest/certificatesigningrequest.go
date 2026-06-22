@@ -120,7 +120,7 @@ Create a new CertificateSigningRequest resource based on a Certificate resource,
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			return o.Validate(args)
 		},
-		// nolint:contextcheck // False positive
+		//nolint:contextcheck // False positive
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return o.Run(cmd.Context(), args)
 		},
