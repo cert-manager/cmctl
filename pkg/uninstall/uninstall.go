@@ -91,7 +91,7 @@ func NewCmd(setupCtx context.Context, ioStreams genericclioptions.IOStreams) *co
 		Use:   "uninstall",
 		Short: "Uninstall cert-manager",
 		Long:  description(setupCtx),
-		// nolint:contextcheck // False positive
+		//nolint:contextcheck // False positive
 		RunE: func(cmd *cobra.Command, args []string) error {
 			res, err := run(cmd.Context(), options)
 			if err != nil {

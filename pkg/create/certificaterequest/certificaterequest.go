@@ -108,7 +108,7 @@ Create a new CertificateRequest resource based on a Certificate resource, by gen
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			return o.Validate(args)
 		},
-		// nolint:contextcheck // False positive
+		//nolint:contextcheck // False positive
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return o.Run(cmd.Context(), args)
 		},
@@ -243,7 +243,7 @@ func (o *Options) Run(ctx context.Context, args []string) error {
 		err = wait.PollUntilContextTimeout(ctx, time.Second, o.Timeout, false, func(ctx context.Context) (done bool, err error) {
 			req, err = o.CMClient.CertmanagerV1().CertificateRequests(req.Namespace).Get(ctx, req.Name, metav1.GetOptions{})
 			if err != nil {
-				return false, nil // nolint: nilerr // Retry and keep polling until context is cancelled
+				return false, nil //nolint: nilerr // Retry and keep polling until context is cancelled
 			}
 			return apiutil.CertificateRequestHasCondition(req, cmapi.CertificateRequestCondition{
 				Type:   cmapi.CertificateRequestConditionReady,

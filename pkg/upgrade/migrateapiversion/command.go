@@ -79,7 +79,7 @@ This command must be run with a cluster running cert-manager v1.0 or greater.`),
 
 			return o.Complete()
 		},
-		// nolint:contextcheck // False positive
+		//nolint:contextcheck // False positive
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return o.Run(cmd.Context(), args)
 		},

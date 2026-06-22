@@ -76,7 +76,7 @@ Mark cert-manager Certificate resources for manual renewal.`),
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			return o.Validate(cmd, args)
 		},
-		// nolint:contextcheck // False positive
+		//nolint:contextcheck // False positive
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return o.Run(cmd.Context(), args)
 		},
