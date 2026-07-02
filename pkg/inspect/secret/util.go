@@ -29,10 +29,28 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 
 	cmapi "github.com/cert-manager/cert-manager/pkg/apis/certmanager/v1"
 	"golang.org/x/crypto/ocsp"
 )
+
+const (
+	// revocationRequestTimeout bounds the total time spent contacting a single
+	// revocation endpoint (an OCSP responder or CRL distribution point)
+	revocationRequestTimeout = 10 * time.Second
+
+	// maxRevocationResponseSize caps how many bytes we read from a revocation endpoint.
+	maxRevocationResponseSize = 1 << 20 // 1 MiB
+)
+
+// revocationHTTPClient is used for all outbound OCSP and CRL requests.
+var revocationHTTPClient = &http.Client{
+	Timeout: revocationRequestTimeout,
+	CheckRedirect: func(req *http.Request, via []*http.Request) error {
+		return http.ErrUseLastResponse
+	},
+}
 
 func fingerprintCert(cert *x509.Certificate) string {
 	if cert == nil {
@@ -61,24 +79,29 @@ func checkOCSPValidCert(ctx context.Context, leafCert, issuerCert *x509.Certific
 	}
 
 	for _, ocspServer := range leafCert.OCSPServer {
-		httpRequest, err := http.NewRequestWithContext(ctx, http.MethodPost, ocspServer, bytes.NewBuffer(buffer))
-		if err != nil {
-			return false, fmt.Errorf("error creating HTTP request: %w", err)
-		}
 		ocspUrl, err := url.Parse(ocspServer)
 		if err != nil {
 			return false, fmt.Errorf("error parsing OCSP URL: %w", err)
 		}
+		// The OCSP URL comes from the untrusted certificate under inspection, so
+		// restrict it to HTTP(S) rather than dereferencing arbitrary schemes.
+		if ocspUrl.Scheme != "http" && ocspUrl.Scheme != "https" {
+			return false, fmt.Errorf("unsupported OCSP URL scheme %q, only http and https are supported", ocspUrl.Scheme)
+		}
+
+		httpRequest, err := http.NewRequestWithContext(ctx, http.MethodPost, ocspServer, bytes.NewBuffer(buffer))
+		if err != nil {
+			return false, fmt.Errorf("error creating HTTP request: %w", err)
+		}
 		httpRequest.Header.Add("Content-Type", "application/ocsp-request")
 		httpRequest.Header.Add("Accept", "application/ocsp-response")
 		httpRequest.Header.Add("Host", ocspUrl.Host)
-		httpClient := &http.Client{}
-		httpResponse, err := httpClient.Do(httpRequest) // #nosec G704 -- internal request, safe SSRF
+		httpResponse, err := revocationHTTPClient.Do(httpRequest) // #nosec G704 -- URL scheme restricted to http(s), redirects disabled, response size and timeout bounded
 		if err != nil {
 			return false, fmt.Errorf("error making HTTP request: %w", err)
 		}
 		defer httpResponse.Body.Close()
-		output, err := io.ReadAll(httpResponse.Body)
+		output, err := io.ReadAll(io.LimitReader(httpResponse.Body, maxRevocationResponseSize))
 		if err != nil {
 			return false, fmt.Errorf("error reading HTTP body: %w", err)
 		}
@@ -102,13 +125,13 @@ func checkCRLValidCert(ctx context.Context, cert *x509.Certificate, url string) 
 		return false, fmt.Errorf("error creating HTTP request: %w", err)
 	}
 
-	resp, err := http.DefaultClient.Do(req) // #nosec G704 -- CRL URL scheme validated by caller (ldap/https only)
+	resp, err := revocationHTTPClient.Do(req) // #nosec G704 -- CRL URL scheme validated by caller (ldap/https only), redirects disabled, response size and timeout bounded
 	if err != nil {
 		return false, fmt.Errorf("error getting HTTP response: %w", err)
 	}
 	defer resp.Body.Close()
 
-	body, err := io.ReadAll(resp.Body)
+	body, err := io.ReadAll(io.LimitReader(resp.Body, maxRevocationResponseSize))
 	if err != nil {
 		return false, fmt.Errorf("error reading HTTP body: %w", err)
 	}
