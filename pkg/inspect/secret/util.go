@@ -125,7 +125,7 @@ func checkCRLValidCert(ctx context.Context, cert *x509.Certificate, url string) 
 		return false, fmt.Errorf("error creating HTTP request: %w", err)
 	}
 
-	resp, err := revocationHTTPClient.Do(req) // #nosec G704 -- CRL URL scheme validated by caller (ldap/https only), redirects disabled, response size and timeout bounded
+	resp, err := revocationHTTPClient.Do(req) // #nosec G704 -- CRL URL scheme validated by caller, redirects disabled, response size and timeout bounded
 	if err != nil {
 		return false, fmt.Errorf("error getting HTTP response: %w", err)
 	}
