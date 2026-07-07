@@ -18,7 +18,11 @@ package secret
 
 import (
 	"crypto/x509"
+	"net/http"
+	"net/http/httptest"
 	"reflect"
+	"strings"
+	"sync/atomic"
 	"testing"
 
 	cmapi "github.com/cert-manager/cert-manager/pkg/apis/certmanager/v1"
@@ -70,6 +74,45 @@ func Test_fingerprintCert(t *testing.T) {
 				t.Errorf("fingerprintCert() = %v, want %v", got, tt.want)
 			}
 		})
+	}
+}
+
+// Test_checkCRLValidCert_doesNotFollowRedirects ensures that a CRL distribution
+// point cannot redirect the request to a different (e.g. internal) endpoint.
+func Test_checkCRLValidCert_doesNotFollowRedirects(t *testing.T) {
+	var internalHit atomic.Bool
+	internal := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		internalHit.Store(true)
+	}))
+	defer internal.Close()
+
+	redirector := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, internal.URL, http.StatusTemporaryRedirect)
+	}))
+	defer redirector.Close()
+
+	cert := MustParseCertificate(t, testCert)
+	// The redirect response is not a valid CRL, so an error is expected
+	if _, err := checkCRLValidCert(t.Context(), cert, redirector.URL); err == nil {
+		t.Fatal("expected an error parsing the redirect response as a CRL, got nil")
+	}
+	if internalHit.Load() {
+		t.Error("checkCRLValidCert followed a redirect to another endpoint; redirects must not be followed")
+	}
+}
+
+// Test_checkOCSPValidCert_rejectsNonHTTPScheme ensures the OCSP server URL
+// is restricted to HTTP(S) rather than being dereferenced with an arbitrary scheme.
+func Test_checkOCSPValidCert_rejectsNonHTTPScheme(t *testing.T) {
+	cert := MustParseCertificate(t, testCert)
+	cert.OCSPServer = []string{"ftp://attacker.example/ocsp"}
+
+	_, err := checkOCSPValidCert(t.Context(), cert, cert)
+	if err == nil {
+		t.Fatal("expected checkOCSPValidCert to reject a non-http(s) OCSP URL, got nil error")
+	}
+	if !strings.Contains(err.Error(), "unsupported OCSP URL scheme") {
+		t.Errorf("expected an unsupported-scheme error, got: %v", err)
 	}
 }
 
