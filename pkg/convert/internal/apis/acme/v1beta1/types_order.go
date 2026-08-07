@@ -67,17 +67,19 @@ type OrderSpec struct {
 	// DNSNames is a list of DNS names that should be included as part of the Order
 	// validation process.
 	// This field must match the corresponding field on the DER encoded CSR.
-	//+optional
+	// +optional
+	// +listType=atomic
 	DNSNames []string `json:"dnsNames,omitempty"`
 
 	// IPAddresses is a list of IP addresses that should be included as part of the Order
 	// validation process.
 	// This field must match the corresponding field on the DER encoded CSR.
 	// +optional
+	// +listType=atomic
 	IPAddresses []string `json:"ipAddresses,omitempty"`
 
 	// Duration is the duration for the not after date for the requested certificate.
-	// this is set on order creation as pe the ACME spec.
+	// This is set on order creation as per the ACME spec.
 	// +optional
 	Duration *metav1.Duration `json:"duration,omitempty"`
 
@@ -85,6 +87,15 @@ type OrderSpec struct {
 	// Supported profiles are listed by the server's ACME directory URL.
 	// +optional
 	Profile string `json:"profile,omitempty"`
+
+	// Replaces is the ARI CertID (RFC 9773 §4.1) of the certificate that this
+	// Order is intended to replace. When set, cert-manager will include the
+	// "replaces" field on the newOrder request to the ACME server if and only
+	// if the server advertises ARI support in its directory. The CertID has
+	// the form "base64url(AKI).base64url(serial)" and is derived locally from
+	// the currently issued leaf certificate.
+	// +optional
+	Replaces string `json:"replaces,omitempty"`
 }
 
 type OrderStatus struct {
