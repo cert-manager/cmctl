@@ -108,22 +108,49 @@ type IssuerConfig struct {
 	Venafi *VenafiIssuer
 }
 
-// VenafiIssuer configures an issuer to sign certificates using a Venafi TPP
-// or Cloud policy zone.
+// Configures an issuer to sign certificates using a CyberArk Certificate Manager Self-Hosted
+// or SaaS policy zone.
 type VenafiIssuer struct {
-	// Zone is the Venafi Policy Zone to use for this issuer.
-	// All requests made to the Venafi platform will be restricted by the named
+	// Zone is the Certificate Manager Policy Zone to use for this issuer.
+	// All requests made to the Certificate Manager platform will be restricted by the named
 	// zone policy.
 	// This field is required.
 	Zone string
 
-	// TPP specifies Trust Protection Platform configuration settings.
-	// Only one of TPP or Cloud may be specified.
+	// TPP specifies CyberArk Certificate Manager Self-Hosted configuration settings.
+	// Only one of CyberArk Certificate Manager may be specified.
 	TPP *VenafiTPP
 
-	// Cloud specifies the Venafi cloud configuration settings.
-	// Only one of TPP or Cloud may be specified.
+	// Cloud specifies the CyberArk Certificate Manager SaaS configuration settings.
+	// Only one of CyberArk Certificate Manager may be specified.
 	Cloud *VenafiCloud
+
+	// NGTS specifies Palo Alto Networks Next Generation Trust Services (NGTS) configuration
+	// using OAuth 2.0 Client Credentials. Only one of tpp, cloud, or ngts may be specified.
+	NGTS *VenafiNGTS
+}
+
+// VenafiNGTS defines connection configuration for the Palo Alto Networks
+// Next Generation Trust Services (NGTS) platform using OAuth 2.0 Client Credentials.
+type VenafiNGTS struct {
+	// URL is the base URL for the NGTS API endpoint.
+	// Defaults to "https://api.strata.paloaltonetworks.com/ngts" if not set.
+	URL string
+
+	// TokenEndpoint is the OAuth 2.0 token endpoint URL used to obtain access tokens,
+	// for example "https://auth.apps.paloaltonetworks.com/oauth2/access_token".
+	// Defaults to "https://auth.apps.paloaltonetworks.com/oauth2/access_token" if not set.
+	TokenEndpoint string
+
+	// TSGID is the Tenant Service Group ID used to scope the OAuth 2.0 access token,
+	// for example "1234567890". The tsg_id: prefix is added automatically.
+	// This field is required.
+	TSGID string
+
+	// CredentialsRef is a reference to a Kubernetes Secret containing the OAuth 2.0
+	// Client ID and Client Secret. The secret must contain the keys 'client-id' and
+	// 'client-secret'.
+	CredentialsRef cmmeta.LocalObjectReference
 }
 
 // VenafiTPP defines connection configuration details for a Venafi TPP instance
@@ -222,7 +249,7 @@ type VaultIssuer struct {
 }
 
 // VaultAuth is configuration used to authenticate with a Vault server. The
-// order of precedence is [`tokenSecretRef`, `appRole`, `clientCertificate` or `kubernetes`].
+// order of precedence is [`tokenSecretRef`, `appRole`, `clientCertificate`, `kubernetes`, `aws`].
 type VaultAuth struct {
 	// TokenSecretRef authenticates with Vault by presenting a token.
 	TokenSecretRef *cmmeta.SecretKeySelector
@@ -234,12 +261,16 @@ type VaultAuth struct {
 	// ClientCertificate authenticates with Vault by presenting a client
 	// certificate during the request's TLS handshake.
 	// Works only when using HTTPS protocol.
-	// +optional
 	ClientCertificate *VaultClientCertificateAuth
 
 	// Kubernetes authenticates with Vault by passing the ServiceAccount
 	// token stored in the named Secret resource to the Vault server.
 	Kubernetes *VaultKubernetesAuth
+
+	// AWS authenticates with Vault using AWS IAM authentication.
+	// This allows authentication using IAM roles for service accounts (IRSA),
+	// EKS Pod Identity (PIA), or ambient credentials (EC2 instance profiles, ECS task role).
+	AWS *VaultAWSAuth
 }
 
 // VaultAppRole authenticates with Vault using the App Role auth mechanism,
@@ -324,6 +355,37 @@ type ServiceAccountRef struct {
 	// consisting of the issuer's namespace and name is always included.
 	// +optional
 	TokenAudiences []string
+}
+
+// VaultAWSAuth authenticates with Vault using AWS IAM authentication.
+// See https://www.vaultproject.io/docs/auth/aws for more details.
+type VaultAWSAuth struct {
+	// The Vault mountPath here is the mount path to use when authenticating with
+	// Vault. For example, setting a value to `/v1/auth/foo`, will use the path
+	// `/v1/auth/foo/login` to authenticate with Vault. If unspecified, the
+	// default value "/v1/auth/aws" will be used.
+	MountPath string
+
+	// A required field containing the Vault Role to assume when authenticating.
+	Role string
+
+	// The AWS region to use for authentication. If not specified, the region
+	// will be determined from AWS_REGION or AWS_DEFAULT_REGION environment
+	// variables, falling back to "us-east-1" if not set.
+	Region string
+
+	// A reference to a service account that will be used to request a web identity
+	// token for IRSA (IAM Roles for Service Accounts) authentication.
+	ServiceAccountRef *ServiceAccountRef
+
+	// The ARN of the AWS IAM role to assume using the Kubernetes service account
+	// token. Required when using IRSA (serviceAccountRef is set).
+	// This role must have a trust policy that allows the OIDC provider to assume it.
+	IAMRoleARN string
+
+	// The Vault header value to include in the STS signing request.
+	// This is used to prevent replay attacks.
+	VaultHeaderValue string
 }
 
 // CAIssuer configures an issuer that can issue certificates from its provided
