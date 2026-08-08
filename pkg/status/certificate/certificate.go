@@ -310,7 +310,7 @@ func findMatchingCR(cmClient cmclient.Interface, ctx context.Context, crt *cmapi
 	}
 	for _, req := range reqs.Items {
 		if predicate.CertificateRequestRevision(nextRevision)(&req) && /* #nosec G601 -- Pointer does not outlive function scope */
-			predicate.ResourceOwnedBy(crt)(&req) /* #nosec G601 -- Pointer does not outlive function scope */ {
+			predicate.ResourceOwnedBy[*cmapi.CertificateRequest](crt)(&req) /* #nosec G601 -- Pointer does not outlive function scope */ {
 			possibleMatches = append(possibleMatches, req.DeepCopy())
 		}
 	}
@@ -337,7 +337,7 @@ func findMatchingOrder(cmClient cmclient.Interface, ctx context.Context, req *cm
 
 	possibleMatches := []*cmacme.Order{}
 	for _, order := range orders.Items {
-		if predicate.ResourceOwnedBy(req)(&order) /* #nosec G601 -- Pointer does not outlive function scope */ {
+		if predicate.ResourceOwnedBy[*cmacme.Order](req)(&order) /* #nosec G601 -- Pointer does not outlive function scope */ {
 			possibleMatches = append(possibleMatches, order.DeepCopy())
 		}
 	}
@@ -389,7 +389,7 @@ func findMatchingChallenges(cmClient cmclient.Interface, ctx context.Context, or
 
 	possibleMatches := []*cmacme.Challenge{}
 	for _, challenge := range challenges.Items {
-		if predicate.ResourceOwnedBy(order)(&challenge) /* #nosec G601 -- Pointer does not outlive function scope */ {
+		if predicate.ResourceOwnedBy[*cmacme.Challenge](order)(&challenge) /* #nosec G601 -- Pointer does not outlive function scope */ {
 			possibleMatches = append(possibleMatches, challenge.DeepCopy())
 		}
 	}

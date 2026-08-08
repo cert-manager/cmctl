@@ -27,9 +27,9 @@ import (
 	acme "github.com/cert-manager/cmctl/v2/pkg/convert/internal/apis/acme"
 	meta "github.com/cert-manager/cmctl/v2/pkg/convert/internal/apis/meta"
 	metav1 "github.com/cert-manager/cmctl/v2/pkg/convert/internal/apis/meta/v1"
-	v1 "k8s.io/api/core/v1"
+	corev1 "k8s.io/api/core/v1"
 	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
-	pkgapismetav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	conversion "k8s.io/apimachinery/pkg/conversion"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	apisv1 "sigs.k8s.io/gateway-api/apis/v1"
@@ -499,6 +499,7 @@ func autoConvert_v1beta1_ACMEChallengeSolver_To_acme_ACMEChallengeSolver(in *ACM
 	} else {
 		out.DNS01 = nil
 	}
+	out.WaitInsteadOfSelfCheck = (*v1.Duration)(unsafe.Pointer(in.WaitInsteadOfSelfCheck))
 	return nil
 }
 
@@ -519,6 +520,7 @@ func autoConvert_acme_ACMEChallengeSolver_To_v1beta1_ACMEChallengeSolver(in *acm
 	} else {
 		out.DNS01 = nil
 	}
+	out.WaitInsteadOfSelfCheck = (*v1.Duration)(unsafe.Pointer(in.WaitInsteadOfSelfCheck))
 	return nil
 }
 
@@ -716,7 +718,7 @@ func Convert_acme_ACMEChallengeSolverHTTP01_To_v1beta1_ACMEChallengeSolverHTTP01
 }
 
 func autoConvert_v1beta1_ACMEChallengeSolverHTTP01GatewayHTTPRoute_To_acme_ACMEChallengeSolverHTTP01GatewayHTTPRoute(in *ACMEChallengeSolverHTTP01GatewayHTTPRoute, out *acme.ACMEChallengeSolverHTTP01GatewayHTTPRoute, s conversion.Scope) error {
-	out.ServiceType = v1.ServiceType(in.ServiceType)
+	out.ServiceType = corev1.ServiceType(in.ServiceType)
 	out.Labels = *(*map[string]string)(unsafe.Pointer(&in.Labels))
 	out.ParentRefs = *(*[]apisv1.ParentReference)(unsafe.Pointer(&in.ParentRefs))
 	out.PodTemplate = (*acme.ACMEChallengeSolverHTTP01IngressPodTemplate)(unsafe.Pointer(in.PodTemplate))
@@ -729,7 +731,7 @@ func Convert_v1beta1_ACMEChallengeSolverHTTP01GatewayHTTPRoute_To_acme_ACMEChall
 }
 
 func autoConvert_acme_ACMEChallengeSolverHTTP01GatewayHTTPRoute_To_v1beta1_ACMEChallengeSolverHTTP01GatewayHTTPRoute(in *acme.ACMEChallengeSolverHTTP01GatewayHTTPRoute, out *ACMEChallengeSolverHTTP01GatewayHTTPRoute, s conversion.Scope) error {
-	out.ServiceType = v1.ServiceType(in.ServiceType)
+	out.ServiceType = corev1.ServiceType(in.ServiceType)
 	out.Labels = *(*map[string]string)(unsafe.Pointer(&in.Labels))
 	out.ParentRefs = *(*[]apisv1.ParentReference)(unsafe.Pointer(&in.ParentRefs))
 	out.PodTemplate = (*ACMEChallengeSolverHTTP01IngressPodTemplate)(unsafe.Pointer(in.PodTemplate))
@@ -742,7 +744,7 @@ func Convert_acme_ACMEChallengeSolverHTTP01GatewayHTTPRoute_To_v1beta1_ACMEChall
 }
 
 func autoConvert_v1beta1_ACMEChallengeSolverHTTP01Ingress_To_acme_ACMEChallengeSolverHTTP01Ingress(in *ACMEChallengeSolverHTTP01Ingress, out *acme.ACMEChallengeSolverHTTP01Ingress, s conversion.Scope) error {
-	out.ServiceType = v1.ServiceType(in.ServiceType)
+	out.ServiceType = corev1.ServiceType(in.ServiceType)
 	out.IngressClassName = (*string)(unsafe.Pointer(in.IngressClassName))
 	out.Class = (*string)(unsafe.Pointer(in.Class))
 	out.Name = in.Name
@@ -757,7 +759,7 @@ func Convert_v1beta1_ACMEChallengeSolverHTTP01Ingress_To_acme_ACMEChallengeSolve
 }
 
 func autoConvert_acme_ACMEChallengeSolverHTTP01Ingress_To_v1beta1_ACMEChallengeSolverHTTP01Ingress(in *acme.ACMEChallengeSolverHTTP01Ingress, out *ACMEChallengeSolverHTTP01Ingress, s conversion.Scope) error {
-	out.ServiceType = v1.ServiceType(in.ServiceType)
+	out.ServiceType = corev1.ServiceType(in.ServiceType)
 	out.IngressClassName = (*string)(unsafe.Pointer(in.IngressClassName))
 	out.Class = (*string)(unsafe.Pointer(in.Class))
 	out.Name = in.Name
@@ -816,8 +818,8 @@ func Convert_acme_ACMEChallengeSolverHTTP01IngressPodObjectMeta_To_v1beta1_ACMEC
 }
 
 func autoConvert_v1beta1_ACMEChallengeSolverHTTP01IngressPodResources_To_acme_ACMEChallengeSolverHTTP01IngressPodResources(in *ACMEChallengeSolverHTTP01IngressPodResources, out *acme.ACMEChallengeSolverHTTP01IngressPodResources, s conversion.Scope) error {
-	out.Limits = *(*v1.ResourceList)(unsafe.Pointer(&in.Limits))
-	out.Requests = *(*v1.ResourceList)(unsafe.Pointer(&in.Requests))
+	out.Limits = *(*corev1.ResourceList)(unsafe.Pointer(&in.Limits))
+	out.Requests = *(*corev1.ResourceList)(unsafe.Pointer(&in.Requests))
 	return nil
 }
 
@@ -827,8 +829,8 @@ func Convert_v1beta1_ACMEChallengeSolverHTTP01IngressPodResources_To_acme_ACMECh
 }
 
 func autoConvert_acme_ACMEChallengeSolverHTTP01IngressPodResources_To_v1beta1_ACMEChallengeSolverHTTP01IngressPodResources(in *acme.ACMEChallengeSolverHTTP01IngressPodResources, out *ACMEChallengeSolverHTTP01IngressPodResources, s conversion.Scope) error {
-	out.Limits = *(*v1.ResourceList)(unsafe.Pointer(&in.Limits))
-	out.Requests = *(*v1.ResourceList)(unsafe.Pointer(&in.Requests))
+	out.Limits = *(*corev1.ResourceList)(unsafe.Pointer(&in.Limits))
+	out.Requests = *(*corev1.ResourceList)(unsafe.Pointer(&in.Requests))
 	return nil
 }
 
@@ -838,15 +840,15 @@ func Convert_acme_ACMEChallengeSolverHTTP01IngressPodResources_To_v1beta1_ACMECh
 }
 
 func autoConvert_v1beta1_ACMEChallengeSolverHTTP01IngressPodSecurityContext_To_acme_ACMEChallengeSolverHTTP01IngressPodSecurityContext(in *ACMEChallengeSolverHTTP01IngressPodSecurityContext, out *acme.ACMEChallengeSolverHTTP01IngressPodSecurityContext, s conversion.Scope) error {
-	out.SELinuxOptions = (*v1.SELinuxOptions)(unsafe.Pointer(in.SELinuxOptions))
+	out.SELinuxOptions = (*corev1.SELinuxOptions)(unsafe.Pointer(in.SELinuxOptions))
 	out.RunAsUser = (*int64)(unsafe.Pointer(in.RunAsUser))
 	out.RunAsGroup = (*int64)(unsafe.Pointer(in.RunAsGroup))
 	out.RunAsNonRoot = (*bool)(unsafe.Pointer(in.RunAsNonRoot))
 	out.SupplementalGroups = *(*[]int64)(unsafe.Pointer(&in.SupplementalGroups))
 	out.FSGroup = (*int64)(unsafe.Pointer(in.FSGroup))
-	out.Sysctls = *(*[]v1.Sysctl)(unsafe.Pointer(&in.Sysctls))
-	out.FSGroupChangePolicy = (*v1.PodFSGroupChangePolicy)(unsafe.Pointer(in.FSGroupChangePolicy))
-	out.SeccompProfile = (*v1.SeccompProfile)(unsafe.Pointer(in.SeccompProfile))
+	out.Sysctls = *(*[]corev1.Sysctl)(unsafe.Pointer(&in.Sysctls))
+	out.FSGroupChangePolicy = (*corev1.PodFSGroupChangePolicy)(unsafe.Pointer(in.FSGroupChangePolicy))
+	out.SeccompProfile = (*corev1.SeccompProfile)(unsafe.Pointer(in.SeccompProfile))
 	return nil
 }
 
@@ -856,15 +858,15 @@ func Convert_v1beta1_ACMEChallengeSolverHTTP01IngressPodSecurityContext_To_acme_
 }
 
 func autoConvert_acme_ACMEChallengeSolverHTTP01IngressPodSecurityContext_To_v1beta1_ACMEChallengeSolverHTTP01IngressPodSecurityContext(in *acme.ACMEChallengeSolverHTTP01IngressPodSecurityContext, out *ACMEChallengeSolverHTTP01IngressPodSecurityContext, s conversion.Scope) error {
-	out.SELinuxOptions = (*v1.SELinuxOptions)(unsafe.Pointer(in.SELinuxOptions))
+	out.SELinuxOptions = (*corev1.SELinuxOptions)(unsafe.Pointer(in.SELinuxOptions))
 	out.RunAsUser = (*int64)(unsafe.Pointer(in.RunAsUser))
 	out.RunAsGroup = (*int64)(unsafe.Pointer(in.RunAsGroup))
 	out.RunAsNonRoot = (*bool)(unsafe.Pointer(in.RunAsNonRoot))
 	out.SupplementalGroups = *(*[]int64)(unsafe.Pointer(&in.SupplementalGroups))
 	out.FSGroup = (*int64)(unsafe.Pointer(in.FSGroup))
-	out.Sysctls = *(*[]v1.Sysctl)(unsafe.Pointer(&in.Sysctls))
-	out.FSGroupChangePolicy = (*v1.PodFSGroupChangePolicy)(unsafe.Pointer(in.FSGroupChangePolicy))
-	out.SeccompProfile = (*v1.SeccompProfile)(unsafe.Pointer(in.SeccompProfile))
+	out.Sysctls = *(*[]corev1.Sysctl)(unsafe.Pointer(&in.Sysctls))
+	out.FSGroupChangePolicy = (*corev1.PodFSGroupChangePolicy)(unsafe.Pointer(in.FSGroupChangePolicy))
+	out.SeccompProfile = (*corev1.SeccompProfile)(unsafe.Pointer(in.SeccompProfile))
 	return nil
 }
 
@@ -875,11 +877,11 @@ func Convert_acme_ACMEChallengeSolverHTTP01IngressPodSecurityContext_To_v1beta1_
 
 func autoConvert_v1beta1_ACMEChallengeSolverHTTP01IngressPodSpec_To_acme_ACMEChallengeSolverHTTP01IngressPodSpec(in *ACMEChallengeSolverHTTP01IngressPodSpec, out *acme.ACMEChallengeSolverHTTP01IngressPodSpec, s conversion.Scope) error {
 	out.NodeSelector = *(*map[string]string)(unsafe.Pointer(&in.NodeSelector))
-	out.Affinity = (*v1.Affinity)(unsafe.Pointer(in.Affinity))
-	out.Tolerations = *(*[]v1.Toleration)(unsafe.Pointer(&in.Tolerations))
+	out.Affinity = (*corev1.Affinity)(unsafe.Pointer(in.Affinity))
+	out.Tolerations = *(*[]corev1.Toleration)(unsafe.Pointer(&in.Tolerations))
 	out.PriorityClassName = in.PriorityClassName
 	out.ServiceAccountName = in.ServiceAccountName
-	out.ImagePullSecrets = *(*[]v1.LocalObjectReference)(unsafe.Pointer(&in.ImagePullSecrets))
+	out.ImagePullSecrets = *(*[]corev1.LocalObjectReference)(unsafe.Pointer(&in.ImagePullSecrets))
 	out.SecurityContext = (*acme.ACMEChallengeSolverHTTP01IngressPodSecurityContext)(unsafe.Pointer(in.SecurityContext))
 	out.Resources = (*acme.ACMEChallengeSolverHTTP01IngressPodResources)(unsafe.Pointer(in.Resources))
 	return nil
@@ -892,11 +894,11 @@ func Convert_v1beta1_ACMEChallengeSolverHTTP01IngressPodSpec_To_acme_ACMEChallen
 
 func autoConvert_acme_ACMEChallengeSolverHTTP01IngressPodSpec_To_v1beta1_ACMEChallengeSolverHTTP01IngressPodSpec(in *acme.ACMEChallengeSolverHTTP01IngressPodSpec, out *ACMEChallengeSolverHTTP01IngressPodSpec, s conversion.Scope) error {
 	out.NodeSelector = *(*map[string]string)(unsafe.Pointer(&in.NodeSelector))
-	out.Affinity = (*v1.Affinity)(unsafe.Pointer(in.Affinity))
-	out.Tolerations = *(*[]v1.Toleration)(unsafe.Pointer(&in.Tolerations))
+	out.Affinity = (*corev1.Affinity)(unsafe.Pointer(in.Affinity))
+	out.Tolerations = *(*[]corev1.Toleration)(unsafe.Pointer(&in.Tolerations))
 	out.PriorityClassName = in.PriorityClassName
 	out.ServiceAccountName = in.ServiceAccountName
-	out.ImagePullSecrets = *(*[]v1.LocalObjectReference)(unsafe.Pointer(&in.ImagePullSecrets))
+	out.ImagePullSecrets = *(*[]corev1.LocalObjectReference)(unsafe.Pointer(&in.ImagePullSecrets))
 	out.SecurityContext = (*ACMEChallengeSolverHTTP01IngressPodSecurityContext)(unsafe.Pointer(in.SecurityContext))
 	out.Resources = (*ACMEChallengeSolverHTTP01IngressPodResources)(unsafe.Pointer(in.Resources))
 	return nil
@@ -1596,6 +1598,7 @@ func Convert_acme_ChallengeSpec_To_v1beta1_ChallengeSpec(in *acme.ChallengeSpec,
 func autoConvert_v1beta1_ChallengeStatus_To_acme_ChallengeStatus(in *ChallengeStatus, out *acme.ChallengeStatus, s conversion.Scope) error {
 	out.Processing = in.Processing
 	out.Presented = in.Presented
+	out.PresentedAt = (*v1.Time)(unsafe.Pointer(in.PresentedAt))
 	out.Reason = in.Reason
 	out.State = acme.State(in.State)
 	return nil
@@ -1609,6 +1612,7 @@ func Convert_v1beta1_ChallengeStatus_To_acme_ChallengeStatus(in *ChallengeStatus
 func autoConvert_acme_ChallengeStatus_To_v1beta1_ChallengeStatus(in *acme.ChallengeStatus, out *ChallengeStatus, s conversion.Scope) error {
 	out.Processing = in.Processing
 	out.Presented = in.Presented
+	out.PresentedAt = (*v1.Time)(unsafe.Pointer(in.PresentedAt))
 	out.Reason = in.Reason
 	out.State = State(in.State)
 	return nil
@@ -1701,8 +1705,9 @@ func autoConvert_v1beta1_OrderSpec_To_acme_OrderSpec(in *OrderSpec, out *acme.Or
 	out.CommonName = in.CommonName
 	out.DNSNames = *(*[]string)(unsafe.Pointer(&in.DNSNames))
 	out.IPAddresses = *(*[]string)(unsafe.Pointer(&in.IPAddresses))
-	out.Duration = (*pkgapismetav1.Duration)(unsafe.Pointer(in.Duration))
+	out.Duration = (*v1.Duration)(unsafe.Pointer(in.Duration))
 	out.Profile = in.Profile
+	out.Replaces = in.Replaces
 	return nil
 }
 
@@ -1719,8 +1724,9 @@ func autoConvert_acme_OrderSpec_To_v1beta1_OrderSpec(in *acme.OrderSpec, out *Or
 	out.CommonName = in.CommonName
 	out.DNSNames = *(*[]string)(unsafe.Pointer(&in.DNSNames))
 	out.IPAddresses = *(*[]string)(unsafe.Pointer(&in.IPAddresses))
-	out.Duration = (*pkgapismetav1.Duration)(unsafe.Pointer(in.Duration))
+	out.Duration = (*v1.Duration)(unsafe.Pointer(in.Duration))
 	out.Profile = in.Profile
+	out.Replaces = in.Replaces
 	return nil
 }
 
@@ -1736,7 +1742,7 @@ func autoConvert_v1beta1_OrderStatus_To_acme_OrderStatus(in *OrderStatus, out *a
 	out.Certificate = *(*[]byte)(unsafe.Pointer(&in.Certificate))
 	out.State = acme.State(in.State)
 	out.Reason = in.Reason
-	out.FailureTime = (*pkgapismetav1.Time)(unsafe.Pointer(in.FailureTime))
+	out.FailureTime = (*v1.Time)(unsafe.Pointer(in.FailureTime))
 	return nil
 }
 
@@ -1752,7 +1758,7 @@ func autoConvert_acme_OrderStatus_To_v1beta1_OrderStatus(in *acme.OrderStatus, o
 	out.State = State(in.State)
 	out.Reason = in.Reason
 	out.Authorizations = *(*[]ACMEAuthorization)(unsafe.Pointer(&in.Authorizations))
-	out.FailureTime = (*pkgapismetav1.Time)(unsafe.Pointer(in.FailureTime))
+	out.FailureTime = (*v1.Time)(unsafe.Pointer(in.FailureTime))
 	return nil
 }
 

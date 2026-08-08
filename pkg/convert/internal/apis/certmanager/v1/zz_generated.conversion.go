@@ -43,6 +43,16 @@ func init() {
 // RegisterConversions adds conversion functions to the given scheme.
 // Public to allow building arbitrary schemes.
 func RegisterConversions(s *runtime.Scheme) error {
+	if err := s.AddGeneratedConversionFunc((*certmanagerv1.ACMERenewalWindow)(nil), (*certmanager.ACMERenewalWindow)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1_ACMERenewalWindow_To_certmanager_ACMERenewalWindow(a.(*certmanagerv1.ACMERenewalWindow), b.(*certmanager.ACMERenewalWindow), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*certmanager.ACMERenewalWindow)(nil), (*certmanagerv1.ACMERenewalWindow)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_certmanager_ACMERenewalWindow_To_v1_ACMERenewalWindow(a.(*certmanager.ACMERenewalWindow), b.(*certmanagerv1.ACMERenewalWindow), scope)
+	}); err != nil {
+		return err
+	}
 	if err := s.AddGeneratedConversionFunc((*certmanagerv1.CAIssuer)(nil), (*certmanager.CAIssuer)(nil), func(a, b interface{}, scope conversion.Scope) error {
 		return Convert_v1_CAIssuer_To_certmanager_CAIssuer(a.(*certmanagerv1.CAIssuer), b.(*certmanager.CAIssuer), scope)
 	}); err != nil {
@@ -60,6 +70,26 @@ func RegisterConversions(s *runtime.Scheme) error {
 	}
 	if err := s.AddGeneratedConversionFunc((*certmanager.Certificate)(nil), (*certmanagerv1.Certificate)(nil), func(a, b interface{}, scope conversion.Scope) error {
 		return Convert_certmanager_Certificate_To_v1_Certificate(a.(*certmanager.Certificate), b.(*certmanagerv1.Certificate), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*certmanagerv1.CertificateACMEARIStatus)(nil), (*certmanager.CertificateACMEARIStatus)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1_CertificateACMEARIStatus_To_certmanager_CertificateACMEARIStatus(a.(*certmanagerv1.CertificateACMEARIStatus), b.(*certmanager.CertificateACMEARIStatus), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*certmanager.CertificateACMEARIStatus)(nil), (*certmanagerv1.CertificateACMEARIStatus)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_certmanager_CertificateACMEARIStatus_To_v1_CertificateACMEARIStatus(a.(*certmanager.CertificateACMEARIStatus), b.(*certmanagerv1.CertificateACMEARIStatus), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*certmanagerv1.CertificateACMEStatus)(nil), (*certmanager.CertificateACMEStatus)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1_CertificateACMEStatus_To_certmanager_CertificateACMEStatus(a.(*certmanagerv1.CertificateACMEStatus), b.(*certmanager.CertificateACMEStatus), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*certmanager.CertificateACMEStatus)(nil), (*certmanagerv1.CertificateACMEStatus)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_certmanager_CertificateACMEStatus_To_v1_CertificateACMEStatus(a.(*certmanager.CertificateACMEStatus), b.(*certmanagerv1.CertificateACMEStatus), scope)
 	}); err != nil {
 		return err
 	}
@@ -110,6 +140,26 @@ func RegisterConversions(s *runtime.Scheme) error {
 	}
 	if err := s.AddGeneratedConversionFunc((*certmanager.CertificatePrivateKey)(nil), (*certmanagerv1.CertificatePrivateKey)(nil), func(a, b interface{}, scope conversion.Scope) error {
 		return Convert_certmanager_CertificatePrivateKey_To_v1_CertificatePrivateKey(a.(*certmanager.CertificatePrivateKey), b.(*certmanagerv1.CertificatePrivateKey), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*certmanagerv1.CertificateRenewal)(nil), (*certmanager.CertificateRenewal)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1_CertificateRenewal_To_certmanager_CertificateRenewal(a.(*certmanagerv1.CertificateRenewal), b.(*certmanager.CertificateRenewal), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*certmanager.CertificateRenewal)(nil), (*certmanagerv1.CertificateRenewal)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_certmanager_CertificateRenewal_To_v1_CertificateRenewal(a.(*certmanager.CertificateRenewal), b.(*certmanagerv1.CertificateRenewal), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*certmanagerv1.CertificateRenewalWindows)(nil), (*certmanager.CertificateRenewalWindows)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1_CertificateRenewalWindows_To_certmanager_CertificateRenewalWindows(a.(*certmanagerv1.CertificateRenewalWindows), b.(*certmanager.CertificateRenewalWindows), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*certmanager.CertificateRenewalWindows)(nil), (*certmanagerv1.CertificateRenewalWindows)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_certmanager_CertificateRenewalWindows_To_v1_CertificateRenewalWindows(a.(*certmanager.CertificateRenewalWindows), b.(*certmanagerv1.CertificateRenewalWindows), scope)
 	}); err != nil {
 		return err
 	}
@@ -343,6 +393,16 @@ func RegisterConversions(s *runtime.Scheme) error {
 	}); err != nil {
 		return err
 	}
+	if err := s.AddGeneratedConversionFunc((*certmanagerv1.VaultAWSAuth)(nil), (*certmanager.VaultAWSAuth)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1_VaultAWSAuth_To_certmanager_VaultAWSAuth(a.(*certmanagerv1.VaultAWSAuth), b.(*certmanager.VaultAWSAuth), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*certmanager.VaultAWSAuth)(nil), (*certmanagerv1.VaultAWSAuth)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_certmanager_VaultAWSAuth_To_v1_VaultAWSAuth(a.(*certmanager.VaultAWSAuth), b.(*certmanagerv1.VaultAWSAuth), scope)
+	}); err != nil {
+		return err
+	}
 	if err := s.AddGeneratedConversionFunc((*certmanagerv1.VaultAppRole)(nil), (*certmanager.VaultAppRole)(nil), func(a, b interface{}, scope conversion.Scope) error {
 		return Convert_v1_VaultAppRole_To_certmanager_VaultAppRole(a.(*certmanagerv1.VaultAppRole), b.(*certmanager.VaultAppRole), scope)
 	}); err != nil {
@@ -413,6 +473,16 @@ func RegisterConversions(s *runtime.Scheme) error {
 	}); err != nil {
 		return err
 	}
+	if err := s.AddGeneratedConversionFunc((*certmanagerv1.VenafiNGTS)(nil), (*certmanager.VenafiNGTS)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1_VenafiNGTS_To_certmanager_VenafiNGTS(a.(*certmanagerv1.VenafiNGTS), b.(*certmanager.VenafiNGTS), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*certmanager.VenafiNGTS)(nil), (*certmanagerv1.VenafiNGTS)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_certmanager_VenafiNGTS_To_v1_VenafiNGTS(a.(*certmanager.VenafiNGTS), b.(*certmanagerv1.VenafiNGTS), scope)
+	}); err != nil {
+		return err
+	}
 	if err := s.AddGeneratedConversionFunc((*certmanagerv1.VenafiTPP)(nil), (*certmanager.VenafiTPP)(nil), func(a, b interface{}, scope conversion.Scope) error {
 		return Convert_v1_VenafiTPP_To_certmanager_VenafiTPP(a.(*certmanagerv1.VenafiTPP), b.(*certmanager.VenafiTPP), scope)
 	}); err != nil {
@@ -434,6 +504,28 @@ func RegisterConversions(s *runtime.Scheme) error {
 		return err
 	}
 	return nil
+}
+
+func autoConvert_v1_ACMERenewalWindow_To_certmanager_ACMERenewalWindow(in *certmanagerv1.ACMERenewalWindow, out *certmanager.ACMERenewalWindow, s conversion.Scope) error {
+	out.Start = (*metav1.Time)(unsafe.Pointer(in.Start))
+	out.End = (*metav1.Time)(unsafe.Pointer(in.End))
+	return nil
+}
+
+// Convert_v1_ACMERenewalWindow_To_certmanager_ACMERenewalWindow is an autogenerated conversion function.
+func Convert_v1_ACMERenewalWindow_To_certmanager_ACMERenewalWindow(in *certmanagerv1.ACMERenewalWindow, out *certmanager.ACMERenewalWindow, s conversion.Scope) error {
+	return autoConvert_v1_ACMERenewalWindow_To_certmanager_ACMERenewalWindow(in, out, s)
+}
+
+func autoConvert_certmanager_ACMERenewalWindow_To_v1_ACMERenewalWindow(in *certmanager.ACMERenewalWindow, out *certmanagerv1.ACMERenewalWindow, s conversion.Scope) error {
+	out.Start = (*metav1.Time)(unsafe.Pointer(in.Start))
+	out.End = (*metav1.Time)(unsafe.Pointer(in.End))
+	return nil
+}
+
+// Convert_certmanager_ACMERenewalWindow_To_v1_ACMERenewalWindow is an autogenerated conversion function.
+func Convert_certmanager_ACMERenewalWindow_To_v1_ACMERenewalWindow(in *certmanager.ACMERenewalWindow, out *certmanagerv1.ACMERenewalWindow, s conversion.Scope) error {
+	return autoConvert_certmanager_ACMERenewalWindow_To_v1_ACMERenewalWindow(in, out, s)
 }
 
 func autoConvert_v1_CAIssuer_To_certmanager_CAIssuer(in *certmanagerv1.CAIssuer, out *certmanager.CAIssuer, s conversion.Scope) error {
@@ -492,6 +584,54 @@ func autoConvert_certmanager_Certificate_To_v1_Certificate(in *certmanager.Certi
 // Convert_certmanager_Certificate_To_v1_Certificate is an autogenerated conversion function.
 func Convert_certmanager_Certificate_To_v1_Certificate(in *certmanager.Certificate, out *certmanagerv1.Certificate, s conversion.Scope) error {
 	return autoConvert_certmanager_Certificate_To_v1_Certificate(in, out, s)
+}
+
+func autoConvert_v1_CertificateACMEARIStatus_To_certmanager_CertificateACMEARIStatus(in *certmanagerv1.CertificateACMEARIStatus, out *certmanager.CertificateACMEARIStatus, s conversion.Scope) error {
+	out.SuggestedWindow = (*certmanager.ACMERenewalWindow)(unsafe.Pointer(in.SuggestedWindow))
+	out.ExplanationURL = in.ExplanationURL
+	out.LastChecked = (*metav1.Time)(unsafe.Pointer(in.LastChecked))
+	out.NextCheck = (*metav1.Time)(unsafe.Pointer(in.NextCheck))
+	out.LastError = in.LastError
+	return nil
+}
+
+// Convert_v1_CertificateACMEARIStatus_To_certmanager_CertificateACMEARIStatus is an autogenerated conversion function.
+func Convert_v1_CertificateACMEARIStatus_To_certmanager_CertificateACMEARIStatus(in *certmanagerv1.CertificateACMEARIStatus, out *certmanager.CertificateACMEARIStatus, s conversion.Scope) error {
+	return autoConvert_v1_CertificateACMEARIStatus_To_certmanager_CertificateACMEARIStatus(in, out, s)
+}
+
+func autoConvert_certmanager_CertificateACMEARIStatus_To_v1_CertificateACMEARIStatus(in *certmanager.CertificateACMEARIStatus, out *certmanagerv1.CertificateACMEARIStatus, s conversion.Scope) error {
+	out.SuggestedWindow = (*certmanagerv1.ACMERenewalWindow)(unsafe.Pointer(in.SuggestedWindow))
+	out.ExplanationURL = in.ExplanationURL
+	out.LastChecked = (*metav1.Time)(unsafe.Pointer(in.LastChecked))
+	out.NextCheck = (*metav1.Time)(unsafe.Pointer(in.NextCheck))
+	out.LastError = in.LastError
+	return nil
+}
+
+// Convert_certmanager_CertificateACMEARIStatus_To_v1_CertificateACMEARIStatus is an autogenerated conversion function.
+func Convert_certmanager_CertificateACMEARIStatus_To_v1_CertificateACMEARIStatus(in *certmanager.CertificateACMEARIStatus, out *certmanagerv1.CertificateACMEARIStatus, s conversion.Scope) error {
+	return autoConvert_certmanager_CertificateACMEARIStatus_To_v1_CertificateACMEARIStatus(in, out, s)
+}
+
+func autoConvert_v1_CertificateACMEStatus_To_certmanager_CertificateACMEStatus(in *certmanagerv1.CertificateACMEStatus, out *certmanager.CertificateACMEStatus, s conversion.Scope) error {
+	out.ARI = (*certmanager.CertificateACMEARIStatus)(unsafe.Pointer(in.ARI))
+	return nil
+}
+
+// Convert_v1_CertificateACMEStatus_To_certmanager_CertificateACMEStatus is an autogenerated conversion function.
+func Convert_v1_CertificateACMEStatus_To_certmanager_CertificateACMEStatus(in *certmanagerv1.CertificateACMEStatus, out *certmanager.CertificateACMEStatus, s conversion.Scope) error {
+	return autoConvert_v1_CertificateACMEStatus_To_certmanager_CertificateACMEStatus(in, out, s)
+}
+
+func autoConvert_certmanager_CertificateACMEStatus_To_v1_CertificateACMEStatus(in *certmanager.CertificateACMEStatus, out *certmanagerv1.CertificateACMEStatus, s conversion.Scope) error {
+	out.ARI = (*certmanagerv1.CertificateACMEARIStatus)(unsafe.Pointer(in.ARI))
+	return nil
+}
+
+// Convert_certmanager_CertificateACMEStatus_To_v1_CertificateACMEStatus is an autogenerated conversion function.
+func Convert_certmanager_CertificateACMEStatus_To_v1_CertificateACMEStatus(in *certmanager.CertificateACMEStatus, out *certmanagerv1.CertificateACMEStatus, s conversion.Scope) error {
+	return autoConvert_certmanager_CertificateACMEStatus_To_v1_CertificateACMEStatus(in, out, s)
 }
 
 func autoConvert_v1_CertificateAdditionalOutputFormat_To_certmanager_CertificateAdditionalOutputFormat(in *certmanagerv1.CertificateAdditionalOutputFormat, out *certmanager.CertificateAdditionalOutputFormat, s conversion.Scope) error {
@@ -664,6 +804,52 @@ func autoConvert_certmanager_CertificatePrivateKey_To_v1_CertificatePrivateKey(i
 // Convert_certmanager_CertificatePrivateKey_To_v1_CertificatePrivateKey is an autogenerated conversion function.
 func Convert_certmanager_CertificatePrivateKey_To_v1_CertificatePrivateKey(in *certmanager.CertificatePrivateKey, out *certmanagerv1.CertificatePrivateKey, s conversion.Scope) error {
 	return autoConvert_certmanager_CertificatePrivateKey_To_v1_CertificatePrivateKey(in, out, s)
+}
+
+func autoConvert_v1_CertificateRenewal_To_certmanager_CertificateRenewal(in *certmanagerv1.CertificateRenewal, out *certmanager.CertificateRenewal, s conversion.Scope) error {
+	out.Policy = certmanager.CertificateRenewalPolicy(in.Policy)
+	out.Windows = *(*[]certmanager.CertificateRenewalWindows)(unsafe.Pointer(&in.Windows))
+	return nil
+}
+
+// Convert_v1_CertificateRenewal_To_certmanager_CertificateRenewal is an autogenerated conversion function.
+func Convert_v1_CertificateRenewal_To_certmanager_CertificateRenewal(in *certmanagerv1.CertificateRenewal, out *certmanager.CertificateRenewal, s conversion.Scope) error {
+	return autoConvert_v1_CertificateRenewal_To_certmanager_CertificateRenewal(in, out, s)
+}
+
+func autoConvert_certmanager_CertificateRenewal_To_v1_CertificateRenewal(in *certmanager.CertificateRenewal, out *certmanagerv1.CertificateRenewal, s conversion.Scope) error {
+	out.Policy = certmanagerv1.CertificateRenewalPolicy(in.Policy)
+	out.Windows = *(*[]certmanagerv1.CertificateRenewalWindows)(unsafe.Pointer(&in.Windows))
+	return nil
+}
+
+// Convert_certmanager_CertificateRenewal_To_v1_CertificateRenewal is an autogenerated conversion function.
+func Convert_certmanager_CertificateRenewal_To_v1_CertificateRenewal(in *certmanager.CertificateRenewal, out *certmanagerv1.CertificateRenewal, s conversion.Scope) error {
+	return autoConvert_certmanager_CertificateRenewal_To_v1_CertificateRenewal(in, out, s)
+}
+
+func autoConvert_v1_CertificateRenewalWindows_To_certmanager_CertificateRenewalWindows(in *certmanagerv1.CertificateRenewalWindows, out *certmanager.CertificateRenewalWindows, s conversion.Scope) error {
+	out.Timezone = in.Timezone
+	out.WindowDuration = (*metav1.Duration)(unsafe.Pointer(in.WindowDuration))
+	out.Cron = in.Cron
+	return nil
+}
+
+// Convert_v1_CertificateRenewalWindows_To_certmanager_CertificateRenewalWindows is an autogenerated conversion function.
+func Convert_v1_CertificateRenewalWindows_To_certmanager_CertificateRenewalWindows(in *certmanagerv1.CertificateRenewalWindows, out *certmanager.CertificateRenewalWindows, s conversion.Scope) error {
+	return autoConvert_v1_CertificateRenewalWindows_To_certmanager_CertificateRenewalWindows(in, out, s)
+}
+
+func autoConvert_certmanager_CertificateRenewalWindows_To_v1_CertificateRenewalWindows(in *certmanager.CertificateRenewalWindows, out *certmanagerv1.CertificateRenewalWindows, s conversion.Scope) error {
+	out.Timezone = in.Timezone
+	out.WindowDuration = (*metav1.Duration)(unsafe.Pointer(in.WindowDuration))
+	out.Cron = in.Cron
+	return nil
+}
+
+// Convert_certmanager_CertificateRenewalWindows_To_v1_CertificateRenewalWindows is an autogenerated conversion function.
+func Convert_certmanager_CertificateRenewalWindows_To_v1_CertificateRenewalWindows(in *certmanager.CertificateRenewalWindows, out *certmanagerv1.CertificateRenewalWindows, s conversion.Scope) error {
+	return autoConvert_certmanager_CertificateRenewalWindows_To_v1_CertificateRenewalWindows(in, out, s)
 }
 
 func autoConvert_v1_CertificateRequest_To_certmanager_CertificateRequest(in *certmanagerv1.CertificateRequest, out *certmanager.CertificateRequest, s conversion.Scope) error {
@@ -863,6 +1049,7 @@ func autoConvert_v1_CertificateSpec_To_certmanager_CertificateSpec(in *certmanag
 	out.Duration = (*metav1.Duration)(unsafe.Pointer(in.Duration))
 	out.RenewBefore = (*metav1.Duration)(unsafe.Pointer(in.RenewBefore))
 	out.RenewBeforePercentage = (*int32)(unsafe.Pointer(in.RenewBeforePercentage))
+	out.Renewal = (*certmanager.CertificateRenewal)(unsafe.Pointer(in.Renewal))
 	out.DNSNames = *(*[]string)(unsafe.Pointer(&in.DNSNames))
 	out.IPAddresses = *(*[]string)(unsafe.Pointer(&in.IPAddresses))
 	out.URIs = *(*[]string)(unsafe.Pointer(&in.URIs))
@@ -905,11 +1092,12 @@ func autoConvert_certmanager_CertificateSpec_To_v1_CertificateSpec(in *certmanag
 	out.Duration = (*metav1.Duration)(unsafe.Pointer(in.Duration))
 	out.RenewBefore = (*metav1.Duration)(unsafe.Pointer(in.RenewBefore))
 	out.RenewBeforePercentage = (*int32)(unsafe.Pointer(in.RenewBeforePercentage))
+	out.Renewal = (*certmanagerv1.CertificateRenewal)(unsafe.Pointer(in.Renewal))
 	out.DNSNames = *(*[]string)(unsafe.Pointer(&in.DNSNames))
 	out.IPAddresses = *(*[]string)(unsafe.Pointer(&in.IPAddresses))
 	out.URIs = *(*[]string)(unsafe.Pointer(&in.URIs))
-	out.EmailAddresses = *(*[]string)(unsafe.Pointer(&in.EmailAddresses))
 	out.OtherNames = *(*[]certmanagerv1.OtherName)(unsafe.Pointer(&in.OtherNames))
+	out.EmailAddresses = *(*[]string)(unsafe.Pointer(&in.EmailAddresses))
 	out.SecretName = in.SecretName
 	out.SecretTemplate = (*certmanagerv1.CertificateSecretTemplate)(unsafe.Pointer(in.SecretTemplate))
 	if in.Keystores != nil {
@@ -949,6 +1137,7 @@ func autoConvert_v1_CertificateStatus_To_certmanager_CertificateStatus(in *certm
 	out.Revision = (*int)(unsafe.Pointer(in.Revision))
 	out.NextPrivateKeySecretName = (*string)(unsafe.Pointer(in.NextPrivateKeySecretName))
 	out.FailedIssuanceAttempts = (*int)(unsafe.Pointer(in.FailedIssuanceAttempts))
+	out.ACME = (*certmanager.CertificateACMEStatus)(unsafe.Pointer(in.ACME))
 	return nil
 }
 
@@ -966,6 +1155,7 @@ func autoConvert_certmanager_CertificateStatus_To_v1_CertificateStatus(in *certm
 	out.Revision = (*int)(unsafe.Pointer(in.Revision))
 	out.NextPrivateKeySecretName = (*string)(unsafe.Pointer(in.NextPrivateKeySecretName))
 	out.FailedIssuanceAttempts = (*int)(unsafe.Pointer(in.FailedIssuanceAttempts))
+	out.ACME = (*certmanagerv1.CertificateACMEStatus)(unsafe.Pointer(in.ACME))
 	return nil
 }
 
@@ -1448,6 +1638,36 @@ func Convert_certmanager_ServiceAccountRef_To_v1_ServiceAccountRef(in *certmanag
 	return autoConvert_certmanager_ServiceAccountRef_To_v1_ServiceAccountRef(in, out, s)
 }
 
+func autoConvert_v1_VaultAWSAuth_To_certmanager_VaultAWSAuth(in *certmanagerv1.VaultAWSAuth, out *certmanager.VaultAWSAuth, s conversion.Scope) error {
+	out.MountPath = in.MountPath
+	out.Role = in.Role
+	out.Region = in.Region
+	out.ServiceAccountRef = (*certmanager.ServiceAccountRef)(unsafe.Pointer(in.ServiceAccountRef))
+	out.IAMRoleARN = in.IAMRoleARN
+	out.VaultHeaderValue = in.VaultHeaderValue
+	return nil
+}
+
+// Convert_v1_VaultAWSAuth_To_certmanager_VaultAWSAuth is an autogenerated conversion function.
+func Convert_v1_VaultAWSAuth_To_certmanager_VaultAWSAuth(in *certmanagerv1.VaultAWSAuth, out *certmanager.VaultAWSAuth, s conversion.Scope) error {
+	return autoConvert_v1_VaultAWSAuth_To_certmanager_VaultAWSAuth(in, out, s)
+}
+
+func autoConvert_certmanager_VaultAWSAuth_To_v1_VaultAWSAuth(in *certmanager.VaultAWSAuth, out *certmanagerv1.VaultAWSAuth, s conversion.Scope) error {
+	out.MountPath = in.MountPath
+	out.Role = in.Role
+	out.Region = in.Region
+	out.ServiceAccountRef = (*certmanagerv1.ServiceAccountRef)(unsafe.Pointer(in.ServiceAccountRef))
+	out.IAMRoleARN = in.IAMRoleARN
+	out.VaultHeaderValue = in.VaultHeaderValue
+	return nil
+}
+
+// Convert_certmanager_VaultAWSAuth_To_v1_VaultAWSAuth is an autogenerated conversion function.
+func Convert_certmanager_VaultAWSAuth_To_v1_VaultAWSAuth(in *certmanager.VaultAWSAuth, out *certmanagerv1.VaultAWSAuth, s conversion.Scope) error {
+	return autoConvert_certmanager_VaultAWSAuth_To_v1_VaultAWSAuth(in, out, s)
+}
+
 func autoConvert_v1_VaultAppRole_To_certmanager_VaultAppRole(in *certmanagerv1.VaultAppRole, out *certmanager.VaultAppRole, s conversion.Scope) error {
 	out.Path = in.Path
 	out.RoleId = in.RoleId
@@ -1505,6 +1725,7 @@ func autoConvert_v1_VaultAuth_To_certmanager_VaultAuth(in *certmanagerv1.VaultAu
 	} else {
 		out.Kubernetes = nil
 	}
+	out.AWS = (*certmanager.VaultAWSAuth)(unsafe.Pointer(in.AWS))
 	return nil
 }
 
@@ -1542,6 +1763,7 @@ func autoConvert_certmanager_VaultAuth_To_v1_VaultAuth(in *certmanager.VaultAuth
 	} else {
 		out.Kubernetes = nil
 	}
+	out.AWS = (*certmanagerv1.VaultAWSAuth)(unsafe.Pointer(in.AWS))
 	return nil
 }
 
@@ -1738,6 +1960,15 @@ func autoConvert_v1_VenafiIssuer_To_certmanager_VenafiIssuer(in *certmanagerv1.V
 	} else {
 		out.Cloud = nil
 	}
+	if in.NGTS != nil {
+		in, out := &in.NGTS, &out.NGTS
+		*out = new(certmanager.VenafiNGTS)
+		if err := Convert_v1_VenafiNGTS_To_certmanager_VenafiNGTS(*in, *out, s); err != nil {
+			return err
+		}
+	} else {
+		out.NGTS = nil
+	}
 	return nil
 }
 
@@ -1766,12 +1997,51 @@ func autoConvert_certmanager_VenafiIssuer_To_v1_VenafiIssuer(in *certmanager.Ven
 	} else {
 		out.Cloud = nil
 	}
+	if in.NGTS != nil {
+		in, out := &in.NGTS, &out.NGTS
+		*out = new(certmanagerv1.VenafiNGTS)
+		if err := Convert_certmanager_VenafiNGTS_To_v1_VenafiNGTS(*in, *out, s); err != nil {
+			return err
+		}
+	} else {
+		out.NGTS = nil
+	}
 	return nil
 }
 
 // Convert_certmanager_VenafiIssuer_To_v1_VenafiIssuer is an autogenerated conversion function.
 func Convert_certmanager_VenafiIssuer_To_v1_VenafiIssuer(in *certmanager.VenafiIssuer, out *certmanagerv1.VenafiIssuer, s conversion.Scope) error {
 	return autoConvert_certmanager_VenafiIssuer_To_v1_VenafiIssuer(in, out, s)
+}
+
+func autoConvert_v1_VenafiNGTS_To_certmanager_VenafiNGTS(in *certmanagerv1.VenafiNGTS, out *certmanager.VenafiNGTS, s conversion.Scope) error {
+	out.URL = in.URL
+	out.TokenEndpoint = in.TokenEndpoint
+	out.TSGID = in.TSGID
+	if err := internalapismetav1.Convert_v1_LocalObjectReference_To_meta_LocalObjectReference(&in.CredentialsRef, &out.CredentialsRef, s); err != nil {
+		return err
+	}
+	return nil
+}
+
+// Convert_v1_VenafiNGTS_To_certmanager_VenafiNGTS is an autogenerated conversion function.
+func Convert_v1_VenafiNGTS_To_certmanager_VenafiNGTS(in *certmanagerv1.VenafiNGTS, out *certmanager.VenafiNGTS, s conversion.Scope) error {
+	return autoConvert_v1_VenafiNGTS_To_certmanager_VenafiNGTS(in, out, s)
+}
+
+func autoConvert_certmanager_VenafiNGTS_To_v1_VenafiNGTS(in *certmanager.VenafiNGTS, out *certmanagerv1.VenafiNGTS, s conversion.Scope) error {
+	out.URL = in.URL
+	out.TokenEndpoint = in.TokenEndpoint
+	out.TSGID = in.TSGID
+	if err := internalapismetav1.Convert_meta_LocalObjectReference_To_v1_LocalObjectReference(&in.CredentialsRef, &out.CredentialsRef, s); err != nil {
+		return err
+	}
+	return nil
+}
+
+// Convert_certmanager_VenafiNGTS_To_v1_VenafiNGTS is an autogenerated conversion function.
+func Convert_certmanager_VenafiNGTS_To_v1_VenafiNGTS(in *certmanager.VenafiNGTS, out *certmanagerv1.VenafiNGTS, s conversion.Scope) error {
+	return autoConvert_certmanager_VenafiNGTS_To_v1_VenafiNGTS(in, out, s)
 }
 
 func autoConvert_v1_VenafiTPP_To_certmanager_VenafiTPP(in *certmanagerv1.VenafiTPP, out *certmanager.VenafiTPP, s conversion.Scope) error {

@@ -72,13 +72,21 @@ type OrderSpec struct {
 	IPAddresses []string
 
 	// Duration is the duration for the not after date for the requested certificate.
-	// this is set on order creation as pe the ACME spec.
+	// This is set on order creation as per the ACME spec.
 	Duration *metav1.Duration
 
 	// Profile allows requesting a certificate profile from the ACME server.
 	// Supported profiles are listed by the server's ACME directory URL.
 	// +optional
 	Profile string `json:"profile,omitempty"`
+
+	// Replaces is the ARI CertID (RFC 9773 §4.1) of the certificate that this
+	// Order is intended to replace. When set, cert-manager will include the
+	// "replaces" field on the newOrder request to the ACME server if and only
+	// if the server advertises ARI support in its directory. The CertID has
+	// the form "base64url(AKI).base64url(serial)" and is derived locally from
+	// the currently issued leaf certificate.
+	Replaces string
 }
 
 type OrderStatus struct {

@@ -184,6 +184,10 @@ type CertificateSpec struct {
 	// +optional
 	RenewBeforePercentage *int32
 
+	// `renewal` allows configuration of how your certificate is renewed. If the policy mentioned is
+	// `RenewBefore` then the controller respects `renewBefore` and `renewBeforePercentage`.
+	Renewal *CertificateRenewal
+
 	// Requested DNS subject alternative names.
 	DNSNames []string
 
@@ -193,16 +197,14 @@ type CertificateSpec struct {
 	// Requested URI subject alternative names.
 	URIs []string
 
+	// `otherNames` is an escape hatch for SAN that allows any type. We currently restrict the support to string like otherNames, cf RFC 5280 p 37
+	// Any UTF8 String valued otherName can be passed with by setting the keys oid: x.x.x.x and UTF8Value: somevalue for `otherName`.
+	// Most commonly this would be UPN set with oid: 1.3.6.1.4.1.311.20.2.3
+	// You should ensure that any OID passed is valid for the UTF8String type as we do not explicitly validate this.
+	OtherNames []OtherName
+
 	// Requested email subject alternative names.
 	EmailAddresses []string
-
-	// `otherNames` is an escape hatch for subject alternative names (SANs) which allows any string-like
-	// otherName as specified in RFC 5280 (https://www.rfc-editor.org/rfc/rfc5280#section-4.2.1.6).
-	// All `otherName`s must include an OID and a UTF-8 string value. For example, the OID for the UPN
-	// `otherName` is "1.3.6.1.4.1.311.20.2.3".
-	// No validation is performed on the given UTF-8 string, so users must ensure that the value is correct before use
-	// +optional
-	OtherNames []OtherName `json:"otherNames,omitempty"`
 
 	// Name of the Secret resource that will be automatically created and
 	// managed by this Certificate resource. It will be populated with a
@@ -269,16 +271,11 @@ type CertificateSpec struct {
 	// revisions exceeds this number.
 	//
 	// If set, revisionHistoryLimit must be a value of `1` or greater.
-	// If unset (`nil`), revisions will not be garbage collected.
-	// Default value is `nil`.
+	// Default value is `1`.
 	RevisionHistoryLimit *int32
 
 	// Defines extra output formats of the private key and signed certificate chain
 	// to be written to this Certificate's target Secret.
-	//
-	// This is a Beta Feature enabled by default. It can be disabled with the
-	// `--feature-gates=AdditionalCertificateOutputFormats=false` option set on both
-	// the controller and webhook components.
 	AdditionalOutputFormats []CertificateAdditionalOutputFormat
 
 	// x.509 certificate NameConstraint extension which MUST NOT be used in a non-CA certificate.
@@ -287,7 +284,6 @@ type CertificateSpec struct {
 	// This is an Alpha Feature and is only enabled with the
 	// `--feature-gates=NameConstraints=true` option set on both
 	// the controller and webhook components.
-	// +optional
 	NameConstraints *NameConstraints
 }
 
@@ -508,13 +504,49 @@ const (
 	Modern2023PKCS12Profile PKCS12Profile = "Modern2023"
 )
 
+type CertificateRenewal struct {
+	// `policy` must be one of `Disabled`, `RenewBefore`.
+	Policy CertificateRenewalPolicy
+
+	// `windows` mentions the behavior of when the renewal must happen.
+	Windows []CertificateRenewalWindows
+}
+
+type CertificateRenewalPolicy string
+
+const (
+	CertificateRenewalPolicyRenewBefore CertificateRenewalPolicy = "RenewBefore"
+	CertificateRenewalPolicyDisabled    CertificateRenewalPolicy = "Disabled"
+)
+
+// CertificateRenewalWindows is the definition for renewal windows
+type CertificateRenewalWindows struct {
+	// `timezone` is IANA compliant timezone. For example America/Denver.
+	// If this field is not set, timezone is treated as UTC.
+	Timezone string
+
+	// `windowDuration` is how long the cron definition is active for.
+	// Value must be in units accepted by Go time.ParseDuration https://golang.org/pkg/time/#ParseDuration.
+	WindowDuration *metav1.Duration
+
+	// `cron` is a cron compliant string to allow when the renewal should be allowed. Format is as shown below:
+	// * * * * *
+	// | | | | |
+	// | | | | day of the week (0–6) (Sunday to Saturday;
+	// | | | month (1–12)             7 is also Sunday on some systems)
+	// | | day of the month (1–31)
+	// | hour (0–23)
+	// minute (0–59)
+	Cron string
+}
+
 // CertificateStatus defines the observed state of Certificate
 type CertificateStatus struct {
 	// List of status conditions to indicate the status of certificates.
 	// Known condition types are `Ready` and `Issuing`.
 	Conditions []CertificateCondition
 
-	// LastFailureTime is set only if the lastest issuance for this
+	// LastFailureTime is set only if the latest issuance for this
 	// Certificate failed and contains the time of the failure. If an
 	// issuance has failed, the delay till the next issuance will be
 	// calculated using formula time.Hour * 2 ^ (failedIssuanceAttempts -
@@ -564,6 +596,9 @@ type CertificateStatus struct {
 	// delay till the next issuance will be calculated using formula
 	// time.Hour * 2 ^ (failedIssuanceAttempts - 1).
 	FailedIssuanceAttempts *int
+
+	// ACME stores information that is fetched from the ACME CA server.
+	ACME *CertificateACMEStatus
 }
 
 // CertificateCondition contains condition information for an Certificate.
@@ -673,4 +708,36 @@ type NameConstraintItem struct {
 	//
 	// +optional
 	URIDomains []string
+}
+
+type CertificateACMEStatus struct {
+	// ARI stores the ACME Renewal Information that is fetched from the ACME server
+	// in accordance with RFC 9773. This is only populated if the ARI feature gate is enabled.
+	ARI *CertificateACMEARIStatus
+}
+
+type CertificateACMEARIStatus struct {
+	// SuggestedWindow is the suggested renewal window as returned by the ACME server in accordance with RFC 9773.
+	SuggestedWindow *ACMERenewalWindow
+
+	// ExplanationURL is a human-readable URL that may explain why the suggested window
+	// has its current value.
+	ExplanationURL string
+
+	// LastChecked is the time at which the ACME server was last checked for renewal information.
+	LastChecked *metav1.Time
+
+	// NextCheck is the time at which the ACME server will next be checked for renewal information.
+	NextCheck *metav1.Time
+
+	// LastError is the last error encountered when checking the ACME server for renewal information, if any.
+	LastError string
+}
+
+type ACMERenewalWindow struct {
+	// Start is the start of the suggested renewal window.
+	Start *metav1.Time
+
+	// End is the end of the suggested renewal window.
+	End *metav1.Time
 }

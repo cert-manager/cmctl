@@ -104,8 +104,7 @@ const (
 )
 
 type ChallengeStatus struct {
-	// Processing is used to denote whether this challenge should be processed
-	// or not.
+	// Used to denote whether this challenge should be processed or not.
 	// This field will only be set to true by the 'scheduling' component.
 	// It will only be set to false by the 'challenges' controller, after the
 	// challenge has reached a final state or timed out.
@@ -113,19 +112,25 @@ type ChallengeStatus struct {
 	// any more action.
 	Processing bool
 
-	// Presented will be set to true if the challenge values for this challenge
-	// are currently 'presented'.
-	// This *does not* imply the self check is passing. Only that the values
-	// have been 'submitted' for the appropriate challenge mechanism (i.e. the
-	// DNS01 TXT record has been presented, or the HTTP01 configuration has been
-	// configured).
+	// Presented is true once cert-manager has configured the solver resources
+	// needed to expose this challenge's validation material.
+	// For example, the DNS01 TXT record has been created, or the HTTP01 solver
+	// has been configured to serve the challenge token.
+	// This does not imply the self check is passing, that the ACME server has
+	// validated the challenge, or that cert-manager has already accepted the
+	// challenge with the ACME server.
 	Presented bool
 
-	// Reason contains human readable information on why the Challenge is in the
+	// PresentedAt records when cert-manager first configured the solver
+	// resources for this challenge. This is used by the optional delay-based
+	// readiness logic.
+	PresentedAt *metav1.Time
+
+	// Contains human readable information on why the Challenge is in the
 	// current state.
 	Reason string
 
-	// State contains the current 'state' of the challenge.
+	// Contains the current 'state' of the challenge.
 	// If not set, the state of the challenge is unknown.
 	State State
 }
