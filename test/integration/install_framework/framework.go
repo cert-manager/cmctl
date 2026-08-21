@@ -68,16 +68,16 @@ func NewTestInstallApiServer(t *testing.T) (*TestInstallApiServer, CleanupFuncti
 	}
 
 	return &TestInstallApiServer{
-			environment: env,
-			testUser:    testUser,
+		environment: env,
+		testUser:    testUser,
 
-			kubeClient: kubeClientset,
+		kubeClient: kubeClientset,
 
-			kubeConfig: kubeConfig,
-		}, func() {
-			defer removeFile()
-			stopFn()
-		}
+		kubeConfig: kubeConfig,
+	}, func() {
+		defer removeFile()
+		stopFn()
+	}
 }
 
 func createKubeConfigFile(t *testing.T, user *envtest.AuthenticatedUser) (string, CleanupFunction) {
