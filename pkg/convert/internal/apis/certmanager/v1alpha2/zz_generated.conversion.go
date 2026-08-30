@@ -23,12 +23,12 @@ package v1alpha2
 import (
 	unsafe "unsafe"
 
-	metav1 "github.com/cert-manager/cert-manager/pkg/apis/meta/v1"
+	apismetav1 "github.com/cert-manager/cert-manager/pkg/apis/meta/v1"
 	acme "github.com/cert-manager/cmctl/v2/pkg/convert/internal/apis/acme"
 	acmev1alpha2 "github.com/cert-manager/cmctl/v2/pkg/convert/internal/apis/acme/v1alpha2"
 	certmanager "github.com/cert-manager/cmctl/v2/pkg/convert/internal/apis/certmanager"
 	meta "github.com/cert-manager/cmctl/v2/pkg/convert/internal/apis/meta"
-	apismetav1 "github.com/cert-manager/cmctl/v2/pkg/convert/internal/apis/meta/v1"
+	metav1 "github.com/cert-manager/cmctl/v2/pkg/convert/internal/apis/meta/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	conversion "k8s.io/apimachinery/pkg/conversion"
 	runtime "k8s.io/apimachinery/pkg/runtime"
@@ -505,8 +505,7 @@ func RegisterConversions(s *runtime.Scheme) error {
 }
 
 func autoConvert_v1alpha2_ACMERenewalWindow_To_certmanager_ACMERenewalWindow(in *ACMERenewalWindow, out *certmanager.ACMERenewalWindow, s conversion.Scope) error {
-	out.Start = (*v1.Time)(unsafe.Pointer(in.Start))
-	out.End = (*v1.Time)(unsafe.Pointer(in.End))
+	*out = *(*certmanager.ACMERenewalWindow)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -516,8 +515,7 @@ func Convert_v1alpha2_ACMERenewalWindow_To_certmanager_ACMERenewalWindow(in *ACM
 }
 
 func autoConvert_certmanager_ACMERenewalWindow_To_v1alpha2_ACMERenewalWindow(in *certmanager.ACMERenewalWindow, out *ACMERenewalWindow, s conversion.Scope) error {
-	out.Start = (*v1.Time)(unsafe.Pointer(in.Start))
-	out.End = (*v1.Time)(unsafe.Pointer(in.End))
+	*out = *(*ACMERenewalWindow)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -527,10 +525,7 @@ func Convert_certmanager_ACMERenewalWindow_To_v1alpha2_ACMERenewalWindow(in *cer
 }
 
 func autoConvert_v1alpha2_CAIssuer_To_certmanager_CAIssuer(in *CAIssuer, out *certmanager.CAIssuer, s conversion.Scope) error {
-	out.SecretName = in.SecretName
-	out.CRLDistributionPoints = *(*[]string)(unsafe.Pointer(&in.CRLDistributionPoints))
-	out.OCSPServers = *(*[]string)(unsafe.Pointer(&in.OCSPServers))
-	out.IssuingCertificateURLs = *(*[]string)(unsafe.Pointer(&in.IssuingCertificateURLs))
+	*out = *(*certmanager.CAIssuer)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -540,10 +535,7 @@ func Convert_v1alpha2_CAIssuer_To_certmanager_CAIssuer(in *CAIssuer, out *certma
 }
 
 func autoConvert_certmanager_CAIssuer_To_v1alpha2_CAIssuer(in *certmanager.CAIssuer, out *CAIssuer, s conversion.Scope) error {
-	out.SecretName = in.SecretName
-	out.CRLDistributionPoints = *(*[]string)(unsafe.Pointer(&in.CRLDistributionPoints))
-	out.OCSPServers = *(*[]string)(unsafe.Pointer(&in.OCSPServers))
-	out.IssuingCertificateURLs = *(*[]string)(unsafe.Pointer(&in.IssuingCertificateURLs))
+	*out = *(*CAIssuer)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -585,11 +577,7 @@ func Convert_certmanager_Certificate_To_v1alpha2_Certificate(in *certmanager.Cer
 }
 
 func autoConvert_v1alpha2_CertificateACMEARIStatus_To_certmanager_CertificateACMEARIStatus(in *CertificateACMEARIStatus, out *certmanager.CertificateACMEARIStatus, s conversion.Scope) error {
-	out.SuggestedWindow = (*certmanager.ACMERenewalWindow)(unsafe.Pointer(in.SuggestedWindow))
-	out.ExplanationURL = in.ExplanationURL
-	out.LastChecked = (*v1.Time)(unsafe.Pointer(in.LastChecked))
-	out.NextCheck = (*v1.Time)(unsafe.Pointer(in.NextCheck))
-	out.LastError = in.LastError
+	*out = *(*certmanager.CertificateACMEARIStatus)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -599,11 +587,7 @@ func Convert_v1alpha2_CertificateACMEARIStatus_To_certmanager_CertificateACMEARI
 }
 
 func autoConvert_certmanager_CertificateACMEARIStatus_To_v1alpha2_CertificateACMEARIStatus(in *certmanager.CertificateACMEARIStatus, out *CertificateACMEARIStatus, s conversion.Scope) error {
-	out.SuggestedWindow = (*ACMERenewalWindow)(unsafe.Pointer(in.SuggestedWindow))
-	out.ExplanationURL = in.ExplanationURL
-	out.LastChecked = (*v1.Time)(unsafe.Pointer(in.LastChecked))
-	out.NextCheck = (*v1.Time)(unsafe.Pointer(in.NextCheck))
-	out.LastError = in.LastError
+	*out = *(*CertificateACMEARIStatus)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -613,7 +597,7 @@ func Convert_certmanager_CertificateACMEARIStatus_To_v1alpha2_CertificateACMEARI
 }
 
 func autoConvert_v1alpha2_CertificateACMEStatus_To_certmanager_CertificateACMEStatus(in *CertificateACMEStatus, out *certmanager.CertificateACMEStatus, s conversion.Scope) error {
-	out.ARI = (*certmanager.CertificateACMEARIStatus)(unsafe.Pointer(in.ARI))
+	*out = *(*certmanager.CertificateACMEStatus)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -623,7 +607,7 @@ func Convert_v1alpha2_CertificateACMEStatus_To_certmanager_CertificateACMEStatus
 }
 
 func autoConvert_certmanager_CertificateACMEStatus_To_v1alpha2_CertificateACMEStatus(in *certmanager.CertificateACMEStatus, out *CertificateACMEStatus, s conversion.Scope) error {
-	out.ARI = (*CertificateACMEARIStatus)(unsafe.Pointer(in.ARI))
+	*out = *(*CertificateACMEStatus)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -633,7 +617,7 @@ func Convert_certmanager_CertificateACMEStatus_To_v1alpha2_CertificateACMEStatus
 }
 
 func autoConvert_v1alpha2_CertificateAdditionalOutputFormat_To_certmanager_CertificateAdditionalOutputFormat(in *CertificateAdditionalOutputFormat, out *certmanager.CertificateAdditionalOutputFormat, s conversion.Scope) error {
-	out.Type = certmanager.CertificateOutputFormatType(in.Type)
+	*out = *(*certmanager.CertificateAdditionalOutputFormat)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -643,7 +627,7 @@ func Convert_v1alpha2_CertificateAdditionalOutputFormat_To_certmanager_Certifica
 }
 
 func autoConvert_certmanager_CertificateAdditionalOutputFormat_To_v1alpha2_CertificateAdditionalOutputFormat(in *certmanager.CertificateAdditionalOutputFormat, out *CertificateAdditionalOutputFormat, s conversion.Scope) error {
-	out.Type = CertificateOutputFormatType(in.Type)
+	*out = *(*CertificateAdditionalOutputFormat)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -653,12 +637,7 @@ func Convert_certmanager_CertificateAdditionalOutputFormat_To_v1alpha2_Certifica
 }
 
 func autoConvert_v1alpha2_CertificateCondition_To_certmanager_CertificateCondition(in *CertificateCondition, out *certmanager.CertificateCondition, s conversion.Scope) error {
-	out.Type = certmanager.CertificateConditionType(in.Type)
-	out.Status = meta.ConditionStatus(in.Status)
-	out.LastTransitionTime = (*v1.Time)(unsafe.Pointer(in.LastTransitionTime))
-	out.Reason = in.Reason
-	out.Message = in.Message
-	out.ObservedGeneration = in.ObservedGeneration
+	*out = *(*certmanager.CertificateCondition)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -668,12 +647,7 @@ func Convert_v1alpha2_CertificateCondition_To_certmanager_CertificateCondition(i
 }
 
 func autoConvert_certmanager_CertificateCondition_To_v1alpha2_CertificateCondition(in *certmanager.CertificateCondition, out *CertificateCondition, s conversion.Scope) error {
-	out.Type = CertificateConditionType(in.Type)
-	out.Status = metav1.ConditionStatus(in.Status)
-	out.LastTransitionTime = (*v1.Time)(unsafe.Pointer(in.LastTransitionTime))
-	out.Reason = in.Reason
-	out.Message = in.Message
-	out.ObservedGeneration = in.ObservedGeneration
+	*out = *(*CertificateCondition)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -797,8 +771,7 @@ func autoConvert_certmanager_CertificatePrivateKey_To_v1alpha2_CertificatePrivat
 }
 
 func autoConvert_v1alpha2_CertificateRenewal_To_certmanager_CertificateRenewal(in *CertificateRenewal, out *certmanager.CertificateRenewal, s conversion.Scope) error {
-	out.Policy = certmanager.CertificateRenewalPolicy(in.Policy)
-	out.Windows = *(*[]certmanager.CertificateRenewalWindows)(unsafe.Pointer(&in.Windows))
+	*out = *(*certmanager.CertificateRenewal)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -808,8 +781,7 @@ func Convert_v1alpha2_CertificateRenewal_To_certmanager_CertificateRenewal(in *C
 }
 
 func autoConvert_certmanager_CertificateRenewal_To_v1alpha2_CertificateRenewal(in *certmanager.CertificateRenewal, out *CertificateRenewal, s conversion.Scope) error {
-	out.Policy = CertificateRenewalPolicy(in.Policy)
-	out.Windows = *(*[]CertificateRenewalWindows)(unsafe.Pointer(&in.Windows))
+	*out = *(*CertificateRenewal)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -819,9 +791,7 @@ func Convert_certmanager_CertificateRenewal_To_v1alpha2_CertificateRenewal(in *c
 }
 
 func autoConvert_v1alpha2_CertificateRenewalWindows_To_certmanager_CertificateRenewalWindows(in *CertificateRenewalWindows, out *certmanager.CertificateRenewalWindows, s conversion.Scope) error {
-	out.Timezone = in.Timezone
-	out.WindowDuration = (*v1.Duration)(unsafe.Pointer(in.WindowDuration))
-	out.Cron = in.Cron
+	*out = *(*certmanager.CertificateRenewalWindows)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -831,9 +801,7 @@ func Convert_v1alpha2_CertificateRenewalWindows_To_certmanager_CertificateRenewa
 }
 
 func autoConvert_certmanager_CertificateRenewalWindows_To_v1alpha2_CertificateRenewalWindows(in *certmanager.CertificateRenewalWindows, out *CertificateRenewalWindows, s conversion.Scope) error {
-	out.Timezone = in.Timezone
-	out.WindowDuration = (*v1.Duration)(unsafe.Pointer(in.WindowDuration))
-	out.Cron = in.Cron
+	*out = *(*CertificateRenewalWindows)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -875,11 +843,7 @@ func Convert_certmanager_CertificateRequest_To_v1alpha2_CertificateRequest(in *c
 }
 
 func autoConvert_v1alpha2_CertificateRequestCondition_To_certmanager_CertificateRequestCondition(in *CertificateRequestCondition, out *certmanager.CertificateRequestCondition, s conversion.Scope) error {
-	out.Type = certmanager.CertificateRequestConditionType(in.Type)
-	out.Status = meta.ConditionStatus(in.Status)
-	out.LastTransitionTime = (*v1.Time)(unsafe.Pointer(in.LastTransitionTime))
-	out.Reason = in.Reason
-	out.Message = in.Message
+	*out = *(*certmanager.CertificateRequestCondition)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -889,11 +853,7 @@ func Convert_v1alpha2_CertificateRequestCondition_To_certmanager_CertificateRequ
 }
 
 func autoConvert_certmanager_CertificateRequestCondition_To_v1alpha2_CertificateRequestCondition(in *certmanager.CertificateRequestCondition, out *CertificateRequestCondition, s conversion.Scope) error {
-	out.Type = CertificateRequestConditionType(in.Type)
-	out.Status = metav1.ConditionStatus(in.Status)
-	out.LastTransitionTime = (*v1.Time)(unsafe.Pointer(in.LastTransitionTime))
-	out.Reason = in.Reason
-	out.Message = in.Message
+	*out = *(*CertificateRequestCondition)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -946,7 +906,7 @@ func Convert_certmanager_CertificateRequestList_To_v1alpha2_CertificateRequestLi
 
 func autoConvert_v1alpha2_CertificateRequestSpec_To_certmanager_CertificateRequestSpec(in *CertificateRequestSpec, out *certmanager.CertificateRequestSpec, s conversion.Scope) error {
 	out.Duration = (*v1.Duration)(unsafe.Pointer(in.Duration))
-	if err := apismetav1.Convert_v1_IssuerReference_To_meta_IssuerReference(&in.IssuerRef, &out.IssuerRef, s); err != nil {
+	if err := metav1.Convert_v1_IssuerReference_To_meta_IssuerReference(&in.IssuerRef, &out.IssuerRef, s); err != nil {
 		return err
 	}
 	// WARNING: in.CSRPEM requires manual conversion: does not exist in peer-type
@@ -961,7 +921,7 @@ func autoConvert_v1alpha2_CertificateRequestSpec_To_certmanager_CertificateReque
 
 func autoConvert_certmanager_CertificateRequestSpec_To_v1alpha2_CertificateRequestSpec(in *certmanager.CertificateRequestSpec, out *CertificateRequestSpec, s conversion.Scope) error {
 	out.Duration = (*v1.Duration)(unsafe.Pointer(in.Duration))
-	if err := apismetav1.Convert_meta_IssuerReference_To_v1_IssuerReference(&in.IssuerRef, &out.IssuerRef, s); err != nil {
+	if err := metav1.Convert_meta_IssuerReference_To_v1_IssuerReference(&in.IssuerRef, &out.IssuerRef, s); err != nil {
 		return err
 	}
 	// WARNING: in.Request requires manual conversion: does not exist in peer-type
@@ -1001,8 +961,7 @@ func Convert_certmanager_CertificateRequestStatus_To_v1alpha2_CertificateRequest
 }
 
 func autoConvert_v1alpha2_CertificateSecretTemplate_To_certmanager_CertificateSecretTemplate(in *CertificateSecretTemplate, out *certmanager.CertificateSecretTemplate, s conversion.Scope) error {
-	out.Annotations = *(*map[string]string)(unsafe.Pointer(&in.Annotations))
-	out.Labels = *(*map[string]string)(unsafe.Pointer(&in.Labels))
+	*out = *(*certmanager.CertificateSecretTemplate)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1012,8 +971,7 @@ func Convert_v1alpha2_CertificateSecretTemplate_To_certmanager_CertificateSecret
 }
 
 func autoConvert_certmanager_CertificateSecretTemplate_To_v1alpha2_CertificateSecretTemplate(in *certmanager.CertificateSecretTemplate, out *CertificateSecretTemplate, s conversion.Scope) error {
-	out.Annotations = *(*map[string]string)(unsafe.Pointer(&in.Annotations))
-	out.Labels = *(*map[string]string)(unsafe.Pointer(&in.Labels))
+	*out = *(*CertificateSecretTemplate)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1055,7 +1013,7 @@ func autoConvert_v1alpha2_CertificateSpec_To_certmanager_CertificateSpec(in *Cer
 	} else {
 		out.Keystores = nil
 	}
-	if err := apismetav1.Convert_v1_IssuerReference_To_meta_IssuerReference(&in.IssuerRef, &out.IssuerRef, s); err != nil {
+	if err := metav1.Convert_v1_IssuerReference_To_meta_IssuerReference(&in.IssuerRef, &out.IssuerRef, s); err != nil {
 		return err
 	}
 	out.IsCA = in.IsCA
@@ -1112,7 +1070,7 @@ func autoConvert_certmanager_CertificateSpec_To_v1alpha2_CertificateSpec(in *cer
 	} else {
 		out.Keystores = nil
 	}
-	if err := apismetav1.Convert_meta_IssuerReference_To_v1_IssuerReference(&in.IssuerRef, &out.IssuerRef, s); err != nil {
+	if err := metav1.Convert_meta_IssuerReference_To_v1_IssuerReference(&in.IssuerRef, &out.IssuerRef, s); err != nil {
 		return err
 	}
 	out.IsCA = in.IsCA
@@ -1135,15 +1093,7 @@ func autoConvert_certmanager_CertificateSpec_To_v1alpha2_CertificateSpec(in *cer
 }
 
 func autoConvert_v1alpha2_CertificateStatus_To_certmanager_CertificateStatus(in *CertificateStatus, out *certmanager.CertificateStatus, s conversion.Scope) error {
-	out.Conditions = *(*[]certmanager.CertificateCondition)(unsafe.Pointer(&in.Conditions))
-	out.LastFailureTime = (*v1.Time)(unsafe.Pointer(in.LastFailureTime))
-	out.NotBefore = (*v1.Time)(unsafe.Pointer(in.NotBefore))
-	out.NotAfter = (*v1.Time)(unsafe.Pointer(in.NotAfter))
-	out.RenewalTime = (*v1.Time)(unsafe.Pointer(in.RenewalTime))
-	out.Revision = (*int)(unsafe.Pointer(in.Revision))
-	out.NextPrivateKeySecretName = (*string)(unsafe.Pointer(in.NextPrivateKeySecretName))
-	out.FailedIssuanceAttempts = (*int)(unsafe.Pointer(in.FailedIssuanceAttempts))
-	out.ACME = (*certmanager.CertificateACMEStatus)(unsafe.Pointer(in.ACME))
+	*out = *(*certmanager.CertificateStatus)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1153,15 +1103,7 @@ func Convert_v1alpha2_CertificateStatus_To_certmanager_CertificateStatus(in *Cer
 }
 
 func autoConvert_certmanager_CertificateStatus_To_v1alpha2_CertificateStatus(in *certmanager.CertificateStatus, out *CertificateStatus, s conversion.Scope) error {
-	out.Conditions = *(*[]CertificateCondition)(unsafe.Pointer(&in.Conditions))
-	out.LastFailureTime = (*v1.Time)(unsafe.Pointer(in.LastFailureTime))
-	out.NotBefore = (*v1.Time)(unsafe.Pointer(in.NotBefore))
-	out.NotAfter = (*v1.Time)(unsafe.Pointer(in.NotAfter))
-	out.RenewalTime = (*v1.Time)(unsafe.Pointer(in.RenewalTime))
-	out.Revision = (*int)(unsafe.Pointer(in.Revision))
-	out.NextPrivateKeySecretName = (*string)(unsafe.Pointer(in.NextPrivateKeySecretName))
-	out.FailedIssuanceAttempts = (*int)(unsafe.Pointer(in.FailedIssuanceAttempts))
-	out.ACME = (*CertificateACMEStatus)(unsafe.Pointer(in.ACME))
+	*out = *(*CertificateStatus)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1277,12 +1219,7 @@ func Convert_certmanager_Issuer_To_v1alpha2_Issuer(in *certmanager.Issuer, out *
 }
 
 func autoConvert_v1alpha2_IssuerCondition_To_certmanager_IssuerCondition(in *IssuerCondition, out *certmanager.IssuerCondition, s conversion.Scope) error {
-	out.Type = certmanager.IssuerConditionType(in.Type)
-	out.Status = meta.ConditionStatus(in.Status)
-	out.LastTransitionTime = (*v1.Time)(unsafe.Pointer(in.LastTransitionTime))
-	out.Reason = in.Reason
-	out.Message = in.Message
-	out.ObservedGeneration = in.ObservedGeneration
+	*out = *(*certmanager.IssuerCondition)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1292,12 +1229,7 @@ func Convert_v1alpha2_IssuerCondition_To_certmanager_IssuerCondition(in *IssuerC
 }
 
 func autoConvert_certmanager_IssuerCondition_To_v1alpha2_IssuerCondition(in *certmanager.IssuerCondition, out *IssuerCondition, s conversion.Scope) error {
-	out.Type = IssuerConditionType(in.Type)
-	out.Status = metav1.ConditionStatus(in.Status)
-	out.LastTransitionTime = (*v1.Time)(unsafe.Pointer(in.LastTransitionTime))
-	out.Reason = in.Reason
-	out.Message = in.Message
-	out.ObservedGeneration = in.ObservedGeneration
+	*out = *(*IssuerCondition)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1449,8 +1381,7 @@ func Convert_certmanager_IssuerSpec_To_v1alpha2_IssuerSpec(in *certmanager.Issue
 }
 
 func autoConvert_v1alpha2_IssuerStatus_To_certmanager_IssuerStatus(in *IssuerStatus, out *certmanager.IssuerStatus, s conversion.Scope) error {
-	out.Conditions = *(*[]certmanager.IssuerCondition)(unsafe.Pointer(&in.Conditions))
-	out.ACME = (*acme.ACMEIssuerStatus)(unsafe.Pointer(in.ACME))
+	*out = *(*certmanager.IssuerStatus)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1460,8 +1391,7 @@ func Convert_v1alpha2_IssuerStatus_To_certmanager_IssuerStatus(in *IssuerStatus,
 }
 
 func autoConvert_certmanager_IssuerStatus_To_v1alpha2_IssuerStatus(in *certmanager.IssuerStatus, out *IssuerStatus, s conversion.Scope) error {
-	out.Conditions = *(*[]IssuerCondition)(unsafe.Pointer(&in.Conditions))
-	out.ACME = (*acmev1alpha2.ACMEIssuerStatus)(unsafe.Pointer(in.ACME))
+	*out = *(*IssuerStatus)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1472,7 +1402,7 @@ func Convert_certmanager_IssuerStatus_To_v1alpha2_IssuerStatus(in *certmanager.I
 
 func autoConvert_v1alpha2_JKSKeystore_To_certmanager_JKSKeystore(in *JKSKeystore, out *certmanager.JKSKeystore, s conversion.Scope) error {
 	out.Create = in.Create
-	if err := apismetav1.Convert_v1_SecretKeySelector_To_meta_SecretKeySelector(&in.PasswordSecretRef, &out.PasswordSecretRef, s); err != nil {
+	if err := metav1.Convert_v1_SecretKeySelector_To_meta_SecretKeySelector(&in.PasswordSecretRef, &out.PasswordSecretRef, s); err != nil {
 		return err
 	}
 	out.Password = (*string)(unsafe.Pointer(in.Password))
@@ -1487,7 +1417,7 @@ func Convert_v1alpha2_JKSKeystore_To_certmanager_JKSKeystore(in *JKSKeystore, ou
 
 func autoConvert_certmanager_JKSKeystore_To_v1alpha2_JKSKeystore(in *certmanager.JKSKeystore, out *JKSKeystore, s conversion.Scope) error {
 	out.Create = in.Create
-	if err := apismetav1.Convert_meta_SecretKeySelector_To_v1_SecretKeySelector(&in.PasswordSecretRef, &out.PasswordSecretRef, s); err != nil {
+	if err := metav1.Convert_meta_SecretKeySelector_To_v1_SecretKeySelector(&in.PasswordSecretRef, &out.PasswordSecretRef, s); err != nil {
 		return err
 	}
 	out.Password = (*string)(unsafe.Pointer(in.Password))
@@ -1501,10 +1431,7 @@ func Convert_certmanager_JKSKeystore_To_v1alpha2_JKSKeystore(in *certmanager.JKS
 }
 
 func autoConvert_v1alpha2_NameConstraintItem_To_certmanager_NameConstraintItem(in *NameConstraintItem, out *certmanager.NameConstraintItem, s conversion.Scope) error {
-	out.DNSDomains = *(*[]string)(unsafe.Pointer(&in.DNSDomains))
-	out.IPRanges = *(*[]string)(unsafe.Pointer(&in.IPRanges))
-	out.EmailAddresses = *(*[]string)(unsafe.Pointer(&in.EmailAddresses))
-	out.URIDomains = *(*[]string)(unsafe.Pointer(&in.URIDomains))
+	*out = *(*certmanager.NameConstraintItem)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1514,10 +1441,7 @@ func Convert_v1alpha2_NameConstraintItem_To_certmanager_NameConstraintItem(in *N
 }
 
 func autoConvert_certmanager_NameConstraintItem_To_v1alpha2_NameConstraintItem(in *certmanager.NameConstraintItem, out *NameConstraintItem, s conversion.Scope) error {
-	out.DNSDomains = *(*[]string)(unsafe.Pointer(&in.DNSDomains))
-	out.IPRanges = *(*[]string)(unsafe.Pointer(&in.IPRanges))
-	out.EmailAddresses = *(*[]string)(unsafe.Pointer(&in.EmailAddresses))
-	out.URIDomains = *(*[]string)(unsafe.Pointer(&in.URIDomains))
+	*out = *(*NameConstraintItem)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1527,9 +1451,7 @@ func Convert_certmanager_NameConstraintItem_To_v1alpha2_NameConstraintItem(in *c
 }
 
 func autoConvert_v1alpha2_NameConstraints_To_certmanager_NameConstraints(in *NameConstraints, out *certmanager.NameConstraints, s conversion.Scope) error {
-	out.Critical = in.Critical
-	out.Permitted = (*certmanager.NameConstraintItem)(unsafe.Pointer(in.Permitted))
-	out.Excluded = (*certmanager.NameConstraintItem)(unsafe.Pointer(in.Excluded))
+	*out = *(*certmanager.NameConstraints)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1539,9 +1461,7 @@ func Convert_v1alpha2_NameConstraints_To_certmanager_NameConstraints(in *NameCon
 }
 
 func autoConvert_certmanager_NameConstraints_To_v1alpha2_NameConstraints(in *certmanager.NameConstraints, out *NameConstraints, s conversion.Scope) error {
-	out.Critical = in.Critical
-	out.Permitted = (*NameConstraintItem)(unsafe.Pointer(in.Permitted))
-	out.Excluded = (*NameConstraintItem)(unsafe.Pointer(in.Excluded))
+	*out = *(*NameConstraints)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1551,8 +1471,7 @@ func Convert_certmanager_NameConstraints_To_v1alpha2_NameConstraints(in *certman
 }
 
 func autoConvert_v1alpha2_OtherName_To_certmanager_OtherName(in *OtherName, out *certmanager.OtherName, s conversion.Scope) error {
-	out.OID = in.OID
-	out.UTF8Value = in.UTF8Value
+	*out = *(*certmanager.OtherName)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1562,8 +1481,7 @@ func Convert_v1alpha2_OtherName_To_certmanager_OtherName(in *OtherName, out *cer
 }
 
 func autoConvert_certmanager_OtherName_To_v1alpha2_OtherName(in *certmanager.OtherName, out *OtherName, s conversion.Scope) error {
-	out.OID = in.OID
-	out.UTF8Value = in.UTF8Value
+	*out = *(*OtherName)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1574,7 +1492,7 @@ func Convert_certmanager_OtherName_To_v1alpha2_OtherName(in *certmanager.OtherNa
 
 func autoConvert_v1alpha2_PKCS12Keystore_To_certmanager_PKCS12Keystore(in *PKCS12Keystore, out *certmanager.PKCS12Keystore, s conversion.Scope) error {
 	out.Create = in.Create
-	if err := apismetav1.Convert_v1_SecretKeySelector_To_meta_SecretKeySelector(&in.PasswordSecretRef, &out.PasswordSecretRef, s); err != nil {
+	if err := metav1.Convert_v1_SecretKeySelector_To_meta_SecretKeySelector(&in.PasswordSecretRef, &out.PasswordSecretRef, s); err != nil {
 		return err
 	}
 	out.Password = (*string)(unsafe.Pointer(in.Password))
@@ -1589,7 +1507,7 @@ func Convert_v1alpha2_PKCS12Keystore_To_certmanager_PKCS12Keystore(in *PKCS12Key
 
 func autoConvert_certmanager_PKCS12Keystore_To_v1alpha2_PKCS12Keystore(in *certmanager.PKCS12Keystore, out *PKCS12Keystore, s conversion.Scope) error {
 	out.Create = in.Create
-	if err := apismetav1.Convert_meta_SecretKeySelector_To_v1_SecretKeySelector(&in.PasswordSecretRef, &out.PasswordSecretRef, s); err != nil {
+	if err := metav1.Convert_meta_SecretKeySelector_To_v1_SecretKeySelector(&in.PasswordSecretRef, &out.PasswordSecretRef, s); err != nil {
 		return err
 	}
 	out.Password = (*string)(unsafe.Pointer(in.Password))
@@ -1603,7 +1521,7 @@ func Convert_certmanager_PKCS12Keystore_To_v1alpha2_PKCS12Keystore(in *certmanag
 }
 
 func autoConvert_v1alpha2_SelfSignedIssuer_To_certmanager_SelfSignedIssuer(in *SelfSignedIssuer, out *certmanager.SelfSignedIssuer, s conversion.Scope) error {
-	out.CRLDistributionPoints = *(*[]string)(unsafe.Pointer(&in.CRLDistributionPoints))
+	*out = *(*certmanager.SelfSignedIssuer)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1613,7 +1531,7 @@ func Convert_v1alpha2_SelfSignedIssuer_To_certmanager_SelfSignedIssuer(in *SelfS
 }
 
 func autoConvert_certmanager_SelfSignedIssuer_To_v1alpha2_SelfSignedIssuer(in *certmanager.SelfSignedIssuer, out *SelfSignedIssuer, s conversion.Scope) error {
-	out.CRLDistributionPoints = *(*[]string)(unsafe.Pointer(&in.CRLDistributionPoints))
+	*out = *(*SelfSignedIssuer)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1623,8 +1541,7 @@ func Convert_certmanager_SelfSignedIssuer_To_v1alpha2_SelfSignedIssuer(in *certm
 }
 
 func autoConvert_v1alpha2_ServiceAccountRef_To_certmanager_ServiceAccountRef(in *ServiceAccountRef, out *certmanager.ServiceAccountRef, s conversion.Scope) error {
-	out.Name = in.Name
-	out.TokenAudiences = *(*[]string)(unsafe.Pointer(&in.TokenAudiences))
+	*out = *(*certmanager.ServiceAccountRef)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1634,8 +1551,7 @@ func Convert_v1alpha2_ServiceAccountRef_To_certmanager_ServiceAccountRef(in *Ser
 }
 
 func autoConvert_certmanager_ServiceAccountRef_To_v1alpha2_ServiceAccountRef(in *certmanager.ServiceAccountRef, out *ServiceAccountRef, s conversion.Scope) error {
-	out.Name = in.Name
-	out.TokenAudiences = *(*[]string)(unsafe.Pointer(&in.TokenAudiences))
+	*out = *(*ServiceAccountRef)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1645,12 +1561,7 @@ func Convert_certmanager_ServiceAccountRef_To_v1alpha2_ServiceAccountRef(in *cer
 }
 
 func autoConvert_v1alpha2_VaultAWSAuth_To_certmanager_VaultAWSAuth(in *VaultAWSAuth, out *certmanager.VaultAWSAuth, s conversion.Scope) error {
-	out.MountPath = in.MountPath
-	out.Role = in.Role
-	out.Region = in.Region
-	out.ServiceAccountRef = (*certmanager.ServiceAccountRef)(unsafe.Pointer(in.ServiceAccountRef))
-	out.IAMRoleARN = in.IAMRoleARN
-	out.VaultHeaderValue = in.VaultHeaderValue
+	*out = *(*certmanager.VaultAWSAuth)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1660,12 +1571,7 @@ func Convert_v1alpha2_VaultAWSAuth_To_certmanager_VaultAWSAuth(in *VaultAWSAuth,
 }
 
 func autoConvert_certmanager_VaultAWSAuth_To_v1alpha2_VaultAWSAuth(in *certmanager.VaultAWSAuth, out *VaultAWSAuth, s conversion.Scope) error {
-	out.MountPath = in.MountPath
-	out.Role = in.Role
-	out.Region = in.Region
-	out.ServiceAccountRef = (*ServiceAccountRef)(unsafe.Pointer(in.ServiceAccountRef))
-	out.IAMRoleARN = in.IAMRoleARN
-	out.VaultHeaderValue = in.VaultHeaderValue
+	*out = *(*VaultAWSAuth)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1677,7 +1583,7 @@ func Convert_certmanager_VaultAWSAuth_To_v1alpha2_VaultAWSAuth(in *certmanager.V
 func autoConvert_v1alpha2_VaultAppRole_To_certmanager_VaultAppRole(in *VaultAppRole, out *certmanager.VaultAppRole, s conversion.Scope) error {
 	out.Path = in.Path
 	out.RoleId = in.RoleId
-	if err := apismetav1.Convert_v1_SecretKeySelector_To_meta_SecretKeySelector(&in.SecretRef, &out.SecretRef, s); err != nil {
+	if err := metav1.Convert_v1_SecretKeySelector_To_meta_SecretKeySelector(&in.SecretRef, &out.SecretRef, s); err != nil {
 		return err
 	}
 	return nil
@@ -1691,7 +1597,7 @@ func Convert_v1alpha2_VaultAppRole_To_certmanager_VaultAppRole(in *VaultAppRole,
 func autoConvert_certmanager_VaultAppRole_To_v1alpha2_VaultAppRole(in *certmanager.VaultAppRole, out *VaultAppRole, s conversion.Scope) error {
 	out.Path = in.Path
 	out.RoleId = in.RoleId
-	if err := apismetav1.Convert_meta_SecretKeySelector_To_v1_SecretKeySelector(&in.SecretRef, &out.SecretRef, s); err != nil {
+	if err := metav1.Convert_meta_SecretKeySelector_To_v1_SecretKeySelector(&in.SecretRef, &out.SecretRef, s); err != nil {
 		return err
 	}
 	return nil
@@ -1706,7 +1612,7 @@ func autoConvert_v1alpha2_VaultAuth_To_certmanager_VaultAuth(in *VaultAuth, out 
 	if in.TokenSecretRef != nil {
 		in, out := &in.TokenSecretRef, &out.TokenSecretRef
 		*out = new(meta.SecretKeySelector)
-		if err := apismetav1.Convert_v1_SecretKeySelector_To_meta_SecretKeySelector(*in, *out, s); err != nil {
+		if err := metav1.Convert_v1_SecretKeySelector_To_meta_SecretKeySelector(*in, *out, s); err != nil {
 			return err
 		}
 	} else {
@@ -1743,8 +1649,8 @@ func Convert_v1alpha2_VaultAuth_To_certmanager_VaultAuth(in *VaultAuth, out *cer
 func autoConvert_certmanager_VaultAuth_To_v1alpha2_VaultAuth(in *certmanager.VaultAuth, out *VaultAuth, s conversion.Scope) error {
 	if in.TokenSecretRef != nil {
 		in, out := &in.TokenSecretRef, &out.TokenSecretRef
-		*out = new(metav1.SecretKeySelector)
-		if err := apismetav1.Convert_meta_SecretKeySelector_To_v1_SecretKeySelector(*in, *out, s); err != nil {
+		*out = new(apismetav1.SecretKeySelector)
+		if err := metav1.Convert_meta_SecretKeySelector_To_v1_SecretKeySelector(*in, *out, s); err != nil {
 			return err
 		}
 	} else {
@@ -1779,9 +1685,7 @@ func Convert_certmanager_VaultAuth_To_v1alpha2_VaultAuth(in *certmanager.VaultAu
 }
 
 func autoConvert_v1alpha2_VaultClientCertificateAuth_To_certmanager_VaultClientCertificateAuth(in *VaultClientCertificateAuth, out *certmanager.VaultClientCertificateAuth, s conversion.Scope) error {
-	out.Path = in.Path
-	out.SecretName = in.SecretName
-	out.Name = in.Name
+	*out = *(*certmanager.VaultClientCertificateAuth)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1791,9 +1695,7 @@ func Convert_v1alpha2_VaultClientCertificateAuth_To_certmanager_VaultClientCerti
 }
 
 func autoConvert_certmanager_VaultClientCertificateAuth_To_v1alpha2_VaultClientCertificateAuth(in *certmanager.VaultClientCertificateAuth, out *VaultClientCertificateAuth, s conversion.Scope) error {
-	out.Path = in.Path
-	out.SecretName = in.SecretName
-	out.Name = in.Name
+	*out = *(*VaultClientCertificateAuth)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1814,7 +1716,7 @@ func autoConvert_v1alpha2_VaultIssuer_To_certmanager_VaultIssuer(in *VaultIssuer
 	if in.CABundleSecretRef != nil {
 		in, out := &in.CABundleSecretRef, &out.CABundleSecretRef
 		*out = new(meta.SecretKeySelector)
-		if err := apismetav1.Convert_v1_SecretKeySelector_To_meta_SecretKeySelector(*in, *out, s); err != nil {
+		if err := metav1.Convert_v1_SecretKeySelector_To_meta_SecretKeySelector(*in, *out, s); err != nil {
 			return err
 		}
 	} else {
@@ -1823,7 +1725,7 @@ func autoConvert_v1alpha2_VaultIssuer_To_certmanager_VaultIssuer(in *VaultIssuer
 	if in.ClientCertSecretRef != nil {
 		in, out := &in.ClientCertSecretRef, &out.ClientCertSecretRef
 		*out = new(meta.SecretKeySelector)
-		if err := apismetav1.Convert_v1_SecretKeySelector_To_meta_SecretKeySelector(*in, *out, s); err != nil {
+		if err := metav1.Convert_v1_SecretKeySelector_To_meta_SecretKeySelector(*in, *out, s); err != nil {
 			return err
 		}
 	} else {
@@ -1832,7 +1734,7 @@ func autoConvert_v1alpha2_VaultIssuer_To_certmanager_VaultIssuer(in *VaultIssuer
 	if in.ClientKeySecretRef != nil {
 		in, out := &in.ClientKeySecretRef, &out.ClientKeySecretRef
 		*out = new(meta.SecretKeySelector)
-		if err := apismetav1.Convert_v1_SecretKeySelector_To_meta_SecretKeySelector(*in, *out, s); err != nil {
+		if err := metav1.Convert_v1_SecretKeySelector_To_meta_SecretKeySelector(*in, *out, s); err != nil {
 			return err
 		}
 	} else {
@@ -1857,8 +1759,8 @@ func autoConvert_certmanager_VaultIssuer_To_v1alpha2_VaultIssuer(in *certmanager
 	out.CABundle = *(*[]byte)(unsafe.Pointer(&in.CABundle))
 	if in.CABundleSecretRef != nil {
 		in, out := &in.CABundleSecretRef, &out.CABundleSecretRef
-		*out = new(metav1.SecretKeySelector)
-		if err := apismetav1.Convert_meta_SecretKeySelector_To_v1_SecretKeySelector(*in, *out, s); err != nil {
+		*out = new(apismetav1.SecretKeySelector)
+		if err := metav1.Convert_meta_SecretKeySelector_To_v1_SecretKeySelector(*in, *out, s); err != nil {
 			return err
 		}
 	} else {
@@ -1866,8 +1768,8 @@ func autoConvert_certmanager_VaultIssuer_To_v1alpha2_VaultIssuer(in *certmanager
 	}
 	if in.ClientCertSecretRef != nil {
 		in, out := &in.ClientCertSecretRef, &out.ClientCertSecretRef
-		*out = new(metav1.SecretKeySelector)
-		if err := apismetav1.Convert_meta_SecretKeySelector_To_v1_SecretKeySelector(*in, *out, s); err != nil {
+		*out = new(apismetav1.SecretKeySelector)
+		if err := metav1.Convert_meta_SecretKeySelector_To_v1_SecretKeySelector(*in, *out, s); err != nil {
 			return err
 		}
 	} else {
@@ -1875,8 +1777,8 @@ func autoConvert_certmanager_VaultIssuer_To_v1alpha2_VaultIssuer(in *certmanager
 	}
 	if in.ClientKeySecretRef != nil {
 		in, out := &in.ClientKeySecretRef, &out.ClientKeySecretRef
-		*out = new(metav1.SecretKeySelector)
-		if err := apismetav1.Convert_meta_SecretKeySelector_To_v1_SecretKeySelector(*in, *out, s); err != nil {
+		*out = new(apismetav1.SecretKeySelector)
+		if err := metav1.Convert_meta_SecretKeySelector_To_v1_SecretKeySelector(*in, *out, s); err != nil {
 			return err
 		}
 	} else {
@@ -1892,7 +1794,7 @@ func Convert_certmanager_VaultIssuer_To_v1alpha2_VaultIssuer(in *certmanager.Vau
 
 func autoConvert_v1alpha2_VaultKubernetesAuth_To_certmanager_VaultKubernetesAuth(in *VaultKubernetesAuth, out *certmanager.VaultKubernetesAuth, s conversion.Scope) error {
 	out.Path = in.Path
-	if err := apismetav1.Convert_v1_SecretKeySelector_To_meta_SecretKeySelector(&in.SecretRef, &out.SecretRef, s); err != nil {
+	if err := metav1.Convert_v1_SecretKeySelector_To_meta_SecretKeySelector(&in.SecretRef, &out.SecretRef, s); err != nil {
 		return err
 	}
 	out.ServiceAccountRef = (*certmanager.ServiceAccountRef)(unsafe.Pointer(in.ServiceAccountRef))
@@ -1907,7 +1809,7 @@ func Convert_v1alpha2_VaultKubernetesAuth_To_certmanager_VaultKubernetesAuth(in 
 
 func autoConvert_certmanager_VaultKubernetesAuth_To_v1alpha2_VaultKubernetesAuth(in *certmanager.VaultKubernetesAuth, out *VaultKubernetesAuth, s conversion.Scope) error {
 	out.Path = in.Path
-	if err := apismetav1.Convert_meta_SecretKeySelector_To_v1_SecretKeySelector(&in.SecretRef, &out.SecretRef, s); err != nil {
+	if err := metav1.Convert_meta_SecretKeySelector_To_v1_SecretKeySelector(&in.SecretRef, &out.SecretRef, s); err != nil {
 		return err
 	}
 	out.ServiceAccountRef = (*ServiceAccountRef)(unsafe.Pointer(in.ServiceAccountRef))
@@ -1917,7 +1819,7 @@ func autoConvert_certmanager_VaultKubernetesAuth_To_v1alpha2_VaultKubernetesAuth
 
 func autoConvert_v1alpha2_VenafiCloud_To_certmanager_VenafiCloud(in *VenafiCloud, out *certmanager.VenafiCloud, s conversion.Scope) error {
 	out.URL = in.URL
-	if err := apismetav1.Convert_v1_SecretKeySelector_To_meta_SecretKeySelector(&in.APITokenSecretRef, &out.APITokenSecretRef, s); err != nil {
+	if err := metav1.Convert_v1_SecretKeySelector_To_meta_SecretKeySelector(&in.APITokenSecretRef, &out.APITokenSecretRef, s); err != nil {
 		return err
 	}
 	return nil
@@ -1930,7 +1832,7 @@ func Convert_v1alpha2_VenafiCloud_To_certmanager_VenafiCloud(in *VenafiCloud, ou
 
 func autoConvert_certmanager_VenafiCloud_To_v1alpha2_VenafiCloud(in *certmanager.VenafiCloud, out *VenafiCloud, s conversion.Scope) error {
 	out.URL = in.URL
-	if err := apismetav1.Convert_meta_SecretKeySelector_To_v1_SecretKeySelector(&in.APITokenSecretRef, &out.APITokenSecretRef, s); err != nil {
+	if err := metav1.Convert_meta_SecretKeySelector_To_v1_SecretKeySelector(&in.APITokenSecretRef, &out.APITokenSecretRef, s); err != nil {
 		return err
 	}
 	return nil
@@ -2019,7 +1921,7 @@ func autoConvert_v1alpha2_VenafiNGTS_To_certmanager_VenafiNGTS(in *VenafiNGTS, o
 	out.URL = in.URL
 	out.TokenEndpoint = in.TokenEndpoint
 	out.TSGID = in.TSGID
-	if err := apismetav1.Convert_v1_LocalObjectReference_To_meta_LocalObjectReference(&in.CredentialsRef, &out.CredentialsRef, s); err != nil {
+	if err := metav1.Convert_v1_LocalObjectReference_To_meta_LocalObjectReference(&in.CredentialsRef, &out.CredentialsRef, s); err != nil {
 		return err
 	}
 	return nil
@@ -2034,7 +1936,7 @@ func autoConvert_certmanager_VenafiNGTS_To_v1alpha2_VenafiNGTS(in *certmanager.V
 	out.URL = in.URL
 	out.TokenEndpoint = in.TokenEndpoint
 	out.TSGID = in.TSGID
-	if err := apismetav1.Convert_meta_LocalObjectReference_To_v1_LocalObjectReference(&in.CredentialsRef, &out.CredentialsRef, s); err != nil {
+	if err := metav1.Convert_meta_LocalObjectReference_To_v1_LocalObjectReference(&in.CredentialsRef, &out.CredentialsRef, s); err != nil {
 		return err
 	}
 	return nil
@@ -2047,14 +1949,14 @@ func Convert_certmanager_VenafiNGTS_To_v1alpha2_VenafiNGTS(in *certmanager.Venaf
 
 func autoConvert_v1alpha2_VenafiTPP_To_certmanager_VenafiTPP(in *VenafiTPP, out *certmanager.VenafiTPP, s conversion.Scope) error {
 	out.URL = in.URL
-	if err := apismetav1.Convert_v1_LocalObjectReference_To_meta_LocalObjectReference(&in.CredentialsRef, &out.CredentialsRef, s); err != nil {
+	if err := metav1.Convert_v1_LocalObjectReference_To_meta_LocalObjectReference(&in.CredentialsRef, &out.CredentialsRef, s); err != nil {
 		return err
 	}
 	out.CABundle = *(*[]byte)(unsafe.Pointer(&in.CABundle))
 	if in.CABundleSecretRef != nil {
 		in, out := &in.CABundleSecretRef, &out.CABundleSecretRef
 		*out = new(meta.SecretKeySelector)
-		if err := apismetav1.Convert_v1_SecretKeySelector_To_meta_SecretKeySelector(*in, *out, s); err != nil {
+		if err := metav1.Convert_v1_SecretKeySelector_To_meta_SecretKeySelector(*in, *out, s); err != nil {
 			return err
 		}
 	} else {
@@ -2070,14 +1972,14 @@ func Convert_v1alpha2_VenafiTPP_To_certmanager_VenafiTPP(in *VenafiTPP, out *cer
 
 func autoConvert_certmanager_VenafiTPP_To_v1alpha2_VenafiTPP(in *certmanager.VenafiTPP, out *VenafiTPP, s conversion.Scope) error {
 	out.URL = in.URL
-	if err := apismetav1.Convert_meta_LocalObjectReference_To_v1_LocalObjectReference(&in.CredentialsRef, &out.CredentialsRef, s); err != nil {
+	if err := metav1.Convert_meta_LocalObjectReference_To_v1_LocalObjectReference(&in.CredentialsRef, &out.CredentialsRef, s); err != nil {
 		return err
 	}
 	out.CABundle = *(*[]byte)(unsafe.Pointer(&in.CABundle))
 	if in.CABundleSecretRef != nil {
 		in, out := &in.CABundleSecretRef, &out.CABundleSecretRef
-		*out = new(metav1.SecretKeySelector)
-		if err := apismetav1.Convert_meta_SecretKeySelector_To_v1_SecretKeySelector(*in, *out, s); err != nil {
+		*out = new(apismetav1.SecretKeySelector)
+		if err := metav1.Convert_meta_SecretKeySelector_To_v1_SecretKeySelector(*in, *out, s); err != nil {
 			return err
 		}
 	} else {
