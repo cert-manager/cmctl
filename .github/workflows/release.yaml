@@ -9,7 +9,9 @@ env:
 
 jobs:
   build_images:
-    runs-on: oracle-4cpu-16gb-x86-64
+    # An unbacked runs-on label does not error; the job queues for 24h, then is cancelled.
+    # Live scale sets: https://github.com/cncf/automation/tree/main/ci/cluster/oci/runners
+    runs-on: oracle-8cpu-32gb-x86-64
 
     permissions:
       contents: write # needed to write releases
