@@ -732,6 +732,11 @@ type CertificateACMEARIStatus struct {
 
 	// LastError is the last error encountered when checking the ACME server for renewal information, if any.
 	LastError string
+
+	// CertID is the ARI CertID (RFC 9773) of the certificate this renewal information was
+	// fetched for. This is used to determine if we need to re-fetch the renewal information
+	// as changed cert id means that ARI fetched before is stale.
+	CertID string
 }
 
 type ACMERenewalWindow struct {
