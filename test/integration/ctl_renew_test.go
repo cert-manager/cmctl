@@ -57,7 +57,7 @@ func TestCtlRenew(t *testing.T) {
 
 	// Create Namespaces
 	for _, ns := range []string{ns1, ns2} {
-		_, err := kubeClient.CoreV1().Namespaces().Create(ctx, &corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: ns}}, metav1.CreateOptions{})
+		_, err := kubeClient.CoreV1().Namespaces().Create(ctx, &corev1.Namespace{Name: ns}, metav1.CreateOptions{})
 		if err != nil {
 			t.Fatal(err)
 		}

@@ -153,7 +153,7 @@ func (o *Options) Complete(f cmdutil.Factory) error {
 // Run executes renew command
 func (o *Options) Run(ctx context.Context, args []string) error {
 
-	nss := []corev1.Namespace{{ObjectMeta: metav1.ObjectMeta{Name: o.Namespace}}}
+	nss := []corev1.Namespace{{Name: o.Namespace}}
 
 	if o.AllNamespaces {
 		kubeClient, err := kubernetes.NewForConfig(o.RESTConfig)

@@ -353,10 +353,11 @@ MA6koCR/K23HZfML8vT6lcHvQJp9XXaHRIe9NX/M/2f6VpfO7JjKWLou5k5a
 				Certificate: gen.Certificate("test-crt",
 					gen.SetCertificateNamespace(ns)),
 				Order: &cmacme.Order{
-					TypeMeta:   metav1.TypeMeta{},
-					ObjectMeta: metav1.ObjectMeta{Name: "example-order", Namespace: ns},
-					Spec:       cmacme.OrderSpec{Request: []byte("dummyCSR"), DNSNames: []string{"www.example.com"}},
-					Status:     cmacme.OrderStatus{},
+					TypeMeta:  metav1.TypeMeta{},
+					Name:      "example-order",
+					Namespace: ns,
+					Spec:      cmacme.OrderSpec{Request: []byte("dummyCSR"), DNSNames: []string{"www.example.com"}},
+					Status:    cmacme.OrderStatus{},
 				},
 				OrderError: nil,
 			},
@@ -380,8 +381,9 @@ MA6koCR/K23HZfML8vT6lcHvQJp9XXaHRIe9NX/M/2f6VpfO7JjKWLou5k5a
 					gen.SetCertificateNamespace(ns)),
 				Challenges: []*cmacme.Challenge{
 					{
-						TypeMeta:   metav1.TypeMeta{},
-						ObjectMeta: metav1.ObjectMeta{Name: "test-challenge1", Namespace: ns},
+						TypeMeta:  metav1.TypeMeta{},
+						Name:      "test-challenge1",
+						Namespace: ns,
 						Spec: cmacme.ChallengeSpec{
 							Type:  "HTTP-01",
 							Token: "token",
@@ -395,8 +397,9 @@ MA6koCR/K23HZfML8vT6lcHvQJp9XXaHRIe9NX/M/2f6VpfO7JjKWLou5k5a
 						},
 					},
 					{
-						TypeMeta:   metav1.TypeMeta{},
-						ObjectMeta: metav1.ObjectMeta{Name: "test-challenge2", Namespace: ns},
+						TypeMeta:  metav1.TypeMeta{},
+						Name:      "test-challenge2",
+						Namespace: ns,
 						Spec: cmacme.ChallengeSpec{
 							Type:  "HTTP-01",
 							Token: "token",
@@ -458,10 +461,10 @@ MA6koCR/K23HZfML8vT6lcHvQJp9XXaHRIe9NX/M/2f6VpfO7JjKWLou5k5a
 				ReqError:     errors.New("dummy error"),
 				ReqEvents:    dummyEventList,
 				Order: &cmacme.Order{
-					ObjectMeta: metav1.ObjectMeta{Name: "test-order"},
+					Name: "test-order",
 				},
 				OrderError:   errors.New("dummy error"),
-				Challenges:   []*cmacme.Challenge{{ObjectMeta: metav1.ObjectMeta{Name: "test-challenge"}}},
+				Challenges:   []*cmacme.Challenge{{Name: "test-challenge"}},
 				ChallengeErr: errors.New("dummy error"),
 			},
 			expOutput: &CertificateStatus{
