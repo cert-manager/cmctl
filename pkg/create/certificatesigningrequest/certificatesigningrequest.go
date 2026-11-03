@@ -350,11 +350,9 @@ func buildCertificateSigningRequest(crt *cmapi.Certificate, pk []byte, crName, s
 	}
 
 	csr := &certificatesv1.CertificateSigningRequest{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:        crName,
-			Annotations: crt.Annotations,
-			Labels:      crt.Labels,
-		},
+		Name:        crName,
+		Annotations: crt.Annotations,
+		Labels:      crt.Labels,
 		Spec: certificatesv1.CertificateSigningRequestSpec{
 			Request:    csrPEM,
 			SignerName: signerName,

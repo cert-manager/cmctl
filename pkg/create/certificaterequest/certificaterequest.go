@@ -278,11 +278,9 @@ func buildCertificateRequest(crt *cmapi.Certificate, pk []byte, crName string) (
 	}
 
 	cr := &cmapi.CertificateRequest{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:        crName,
-			Annotations: crt.Annotations,
-			Labels:      crt.Labels,
-		},
+		Name:        crName,
+		Annotations: crt.Annotations,
+		Labels:      crt.Labels,
 		Spec: cmapi.CertificateRequestSpec{
 			Request:   csrPEM,
 			Duration:  crt.Spec.Duration,

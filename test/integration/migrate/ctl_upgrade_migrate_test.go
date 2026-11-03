@@ -24,7 +24,6 @@ import (
 
 	apiextinstall "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/install"
 	apiext "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -42,19 +41,15 @@ func newResourceAtVersion(t *testing.T, version string) client.Object {
 	switch version {
 	case "v1":
 		return &v1.TestType{
-			ObjectMeta: metav1.ObjectMeta{
-				Name:      "object",
-				Namespace: "default",
-			},
+			Name:               "object",
+			Namespace:          "default",
 			TestField:          "abc",
 			TestFieldImmutable: "def",
 		}
 	case "v2":
 		return &v2.TestType{
-			ObjectMeta: metav1.ObjectMeta{
-				Name:      "object",
-				Namespace: "default",
-			},
+			Name:               "object",
+			Namespace:          "default",
 			TestField:          "abc",
 			TestFieldImmutable: "def",
 		}

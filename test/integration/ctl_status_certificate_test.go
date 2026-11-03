@@ -114,7 +114,7 @@ MA6koCR/K23HZfML8vT6lcHvQJp9XXaHRIe9NX/M/2f6VpfO7JjKWLou5k5a
 	}
 
 	// Create Namespace
-	_, err = kubernetesCl.CoreV1().Namespaces().Create(ctx, &corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: ns1}}, metav1.CreateOptions{})
+	_, err = kubernetesCl.CoreV1().Namespaces().Create(ctx, &corev1.Namespace{Name: ns1}, metav1.CreateOptions{})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -150,13 +150,11 @@ MA6koCR/K23HZfML8vT6lcHvQJp9XXaHRIe9NX/M/2f6VpfO7JjKWLou5k5a
 				NotAfter: &metav1.Time{Time: certIsValidTime}, Revision: &revision1},
 			crtEvents: &corev1.EventList{
 				Items: []corev1.Event{{
-					ObjectMeta: metav1.ObjectMeta{
-						Name:      "crtEvent",
-						Namespace: ns1,
-					},
-					Type:    "type",
-					Reason:  "reason",
-					Message: "message",
+					Name:      "crtEvent",
+					Namespace: ns1,
+					Type:      "type",
+					Reason:    "reason",
+					Message:   "message",
 				}},
 			},
 			inputArgs:      []string{crt1Name},
@@ -215,9 +213,7 @@ No CertificateRequest found for this Certificate$`,
 				})),
 			issuerEvents: &corev1.EventList{
 				Items: []corev1.Event{{
-					ObjectMeta: metav1.ObjectMeta{
-						Name: "issuerEvent",
-					},
+					Name:    "issuerEvent",
 					Type:    "type",
 					Reason:  "reason",
 					Message: "message",
@@ -228,13 +224,11 @@ No CertificateRequest found for this Certificate$`,
 				gen.SetSecretData(map[string][]byte{"tls.crt": tlsCrt})),
 			secretEvents: &corev1.EventList{
 				Items: []corev1.Event{{
-					ObjectMeta: metav1.ObjectMeta{
-						Name:      "secretEvent",
-						Namespace: ns1,
-					},
-					Type:    "type",
-					Reason:  "reason",
-					Message: "message",
+					Name:      "secretEvent",
+					Namespace: ns1,
+					Type:      "type",
+					Reason:    "reason",
+					Message:   "message",
 				}},
 			},
 			order: gen.Order("example-order",
@@ -328,13 +322,11 @@ Challenges:
 			reqStatus: &cmapi.CertificateRequestStatus{Conditions: []cmapi.CertificateRequestCondition{reqNotReadyCond}},
 			reqEvents: &corev1.EventList{
 				Items: []corev1.Event{{
-					ObjectMeta: metav1.ObjectMeta{
-						Name:      "reqEvent",
-						Namespace: ns1,
-					},
-					Type:    "type",
-					Reason:  "reason",
-					Message: "message",
+					Name:      "reqEvent",
+					Namespace: ns1,
+					Type:      "type",
+					Reason:    "reason",
+					Message:   "message",
 				}},
 			},
 			issuer: nil,

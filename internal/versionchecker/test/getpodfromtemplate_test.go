@@ -44,13 +44,11 @@ func getPodFromTemplate(template *v1.PodTemplateSpec, parentObject runtime.Objec
 	prefix := getPodsPrefix(accessor.GetName())
 
 	pod := &v1.Pod{
-		ObjectMeta: metav1.ObjectMeta{
-			Labels:       desiredLabels,
-			Annotations:  desiredAnnotations,
-			GenerateName: prefix,
-			Name:         prefix + rand.String(5),
-			Finalizers:   desiredFinalizers,
-		},
+		Labels:       desiredLabels,
+		Annotations:  desiredAnnotations,
+		GenerateName: prefix,
+		Name:         prefix + rand.String(5),
+		Finalizers:   desiredFinalizers,
 		Status: v1.PodStatus{
 			Phase: v1.PodRunning,
 		},
