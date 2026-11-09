@@ -85,6 +85,7 @@ func NewCmdStatusCert(setupCtx context.Context, ioStreams genericclioptions.IOSt
 
 	cmd := &cobra.Command{
 		Use:   "certificate",
+		Aliases: []string{"cert"},
 		Short: "Get details about the current status of a cert-manager Certificate resource",
 		Long: templates.LongDesc(`
 Get details about the current status of a cert-manager Certificate resource, including information on related resources like CertificateRequest or Order.`),
