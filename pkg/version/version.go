@@ -115,7 +115,15 @@ func NewCmdVersion(setupCtx context.Context, ioStreams genericclioptions.IOStrea
 	cmd.Flags().BoolVar(&o.Short, "short", o.Short, "If true, print just the version number.")
 	cmd.Flags().StringVarP(&o.Output, "output", "o", o.Output, "One of 'yaml' or 'json'.")
 
+	prepareClient := cmd.PreRunE
 	o.Factory = factory.New(cmd)
+	prepareServer := cmd.PreRunE
+	cmd.PreRunE = func(cmd *cobra.Command, args []string) error {
+		if o.ClientOnly {
+			return prepareClient(cmd, args)
+		}
+		return prepareServer(cmd, args)
+	}
 
 	return cmd
 }
