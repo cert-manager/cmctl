@@ -5,13 +5,13 @@ go 1.27.0
 require (
 	github.com/cert-manager/cert-manager v1.21.3
 	github.com/go-logr/logr v1.4.4
-	github.com/sergi/go-diff v1.4.0
+	github.com/sergi/go-diff v1.4.5
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/pflag v1.1.0
 	github.com/stretchr/testify v1.12.1
 	golang.org/x/crypto v0.59.0
 	golang.org/x/sync v0.25.0
-	helm.sh/helm/v4 v4.3.1
+	helm.sh/helm/v4 v4.3.2
 	k8s.io/api v0.37.2
 	k8s.io/apiextensions-apiserver v0.37.2
 	k8s.io/apimachinery v0.37.2
